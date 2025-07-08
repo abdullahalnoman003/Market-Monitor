@@ -1,11 +1,142 @@
-import React from 'react';
+import React, { useContext } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { TfiBarChart } from "react-icons/tfi";
+import Swal from "sweetalert2";
+import ThemeToggle from "./ThemeToggle";
+import { AuthContext } from "../Authentication/Context/AuthContext";
 
 const Navbar = () => {
-    return (
-        <div>
-            This IS navbar;
+  const context = useContext(AuthContext);
+  const { user, logout } = context || {};
+
+  const handleLogout = async () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, logout!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await logout();
+          Swal.fire({
+            title: "Logged out!",
+            text: "You have successfully logged out.",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        } catch (error) {
+          Swal.fire({
+            title: "Error!",
+            text: `Logout failed: ${error.message}`,
+            icon: "error",
+          });
+        }
+      }
+    });
+  };
+
+  return (
+    <div className="navbar bg-base-100/90 backdrop-blur-md shadow-md fixed top-0 z-50">
+      <div className="navbar-start">
+        {/* Mobile Dropdown */}
+        <div className="dropdown">
+          <button
+            tabIndex={0}
+            className="btn btn-ghost lg:hidden"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 z-50"
+          >
+            <li><NavLink to="/">Home</NavLink></li>
+            <li><NavLink to="/markets">Markets</NavLink></li>
+            <li><NavLink to="/compare">Compare</NavLink></li>
+            {user && (
+              <>
+                <li><NavLink to="/vendors">Vendor Panel</NavLink></li>
+                <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+              </>
+            )}
+            <li><NavLink to="/about">About</NavLink></li>
+          </ul>
         </div>
-    );
+
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-1 text-2xl font-extrabold">
+          <TfiBarChart className="text-primary" />
+          <span className="text-primary">Market</span>
+          <span className="text-secondary">Monitor</span>
+        </Link>
+      </div>
+
+      {/* Desktop Menu */}
+      <div className="navbar-center hidden lg:flex">
+        <ul className="menu menu-horizontal gap-3 px-1">
+          <li><NavLink to="/" className="btn btn-sm border border-primary">Home</NavLink></li>
+          <li><NavLink to="/markets" className="btn btn-sm border border-primary">Markets</NavLink></li>
+          <li><NavLink to="/compare" className="btn btn-sm border border-primary">Compare</NavLink></li>
+          {user && (
+            <>
+              <li><NavLink to="/vendors" className="btn btn-sm border border-primary">Vendor Panel</NavLink></li>
+              <li><NavLink to="/dashboard" className="btn btn-sm border border-primary">Dashboard</NavLink></li>
+            </>
+          )}
+          <li><NavLink to="/about" className="btn btn-sm border border-primary">About</NavLink></li>
+        </ul>
+      </div>
+
+      {/* Theme & Auth Buttons */}
+      <div className="navbar-end flex items-center gap-2">
+        <ThemeToggle />
+        {!user ? (
+          <>
+            <NavLink to="/login" className="btn btn-sm border border-primary">Login</NavLink>
+            <NavLink to="/register" className="btn btn-sm border border-primary">Register</NavLink>
+          </>
+        ) : (
+          <div className="dropdown dropdown-end">
+            <div
+              tabIndex={0}
+              className="btn btn-ghost btn-circle avatar tooltip tooltip-left"
+              data-tip={user.displayName || "User"}
+            >
+              <div className="w-10 rounded-full border border-primary">
+                <img src={user.photoURL || "/default-user.png"} alt="User Avatar" />
+              </div>
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-40"
+            >
+              <li>
+                <NavLink to="/profile" className="text-sm">Profile</NavLink>
+              </li>
+              <li>
+                <button onClick={handleLogout} className="text-red-600 hover:text-red-800 font-semibold text-sm">
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Navbar;
