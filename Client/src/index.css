@@ -1,2 +1,8 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: fantasy --default, abyss ;
+}
+.active{
+  @apply
+  btn-primary
+}
