@@ -19,7 +19,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        Component: Login,
+        element: <PublicRoute><Login></Login></PublicRoute> ,
       },
       {
         path: "/forgot-password",
@@ -29,10 +29,7 @@ const router = createBrowserRouter([
         path: "/register",
         element: <PublicRoute><Register></Register></PublicRoute> ,
       },
-      {
-        path: "/login",
-        element: <PublicRoute><Login></Login></PublicRoute> ,
-      },
+      
     ],
   },
   {

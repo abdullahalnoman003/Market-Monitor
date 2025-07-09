@@ -75,6 +75,7 @@ const Login = () => {
           text: error.message,
           timer: 2000,
         });
+        setLoading(false)
       });
   };
 
@@ -144,7 +145,7 @@ const Login = () => {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-3"
+                  className="absolute right-3 top-3 z-5"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}

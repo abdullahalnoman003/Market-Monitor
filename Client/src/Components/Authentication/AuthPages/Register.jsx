@@ -3,7 +3,6 @@ import {
   GoogleAuthProvider,
   sendEmailVerification,
   signInWithPopup,
-  signOut,
   updateProfile,
 } from "firebase/auth";
 import React, { useState } from "react";
@@ -73,16 +72,14 @@ const Register = () => {
           photoURL,
         }).then(() => {
           sendEmailVerification(user).then(() => {
-            signOut(auth).then(() => {
-              Swal.fire(
+            Swal.fire(
                 "Registration Successful!",
-                "Please verify your email before login.",
+                `Welcome ${user.displayName}.`,
                 "success"
               );
               reset();
               setLoading(false);
-              navigate("/login");
-            });
+              navigate("/");
           });
         });
       })
@@ -153,7 +150,7 @@ const Register = () => {
                 type="text"
                 {...register("name", { required: "Name is required" })}
                 className="input input-bordered w-full input-primary"
-                placeholder="John Doe"
+                placeholder="Your Name"
               />
               {errors.name && (
                 <p className="text-red-600 text-sm">{errors.name.message}</p>
