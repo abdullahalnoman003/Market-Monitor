@@ -41,13 +41,13 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-base-100/90 backdrop-blur-md shadow-md fixed top-0 z-50">
+    <div className="navbar bg-base-100/90 backdrop-blur-md shadow-md fixed px-6 max-md:pl-1 top-0 z-50">
       <div className="navbar-start">
         {/* Mobile Dropdown */}
         <div className="dropdown">
           <button
             tabIndex={0}
-            className="btn btn-ghost lg:hidden"
+            className="btn btn-ghost  lg:hidden"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -63,21 +63,21 @@ const Navbar = () => {
             tabIndex={0}
             className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 z-50"
           >
-            <li><NavLink to="/">Home</NavLink></li>
-            <li><NavLink to="/markets">Markets</NavLink></li>
-            <li><NavLink to="/compare">Compare</NavLink></li>
+            <li className="font-bold"><NavLink  to="/">Home</NavLink></li>
+            <li className="font-bold"><NavLink  to="/markets">Markets</NavLink></li>
+            <li className="font-bold"><NavLink  to="/compare">Compare</NavLink></li>
             {user && (
               <>
-                <li><NavLink to="/vendors">Vendor Panel</NavLink></li>
-                <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+                <li className="font-bold"><NavLink  to="/vendors">Vendor Panel</NavLink></li>
+                <li className="font-bold"><NavLink  to="/dashboard">Dashboard</NavLink></li>
               </>
             )}
-            <li><NavLink to="/about">About</NavLink></li>
+            <li className="font-bold"><NavLink to="/about">About</NavLink></li>
           </ul>
         </div>
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-1 text-2xl font-extrabold">
+        <Link to="/" className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold">
           <TfiBarChart className="text-primary" />
           <span className="text-primary">Market</span>
           <span className="text-secondary">Monitor</span>
@@ -87,16 +87,16 @@ const Navbar = () => {
       {/* Desktop Menu */}
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal gap-3 px-1">
-          <li><NavLink to="/" className="btn btn-sm border border-primary">Home</NavLink></li>
-          <li><NavLink to="/markets" className="btn btn-sm border border-primary">Markets</NavLink></li>
-          <li><NavLink to="/compare" className="btn btn-sm border border-primary">Compare</NavLink></li>
+          <li><NavLink to="/" className="font-bold   ">Home</NavLink></li>
+          <li><NavLink to="/markets" className="font-bold  ">Markets</NavLink></li>
+          <li><NavLink to="/compare" className="font-bold  ">Compare</NavLink></li>
           {user && (
             <>
-              <li><NavLink to="/vendors" className="btn btn-sm border border-primary">Vendor Panel</NavLink></li>
-              <li><NavLink to="/dashboard" className="btn btn-sm border border-primary">Dashboard</NavLink></li>
+              <li><NavLink to="/vendors" className="font-bold  ">Vendor Panel</NavLink></li>
+              <li><NavLink to="/dashboard" className="font-bold  ">Dashboard</NavLink></li>
             </>
           )}
-          <li><NavLink to="/about" className="btn btn-sm border border-primary">About</NavLink></li>
+          <li><NavLink to="/about" className="font-bold  ">About</NavLink></li>
         </ul>
       </div>
 
@@ -105,8 +105,8 @@ const Navbar = () => {
         <ThemeToggle />
         {!user ? (
           <>
-            <NavLink to="/login" className="btn btn-sm border border-primary">Login</NavLink>
-            <NavLink to="/register" className="btn btn-sm border border-primary">Register</NavLink>
+            <NavLink to="/login" className=" font-bold ">Login</NavLink>
+            <NavLink to="/register" className=" font-bold ">Register</NavLink>
           </>
         ) : (
           <div className="dropdown dropdown-end">

@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom'; // <-- updated import
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 py-10 px-6 transition-all duration-300 mt-10 rounded-t-2xl shadow-inner">
-      <div className="max-w-7xl mx-auto grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="bg-gray-100 dark:bg-gray-900  py-10 px-6 transition-all duration-300 mt-10 rounded-t-2xl shadow-inner">
+      <div className="max-w-screen mx-auto grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         
         {/* Branding */}
         <div className="text-center sm:text-left">
