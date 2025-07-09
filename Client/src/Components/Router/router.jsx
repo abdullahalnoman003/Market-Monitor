@@ -4,6 +4,8 @@ import NotFound from "../Error/NotFound";
 import AdminLayout from "../Layout/AdminLayout";
 import VendorLayout from "../Layout/VendorLayout";
 import Login from "../Authentication/AuthPages/Login";
+import ForgotPassword from "../Authentication/AuthPages/ForgotPassword";
+import Register from "../Authentication/AuthPages/Register";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -12,6 +14,18 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <></>,
+      },
+      {
+        path: "/login",
+        Component: Login,
+      },
+      {
+        path: "/forgot-password",
+        Component: ForgotPassword,
+      },
+      {
+        path: "/register",
+        Component: Register,
       },
       {
         path: "/login",

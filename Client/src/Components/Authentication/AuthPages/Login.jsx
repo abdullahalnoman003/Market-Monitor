@@ -10,8 +10,10 @@ import { FaEyeSlash, FaEye } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import { auth } from "../../../Firebase/firebase.init";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const Login = () => {
+  useDocumentTitle("Login | Market Monitor")
   const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,7 +28,7 @@ const Login = () => {
       <div className="h-screen flex items-center justify-center bg-base-200">
         <div className="text-center">
           <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold text-yellow-800 mt-4">
+          <p className="text-xl font-semibold text-primary mt-4">
             Logging in... Please wait.
           </p>
         </div>
@@ -34,7 +36,7 @@ const Login = () => {
     );
   }
 
-  // Google Login
+  // Google Login function
   const handleGoogleSignin = () => {
     setLoading(true);
     signInWithPopup(auth, provider)
@@ -48,7 +50,7 @@ const Login = () => {
       .finally(() => setLoading(false));
   };
 
-  // Email/Password Login
+  // Email/Password Login function
   const handleEmailLogin = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
