@@ -1,12 +1,12 @@
 import React from 'react';
 import { FaFacebookF, FaInstagram, FaEnvelope } from 'react-icons/fa';
 import { FaSquareXTwitter } from "react-icons/fa6";
-import { TfiBarChart } from 'react-icons/tfi'; // Changed icon to match market/data theme
-import { Link } from 'react-router-dom'; // <-- updated import
+import { TfiBarChart } from 'react-icons/tfi'; 
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-100 dark:bg-gray-900  py-10 px-6 transition-all duration-300 mt-10 rounded-t-2xl shadow-inner">
+    <footer className="bg-base-200 text-base-content py-10 px-6 mt-10 rounded-t-2xl shadow-inner transition-colors duration-300">
       <div className="max-w-screen mx-auto grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         
         {/* Branding */}
@@ -58,6 +58,7 @@ const Footer = () => {
             </a>
           </div>
         </div>
+
       </div>
     </footer>
   );

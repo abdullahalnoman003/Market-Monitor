@@ -6,6 +6,8 @@ import VendorLayout from "../Layout/VendorLayout";
 import Login from "../Authentication/AuthPages/Login";
 import ForgotPassword from "../Authentication/AuthPages/ForgotPassword";
 import Register from "../Authentication/AuthPages/Register";
+import PrivateRoute from "../Authentication/Routes/PrivateRoute";
+import PublicRoute from "../Authentication/Routes/PublicRoute";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -21,15 +23,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/forgot-password",
-        Component: ForgotPassword,
+        element: <ForgotPassword></ForgotPassword> ,
       },
       {
         path: "/register",
-        Component: Register,
+        element: <PublicRoute><Register></Register></PublicRoute> ,
       },
       {
         path: "/login",
-        Component: Login,
+        element: <PublicRoute><Login></Login></PublicRoute> ,
       },
     ],
   },
