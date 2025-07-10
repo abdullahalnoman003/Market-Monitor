@@ -2,16 +2,20 @@ import { createBrowserRouter } from "react-router-dom";
 import HomeLayout from "../Layout/HomeLayout";
 import NotFound from "../Error/NotFound";
 import AdminLayout from "../Layout/AdminLayout";
-import VendorLayout from "../Layout/VendorLayout";
+import VendorLayout from "../Layout/VendorLayout/VendorLayout";
 import Login from "../Authentication/AuthPages/Login";
 import ForgotPassword from "../Authentication/AuthPages/ForgotPassword";
 import Register from "../Authentication/AuthPages/Register";
 import PrivateRoute from "../Authentication/Routes/PrivateRoute";
 import PublicRoute from "../Authentication/Routes/PublicRoute";
+import AddProduct from "../Layout/VendorLayout/AddProduct";
+import MyProducts from "../Layout/VendorLayout/MyProducts";
+import UpdateProduct from "../Layout/VendorLayout/UpdateProduct";
+import ProductNotFound from "../Error/ProductNotFound";
 const router = createBrowserRouter([
   {
     path: "/",
-    Component: HomeLayout,
+    element: <HomeLayout></HomeLayout>,
     children: [
       {
         index: true,
@@ -39,23 +43,48 @@ const router = createBrowserRouter([
       },
       {
         path: "/*",
-        Component: NotFound,
+        element: <NotFound></NotFound>,
       },
     ],
   },
   {
     path: "/dashboard/admin",
-    Component: AdminLayout,
+    element: <AdminLayout />,
     children: [{}],
   },
   {
     path: "/dashboard/vendor",
-    Component: VendorLayout,
-    children: [{}],
+    element: <VendorLayout></VendorLayout>,
+    children: [
+      {
+        path: "add-product",
+        element: (
+          <PrivateRoute>
+            <AddProduct></AddProduct>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-products",
+        element: (
+          <PrivateRoute>
+            <MyProducts></MyProducts>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "update-product/:id",
+        element: (
+          <PrivateRoute>
+            <UpdateProduct></UpdateProduct>
+          </PrivateRoute>
+        ),
+      },
+    ],
   },
   {
     path: "/*",
-    Component: NotFound,
+    element: <NotFound />,
   },
 ]);
 export default router;

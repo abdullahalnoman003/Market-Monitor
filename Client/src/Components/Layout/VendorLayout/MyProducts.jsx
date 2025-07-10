@@ -155,7 +155,7 @@ const MyProducts = () => {
                 <button
                   data-tooltip-id="edit-tooltip"
                   data-tooltip-content="Edit Product"
-                  onClick={() => navigate(`/update-product/${product._id}`)}
+                  onClick={() => navigate(`/dashboard/vendor/update-product/${product._id}`)}
                   className="btn btn-sm btn-outline btn-warning"
                 >
                   <FaEdit className="mr-1" /> Edit
