@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import { auth } from "../../../Firebase/firebase.init";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import useAxios from "../../../Hooks/useAxios";
 
 const Login = () => {
   useDocumentTitle("Login | Market Monitor")
@@ -19,6 +20,7 @@ const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
+  const axiosInstance = useAxios();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -37,18 +39,36 @@ const Login = () => {
   }
 
   // Google Login function
-  const handleGoogleSignin = () => {
-    setLoading(true);
-    signInWithPopup(auth, provider)
-      .then(() => {
-        Swal.fire("Login Successful", "Welcome to Market Monitor!", "success");
-        navigate(from, { replace: true });
-      })
-      .catch((error) => {
-        Swal.fire("Google Login Failed", error.message, "error");
-      })
-      .finally(() => setLoading(false));
-  };
+ const handleGoogleSignin = () => {
+  setLoading(true);
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      const user = result.user;
+
+      const userInfo = {
+        name: user.displayName,
+        email: user.email.toLowerCase(),
+        role: "user",
+      };
+
+      axiosInstance.post("/users", userInfo)
+        .then(() => {
+          Swal.fire("Login Successful", "Welcome to Market Monitor!", "success");
+          navigate(from, { replace: true });
+        })
+        .catch((err) => {
+          console.error("Failed to sync Google user to DB:", err);
+          // Even if saving fails, allow login
+          Swal.fire("Login Successful", "Welcome!", "success");
+          navigate(from, { replace: true });
+        });
+    })
+    .catch((error) => {
+      Swal.fire("Google Login Failed", error.message, "error");
+    })
+    .finally(() => setLoading(false));
+};
+
 
   // Email/Password Login function
   const handleEmailLogin = (e) => {

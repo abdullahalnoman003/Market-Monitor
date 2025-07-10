@@ -1,7 +1,6 @@
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  sendEmailVerification,
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
@@ -12,6 +11,7 @@ import { FcGoogle } from "react-icons/fc";
 import { auth } from "../../../Firebase/firebase.init";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
+import useAxios from "../../../Hooks/useAxios";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -21,6 +21,8 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
+  const axiosInstance = useAxios();
+
   const {
     register,
     handleSubmit,
@@ -28,7 +30,6 @@ const Register = () => {
     reset,
   } = useForm();
 
-  // Handle image upload to imgbb
   const handleImageUpload = async (imageFile) => {
     const formData = new FormData();
     formData.append("image", imageFile);
@@ -53,11 +54,11 @@ const Register = () => {
     }
   };
 
-  // Form submission handler
   const onSubmit = async (data) => {
     setLoading(true);
     const { name, email, password, image } = data;
 
+    
     const photoURL = await handleImageUpload(image[0]);
     if (!photoURL) {
       setLoading(false);
@@ -67,12 +68,21 @@ const Register = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+
         updateProfile(user, {
           displayName: name,
           photoURL,
         }).then(() => {
-          sendEmailVerification(user).then(() => {
-            Swal.fire(
+          const userInfo = {
+            name: data.name,
+            email: data.email.toLowerCase(),
+            role: "user",
+          };
+
+          axiosInstance
+            .post("/users", userInfo)
+            .then(() => {
+              Swal.fire(
                 "Registration Successful!",
                 `Welcome ${user.displayName}.`,
                 "success"
@@ -80,7 +90,16 @@ const Register = () => {
               reset();
               setLoading(false);
               navigate("/");
-          });
+            })
+            .catch((err) => {
+              console.error("Error saving user to DB:", err);
+              Swal.fire(
+                "Registration Failed",
+                "Failed to save user to DB",
+                "error"
+              );
+              setLoading(false);
+            });
         });
       })
       .catch((error) => {
@@ -89,11 +108,31 @@ const Register = () => {
       });
   };
 
+  //  Google Sign-In with DB submission
   const handleGoogleSignin = () => {
     signInWithPopup(auth, provider)
-      .then(() => {
-        Swal.fire("Google Sign-in Successful", "Welcome!", "success");
-        navigate("/");
+      .then((result) => {
+        const user = result.user;
+        const userInfo = {
+          name: user.displayName,
+          email: user.email.toLowerCase(),
+          role: "user",
+        };
+
+        axiosInstance
+          .post("/users", userInfo)
+          .then(() => {
+            Swal.fire("Google Sign-in Successful", "Welcome!", "success");
+            navigate("/");
+          })
+          .catch((err) => {
+            console.error("Google user DB save failed:", err);
+            Swal.fire(
+              "Google Sign-in Failed",
+              "Could not save user info",
+              "error"
+            );
+          });
       })
       .catch((error) => {
         Swal.fire("Google Sign-in Failed", error.message, "error");
@@ -219,7 +258,7 @@ const Register = () => {
               <input
                 type="file"
                 accept="image/*"
-                {...register("image", { required: "Image is required" })}
+                {...register("image")}
                 className="file-input file-input-bordered w-full file-input-primary"
               />
               {errors.image && (
