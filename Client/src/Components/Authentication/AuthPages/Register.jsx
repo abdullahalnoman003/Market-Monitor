@@ -21,8 +21,9 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const axiosInstance = useAxios();
+  const axiosInstance = useAxios(); // imoporting axios instance from the axios hook
 
+  // here is the initialization for the   React hook form
   const {
     register,
     handleSubmit,
@@ -34,6 +35,7 @@ const Register = () => {
     const formData = new FormData();
     formData.append("image", imageFile);
 
+    // image upload into imgbb 
     setUploadingImage(true);
     try {
       const res = await fetch(
@@ -58,7 +60,6 @@ const Register = () => {
     setLoading(true);
     const { name, email, password, image } = data;
 
-    
     const photoURL = await handleImageUpload(image[0]);
     if (!photoURL) {
       setLoading(false);
@@ -73,12 +74,13 @@ const Register = () => {
           displayName: name,
           photoURL,
         }).then(() => {
+          // creating object to store user info, here data means the form data in data the name and thefield name
           const userInfo = {
             name: data.name,
             email: data.email.toLowerCase(),
             role: "user",
           };
-
+          // post send to backend to store the user info
           axiosInstance
             .post("/users", userInfo)
             .then(() => {
@@ -90,7 +92,7 @@ const Register = () => {
               reset();
               setLoading(false);
               navigate("/");
-            })
+            }) // in catch if any error happend then it will send error..
             .catch((err) => {
               console.error("Error saving user to DB:", err);
               Swal.fire(
@@ -108,7 +110,7 @@ const Register = () => {
       });
   };
 
-  //  Google Sign-In with DB submission
+  //  Google Sign-In with DB submission, here sending tyhe data to database to store the default is user 
   const handleGoogleSignin = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
@@ -118,7 +120,7 @@ const Register = () => {
           email: user.email.toLowerCase(),
           role: "user",
         };
-
+// sending data to backendd
         axiosInstance
           .post("/users", userInfo)
           .then(() => {

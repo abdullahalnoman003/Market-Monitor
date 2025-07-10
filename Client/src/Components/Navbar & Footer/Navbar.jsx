@@ -4,10 +4,11 @@ import { TfiBarChart } from "react-icons/tfi";
 import Swal from "sweetalert2";
 import ThemeToggle from "./ThemeToggle";
 import { AuthContext } from "../Authentication/Context/AuthContext";
+import useUserRole from "../../Hooks/useUserRole";
 
 const Navbar = () => {
-  const context = useContext(AuthContext);
-  const { user, logout } = context || {};
+  const { user, logout } = useContext(AuthContext) || {};
+  const [role] = useUserRole(user?.email); // ✅ Get role
 
   const handleLogout = async () => {
     Swal.fire({
@@ -40,15 +41,20 @@ const Navbar = () => {
     });
   };
 
+  // ✅ Show dashboard link based on role
+  const renderDashboardLink = () => {
+    if (!role) return null;
+    if (role === "admin") return <NavLink to="/dashboard/admin">Admin Dashboard</NavLink>;
+    if (role === "vendor") return <NavLink to="/dashboard/vendor">Vendor Dashboard</NavLink>;
+    return <NavLink to="/dashboard">Dashboard</NavLink>; // default for "user"
+  };
+
   return (
     <div className="navbar bg-base-100/90 backdrop-blur-md shadow-md fixed px-6 max-md:pl-1 top-0 z-50">
       <div className="navbar-start">
         {/* Mobile Dropdown */}
         <div className="dropdown">
-          <button
-            tabIndex={0}
-            className="btn btn-ghost  lg:hidden"
-          >
+          <button tabIndex={0} className="btn btn-ghost lg:hidden">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -63,14 +69,11 @@ const Navbar = () => {
             tabIndex={0}
             className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 z-50"
           >
-            <li className="font-bold"><NavLink  to="/">Home</NavLink></li>
-            <li className="font-bold"><NavLink  to="/markets">Markets</NavLink></li>
-            <li className="font-bold"><NavLink  to="/compare">Compare</NavLink></li>
+            <li className="font-bold"><NavLink to="/">Home</NavLink></li>
+            <li className="font-bold"><NavLink to="/markets">Markets</NavLink></li>
+            <li className="font-bold"><NavLink to="/compare">Compare</NavLink></li>
             {user && (
-              <>
-                <li className="font-bold"><NavLink  to="/vendors">Vendor Panel</NavLink></li>
-                <li className="font-bold"><NavLink  to="/dashboard">Dashboard</NavLink></li>
-              </>
+              <li className="font-bold">{renderDashboardLink()}</li>
             )}
             <li className="font-bold"><NavLink to="/about">About</NavLink></li>
           </ul>
@@ -87,26 +90,23 @@ const Navbar = () => {
       {/* Desktop Menu */}
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal gap-3 px-1">
-          <li><NavLink to="/" className="font-bold   ">Home</NavLink></li>
-          <li><NavLink to="/markets" className="font-bold  ">Markets</NavLink></li>
-          <li><NavLink to="/compare" className="font-bold  ">Compare</NavLink></li>
+          <li><NavLink to="/" className="font-bold">Home</NavLink></li>
+          <li><NavLink to="/markets" className="font-bold">Markets</NavLink></li>
+          <li><NavLink to="/compare" className="font-bold">Compare</NavLink></li>
           {user && (
-            <>
-              <li><NavLink to="/vendors" className="font-bold  ">Vendor Panel</NavLink></li>
-              <li><NavLink to="/dashboard" className="font-bold  ">Dashboard</NavLink></li>
-            </>
+            <li className="font-bold">{renderDashboardLink()}</li>
           )}
-          <li><NavLink to="/about" className="font-bold  ">About</NavLink></li>
+          <li><NavLink to="/about" className="font-bold">About</NavLink></li>
         </ul>
       </div>
 
-      {/* Theme & Auth Buttons */}
+      {/* Theme & Auth */}
       <div className="navbar-end flex items-center gap-2">
         <ThemeToggle />
         {!user ? (
           <>
-            <NavLink to="/login" className=" font-bold ">Login</NavLink>
-            <NavLink to="/register" className=" font-bold ">Register</NavLink>
+            <NavLink to="/login" className="font-bold">Login</NavLink>
+            <NavLink to="/register" className="font-bold">Register</NavLink>
           </>
         ) : (
           <div className="dropdown dropdown-end">
@@ -123,11 +123,12 @@ const Navbar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-40"
             >
+              <li><NavLink to="/profile" className="text-sm">Profile</NavLink></li>
               <li>
-                <NavLink to="/profile" className="text-sm">Profile</NavLink>
-              </li>
-              <li>
-                <button onClick={handleLogout} className="text-red-600 hover:text-red-800 font-semibold text-sm">
+                <button
+                  onClick={handleLogout}
+                  className="text-red-600 hover:text-red-800 font-semibold text-sm"
+                >
                   Logout
                 </button>
               </li>

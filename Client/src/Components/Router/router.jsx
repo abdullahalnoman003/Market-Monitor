@@ -19,36 +19,39 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <PublicRoute><Login></Login></PublicRoute> ,
+        element: (
+          <PublicRoute>
+            <Login></Login>
+          </PublicRoute>
+        ),
       },
       {
         path: "/forgot-password",
-        element: <ForgotPassword></ForgotPassword> ,
+        element: <ForgotPassword></ForgotPassword>,
       },
       {
         path: "/register",
-        element: <PublicRoute><Register></Register></PublicRoute> ,
+        element: (
+          <PublicRoute>
+            <Register></Register>
+          </PublicRoute>
+        ),
       },
-      
+      {
+        path: "/*",
+        Component: NotFound,
+      },
     ],
   },
   {
-    path:"/admin-dashboard",
+    path: "/dashboard/admin",
     Component: AdminLayout,
-    children: [
-        {
-            
-        },
-    ]
+    children: [{}],
   },
   {
-    path:"/vendor-dashboard",
+    path: "/dashboard/vendor",
     Component: VendorLayout,
-    children: [
-        {
-            
-        },
-    ]
+    children: [{}],
   },
   {
     path: "/*",
