@@ -4,5 +4,5 @@
 }
 .active{
   @apply
-  btn-primary
+  border-b-2
 }

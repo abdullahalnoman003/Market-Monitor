@@ -1,34 +1,65 @@
-import React from 'react';
-import { FaFacebookF, FaInstagram, FaEnvelope } from 'react-icons/fa';
+import React from "react";
+import { FaFacebookF, FaInstagram, FaEnvelope } from "react-icons/fa";
 import { FaSquareXTwitter } from "react-icons/fa6";
-import { TfiBarChart } from 'react-icons/tfi'; 
-import { Link } from 'react-router-dom';
+import { TfiBarChart } from "react-icons/tfi";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
     <footer className="bg-base-200 text-base-content py-10 px-6 mt-10 rounded-t-2xl shadow-inner transition-colors duration-300">
       <div className="max-w-screen mx-auto grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-        
         {/* Branding */}
         <div className="text-center sm:text-left">
-          <h2 className="text-3xl font-extrabold flex items-center justify-center sm:justify-start gap-2 text-primary">
-            <TfiBarChart className="text-4xl" />
-            Market<span className="text-secondary">Monitor</span>
-          </h2>
+          <div className="flex items-center justify-center sm:justify-start">
+            <img src="/logo.png" alt="" className="h-10 w-fit" />
+            <h2 className="text-3xl font-extrabold flex items-center justify-center sm:justify-start gap-2 text-primary">
+              Market<span className="text-secondary">Monitor</span>
+            </h2>
+          </div>
+
           <p className="mt-2 text-sm">
-            Stay updated with real-time market prices of essentials. Compare across locations. Buy smart, live smarter.
+            Stay updated with real-time market prices of essentials. Compare
+            across locations. Buy smart, live smarter.
           </p>
-          <p className="text-xs mt-4">&copy; {new Date().getFullYear()} MarketMonitor. All rights reserved.</p>
+          <p className="text-xs mt-4">
+            &copy; {new Date().getFullYear()} MarketMonitor. All rights
+            reserved.
+          </p>
         </div>
 
         {/* Quick Links */}
         <div className="text-center sm:text-left">
           <h3 className="text-xl font-semibold mb-3">Quick Links</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/markets" className="hover:text-primary transition-colors">Browse Markets</Link></li>
-            <li><Link to="/compare" className="hover:text-primary transition-colors">Compare Prices</Link></li>
-            <li><Link to="/vendors" className="hover:text-primary transition-colors">Vendor Portal</Link></li>
-            <li><Link to="/ads" className="hover:text-primary transition-colors">Sponsor With Us</Link></li>
+            <li>
+              <Link
+                to="/markets"
+                className="hover:text-primary transition-colors"
+              >
+                Browse Markets
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/compare"
+                className="hover:text-primary transition-colors"
+              >
+                Compare Prices
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/vendors"
+                className="hover:text-primary transition-colors"
+              >
+                Vendor Portal
+              </Link>
+            </li>
+            <li>
+              <Link to="/ads" className="hover:text-primary transition-colors">
+                Sponsor With Us
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -44,13 +75,28 @@ const Footer = () => {
         <div className="text-center sm:text-left">
           <h3 className="text-xl font-semibold mb-3">Connect With Us</h3>
           <div className="flex justify-center sm:justify-start gap-5 mt-3 text-2xl">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+            >
               <FaFacebookF className="hover:text-blue-600 transition-colors duration-200" />
             </a>
-            <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">
+            <a
+              href="https://x.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter/X"
+            >
               <FaSquareXTwitter className="hover:text-black transition-colors duration-200" />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
               <FaInstagram className="hover:text-pink-600 transition-colors duration-200" />
             </a>
             <a href="mailto:support@marketmonitor.com" aria-label="Email">
@@ -58,7 +104,6 @@ const Footer = () => {
             </a>
           </div>
         </div>
-
       </div>
     </footer>
   );

@@ -41,7 +41,7 @@ const Navbar = () => {
     });
   };
 
-  // ✅ Show dashboard link based on role
+  //Show dashboard link based on role
   const renderDashboardLink = () => {
     if (!role) return null;
     if (role === "admin") return <NavLink to="/dashboard/admin">Admin Dashboard</NavLink>;
@@ -81,7 +81,7 @@ const Navbar = () => {
 
         {/* Logo */}
         <Link to="/" className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold">
-          <TfiBarChart className="text-primary" />
+          <img className="max-md:w-8 w-10" src="/logo.png" alt="" />
           <span className="text-primary">Market</span>
           <span className="text-secondary">Monitor</span>
         </Link>
