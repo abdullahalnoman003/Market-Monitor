@@ -50,11 +50,11 @@ const AllUsers = () => {
   const getRoleBadge = (role) => {
     switch (role) {
       case "admin":
-        return <span className="badge badge-success ">Admin</span>;
+        return <span className="badge badge-success font-bold shadow-md hover:shadow-primary transition-all transform-3d  ">Admin</span>;
       case "vendor":
-        return <span className="badge badge-info ">Vendor</span>;
+        return <span className="badge badge-info font-bold shadow-md hover:shadow-primary transition-all transform-3d">Vendor</span>;
       default:
-        return <span className="badge badge-neutral ">User</span>;
+        return <span className="badge badge-neutral font-bold shadow-md hover:shadow-primary transition-all transform-3d">User</span>;
     }
   };
 
@@ -63,18 +63,18 @@ const AllUsers = () => {
       <h2 className="text-3xl sm:text-4xl font-bold text-center mb-2 text-primary">
         👤 Manage All Users
       </h2>
-      <p className="text-center text-base sm:text-lg mb-8">
-         Assign roles <b>User</b>, <b>Admin</b>, or <b>Vendor</b> to any registered user.
+      <p className="text-center text-base sm:text-lg  mb-8">
+        Assign roles: <b>User</b>, <b>Admin</b>, or <b>Vendor</b> to any registered user.
       </p>
 
       <div className="overflow-x-auto rounded-lg shadow-md shadow-primary">
         <table className="table w-full">
-          <thead className=" bg-primary-content font-extrabold text-sm sm:text-base">
-            <tr >
+          <thead className="bg-accent  text-sm sm:text-base">
+            <tr>
               <th>#</th>
-              <th className="">Name</th>
+              <th>Name</th>
               <th>Email</th>
-              <th >Current Role</th>
+              <th>Current Role</th>
               <th className="text-center">Actions</th>
             </tr>
           </thead>
@@ -89,7 +89,7 @@ const AllUsers = () => {
                   <div className="flex flex-wrap gap-2 justify-center">
                     <button
                       onClick={() => updateRole(u._id, u.email, "admin")}
-                      className="btn font-bold btn-xs btn-success "
+                      className="btn btn-xs btn-success "
                     >
                       Admin
                     </button>
