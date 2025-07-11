@@ -8,7 +8,6 @@ const VendorLayout = () => {
         <div>
             <VendorNav></VendorNav>
             <Outlet></Outlet>
-            This is for vendor.
             <Footer></Footer>
 
         </div>

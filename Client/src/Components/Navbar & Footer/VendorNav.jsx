@@ -66,7 +66,7 @@ const VendorNav = () => {
         </div>
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold">
+        <Link to="/dashboard/vendor" className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold">
           <img className="max-md:w-8 w-10" src="/logo.png" alt="" />
           <span className="text-primary">Market</span>
           <span className="text-secondary">Monitor <span className="text-sm text-primary-content">(Vendor)</span></span>

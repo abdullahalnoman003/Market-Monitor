@@ -16,6 +16,8 @@ import Profile from "../Authentication/AuthPages/Profile";
 import AdvertisementForm from "../Layout/VendorLayout/AdvertisementForm";
 import MyAdvertisements from "../Layout/VendorLayout/MyAdvertisements";
 import UpdateAdvertisement from "../Layout/VendorLayout/UpdateAdvertisement";
+import WelcomeVendor from "../Layout/VendorLayout/WelcomeVendor";
+import AllProducts from "../Layout/PublicLayout/AllProducts";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -38,6 +40,10 @@ const router = createBrowserRouter([
         element: <ForgotPassword></ForgotPassword>,
       },
       {
+        path: "/all-products",
+        element: <AllProducts></AllProducts>,
+      },
+      {
         path: "/register",
         element: (
           <PublicRoute>
@@ -50,6 +56,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <Profile></Profile>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/product/:id",
+        element: (
+          <PrivateRoute>
+            <ProductNotFound></ProductNotFound>
           </PrivateRoute>
         ),
       },
@@ -68,6 +82,14 @@ const router = createBrowserRouter([
     path: "/dashboard/vendor",
     element: <VendorLayout></VendorLayout>,
     children: [
+      {
+        path: "",
+        element: (
+          <PrivateRoute>
+            <WelcomeVendor></WelcomeVendor>
+          </PrivateRoute>
+        ),
+      },
       {
         path: "add-product",
         element: (
