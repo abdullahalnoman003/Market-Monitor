@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useQuery } from "@tanstack/react-query";
@@ -6,8 +6,6 @@ import { Link } from "react-router-dom";
 import useAxios from "../../../Hooks/useAxios";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import ProductNotFound from "../../Error/ProductNotFound";
-import useUserRole from "../../../Hooks/useUserRole";
-import { AuthContext } from "../../Authentication/Context/AuthContext";
 
 
 
@@ -20,43 +18,36 @@ const LoadingSpinner = () => (
   </div>
 );
 
-const ProductCard = ({ product, role }) => {
-  const productLink =
-    role === "admin"
-      ? `/dashboard/admin/product/${product._id}`
-      : `/product/${product._id}`;
-
-  return (
-    <div className="card bg-base-100 shadow-primary shadow-md hover:shadow-xl border border-primary-300 transition-all duration-300">
-      <figure className="p-5">
-        <img
-          src={product.product_image}
-          alt={product.item_name}
-          className="rounded-xl h-48 w-full object-cover"
-        />
-      </figure>
-      <div className="card-body space-y-2 px-5">
-        <h3 className="card-title text-primary font-semibold text-lg">
-          🥦 {product.item_name}
-        </h3>
-        <p><b>💰 Price:</b> ৳{product.price_per_unit}</p>
-        <p><b>📅 Date:</b> {product.date}</p>
-        <p><b>🏪 Market:</b> {product.market_name}</p>
-        <p><b>👨‍🌾 Vendor:</b> {product.vendor_name}</p>
-        <div className="mt-4">
-          <Link to={productLink}>
-            <button className="btn btn-sm btn-primary w-full">🔍 View Details</button>
-          </Link>
-        </div>
+const ProductCard = ({ product }) => (
+  <div className="card bg-base-100 shadow-primary shadow-md hover:shadow-xl border border-primary-300 transition-all duration-300">
+    <figure className="p-5">
+      <img
+        src={product.product_image}
+        alt={product.item_name}
+        className="rounded-xl h-48 w-full object-cover"
+      />
+    </figure>
+    <div className="card-body space-y-2 px-5">
+      <h3 className="card-title text-primary font-semibold text-lg">
+        🥦 {product.item_name}
+      </h3>
+      <p><b>💰 Price:</b> ৳{product.price_per_unit}</p>
+      <p><b>📅 Date:</b> {product.date}</p>
+      <p><b>🏪 Market:</b> {product.market_name}</p>
+      <p><b>👨‍🌾 Vendor:</b> {product.vendor_name}</p>
+      <div className="mt-4">
+        {
+          
+        }
+        <Link to={`/product/${product._id}`}>
+          <button className="btn btn-sm btn-primary w-full">🔍 View Details</button>
+        </Link>
       </div>
     </div>
-  );
-};
-
+  </div>
+);
 
 const AllProducts = () => {
-  const {user} = useContext(AuthContext);
-  const [role] = useUserRole(user.email);
   const axiosInstance = useAxios();
   useDocumentTitle("All Products || Market Monitor");
 
@@ -129,7 +120,7 @@ const AllProducts = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => (
-            <ProductCard key={product._id} product={product} role={role} />
+            <ProductCard key={product._id} product={product} />
           ))}
         </div>
       )}
