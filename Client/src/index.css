@@ -4,5 +4,5 @@
 }
 .active{
   @apply
-  btn-ghost bg-secondary-content
+ text-primary
 }

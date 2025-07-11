@@ -18,6 +18,7 @@ import MyAdvertisements from "../Layout/VendorLayout/MyAdvertisements";
 import UpdateAdvertisement from "../Layout/VendorLayout/UpdateAdvertisement";
 import WelcomeVendor from "../Layout/VendorLayout/WelcomeVendor";
 import AllProducts from "../Layout/PublicLayout/AllProducts";
+import ProductDetails from "../Layout/PublicLayout/ProductDetails";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -63,7 +64,7 @@ const router = createBrowserRouter([
         path: "/product/:id",
         element: (
           <PrivateRoute>
-            <ProductNotFound></ProductNotFound>
+            <ProductDetails></ProductDetails>
           </PrivateRoute>
         ),
       },
