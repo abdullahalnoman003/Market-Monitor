@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
-import HomeLayout from "../Layout/HomeLayout";
 import NotFound from "../Error/NotFound";
-import AdminLayout from "../Layout/AdminLayout";
+import AdminLayout from "../Layout/AdminLayout/AdminLayout";
 import VendorLayout from "../Layout/VendorLayout/VendorLayout";
 import Login from "../Authentication/AuthPages/Login";
 import ForgotPassword from "../Authentication/AuthPages/ForgotPassword";
@@ -19,6 +18,9 @@ import UpdateAdvertisement from "../Layout/VendorLayout/UpdateAdvertisement";
 import WelcomeVendor from "../Layout/VendorLayout/WelcomeVendor";
 import AllProducts from "../Layout/PublicLayout/AllProducts";
 import ProductDetails from "../Layout/PublicLayout/ProductDetails";
+import HomeLayout from "../Layout/Home/HomeLayout";
+import WelcomeAdmin from "../Layout/AdminLayout/WelcomeAdmin";
+import AllUsers from "../Layout/AdminLayout/AllUsers";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -77,7 +79,29 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/admin",
     element: <AdminLayout />,
-    children: [{}],
+    children: [
+      {
+        path: "",
+        element: <WelcomeAdmin></WelcomeAdmin>,
+      },
+      {
+        path: "all-users",
+        element: <PrivateRoute> <AllUsers></AllUsers> </PrivateRoute> ,
+      },
+      {
+        path: "all-products",
+        element: <PrivateRoute><AllProducts></AllProducts></PrivateRoute> ,
+      },
+      {
+        path: "product/:id",
+        element: (
+          <PrivateRoute>
+            <ProductDetails></ProductDetails>
+          </PrivateRoute>
+        ),
+      },
+      
+    ],
   },
   {
     path: "/dashboard/vendor",
@@ -143,11 +167,10 @@ const router = createBrowserRouter([
         path: "update-advertisement/:id",
         element: (
           <PrivateRoute>
-           <UpdateAdvertisement></UpdateAdvertisement>
+            <UpdateAdvertisement></UpdateAdvertisement>
           </PrivateRoute>
         ),
       },
-
     ],
   },
   {

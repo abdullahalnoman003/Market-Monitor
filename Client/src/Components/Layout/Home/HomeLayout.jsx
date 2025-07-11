@@ -1,7 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Navbar from "../Navbar & Footer/Navbar";
-import Footer from "../Navbar & Footer/Footer";
+import Navbar from "../../Navbar & Footer/Navbar";
+import Footer from "../../Navbar & Footer/Footer";
+
 
 const HomeLayout = () => {
   return (
