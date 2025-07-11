@@ -4,5 +4,5 @@
 }
 .active{
   @apply
-  border-b-3
+  btn-ghost bg-secondary-content
 }

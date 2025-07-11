@@ -77,7 +77,7 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-base-200 rounded-xl shadow-md my-10">
+    <div className="max-w-4xl mx-auto p-6 bg-base-200 rounded-xl shadow-md shadow-primary my-10">
       <h2 className="text-3xl font-bold text-center mb-4 text-primary">
         🛒 Add Market Product
       </h2>

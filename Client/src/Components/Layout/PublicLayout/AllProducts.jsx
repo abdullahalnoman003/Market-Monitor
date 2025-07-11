@@ -1,50 +1,71 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import useDocumentTitle from "../../../Hooks/useDocumentTitle";
-import useAxios from "../../../Hooks/useAxios";
-import ProductNotFound from "../../Error/ProductNotFound";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import useAxios from "../../../Hooks/useAxios";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import ProductNotFound from "../../Error/ProductNotFound";
 
 const LoadingSpinner = () => (
   <div className="min-h-screen w-full flex items-center justify-center bg-base">
     <div className="text-center space-y-3">
       <span className="loading loading-bars loading-lg text-primary"></span>
+      <p className="text-xl font-semibold text-yellow-800">Please Wait...</p>
     </div>
   </div>
 );
+
+const ProductCard = ({ product }) => (
+  <div className="card bg-base-100 shadow-primary shadow-md hover:shadow-xl border border-primary-300 transition-all duration-300">
+    <figure className="p-5">
+      <img
+        src={product.product_image}
+        alt={product.item_name}
+        className="rounded-xl h-48 w-full object-cover"
+      />
+    </figure>
+    <div className="card-body space-y-2 px-5">
+      <h3 className="card-title text-primary font-semibold text-lg">
+        🥦 {product.item_name}
+      </h3>
+      <p><b>💰 Price:</b> ৳{product.price_per_unit}</p>
+      <p><b>📅 Date:</b> {product.date}</p>
+      <p><b>🏪 Market:</b> {product.market_name}</p>
+      <p><b>👨‍🌾 Vendor:</b> {product.vendor_name}</p>
+      <div className="mt-4">
+        <Link to={`/product/${product._id}`}>
+          <button className="btn btn-sm btn-primary w-full">🔍 View Details</button>
+        </Link>
+      </div>
+    </div>
+  </div>
+);
+
 const AllProducts = () => {
-  const [products, setProducts] = useState([]);
-  const [sortOrder, setSortOrder] = useState("");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [loading, setLoading] = useState(true);
   const axiosInstance = useAxios();
   useDocumentTitle("All Products || Market Monitor");
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
+  const [sortOrder, setSortOrder] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  // Fetch products using React Query
+  const { data: products = [], isLoading, isError } = useQuery({
+    queryKey: ["products", sortOrder, startDate, endDate],
+    queryFn: async () => {
       const params = {};
       if (sortOrder) params.sort = sortOrder;
       if (startDate) params.start = startDate.toISOString().split("T")[0];
       if (endDate) params.end = endDate.toISOString().split("T")[0];
 
       const res = await axiosInstance.get("/all-products", { params });
-      setProducts(res.data);
-    } catch (err) {
-      console.error("Failed to fetch products", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return res.data;
+    },
+  });
 
-  useEffect(() => {
-    fetchProducts();
-  }, [sortOrder, startDate, endDate]);
-
-  // Show spinner while loading
-  if (loading) return <LoadingSpinner />;
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) return <p className="text-center text-red-500 mt-10">❌ Failed to load products</p>;
 
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -88,54 +109,13 @@ const AllProducts = () => {
         </div>
       </div>
 
-      {/* Show when no products found */}
+      {/* Show products or fallback */}
       {products.length === 0 ? (
         <ProductNotFound />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => (
-            <div
-              key={product._id}
-              className="card bg-base-100 shadow-primary shadow-md hover:shadow-xl border border-primary-300 transition-all duration-300"
-            >
-              {/* Product Image */}
-              <figure className="p-5">
-                <img
-                  src={product.product_image}
-                  alt={product.item_name}
-                  className="rounded-xl h-48 w-full object-cover"
-                />
-              </figure>
-
-              {/* Product Info */}
-              <div className="card-body space-y-2 px-5">
-                <h3 className="card-title text-primary font-semibold text-lg">
-                  🥦 {product.item_name}
-                </h3>
-
-                <p>
-                  <b>💰 Price:</b> ৳{product.price_per_unit}
-                </p>
-                <p>
-                  <b>📅 Date:</b> {product.date}
-                </p>
-                <p>
-                  <b>🏪 Market:</b> {product.market_name}
-                </p>
-                <p>
-                  <b>👨‍🌾 Vendor:</b> {product.vendor_name}
-                </p>
-
-                {/* 🔘 Details Button */}
-                <div className="mt-4">
-                  <Link to={`/product/${product._id}`}>
-                    <button className="btn btn-sm btn-primary w-full">
-                      🔍 View Details
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <ProductCard key={product._id} product={product} />
           ))}
         </div>
       )}

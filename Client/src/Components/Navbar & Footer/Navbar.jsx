@@ -117,7 +117,7 @@ const Navbar = () => {
               className="btn btn-ghost btn-circle avatar tooltip tooltip-left"
               data-tip={user.displayName || "User"}
             >
-              <div className="w-10 rounded-full border border-primary">
+              <div className="w-10 rounded-full border hover:shadow-sm border-primary shadow-primary">
                 <img src={user.photoURL || "/default-user.png"} alt="User Avatar" />
               </div>
             </div>

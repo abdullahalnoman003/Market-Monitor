@@ -93,7 +93,7 @@ const VendorNav = () => {
               className="btn btn-ghost btn-circle avatar tooltip tooltip-left"
               data-tip={user.displayName || "User"}
             >
-              <div className="w-10 rounded-full border border-primary">
+              <div className="w-10 rounded-full border hover:shadow-sm shadow-primary border-primary">
                 <img src={user.photoURL || "/default-user.png"} alt="User Avatar" />
               </div>
             </div>
@@ -101,7 +101,7 @@ const VendorNav = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-40"
             >
-              <li><NavLink to="/profile" className="text-sm">Profile</NavLink></li>
+              <li><NavLink to="/dashboard/vendor/profile" className="text-sm">Profile</NavLink></li>
               <li>
                 <button
                   onClick={handleLogout}

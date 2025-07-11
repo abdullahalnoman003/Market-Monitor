@@ -33,10 +33,18 @@ const Footer = () => {
           <ul className="space-y-2 text-sm">
             <li>
               <Link
-                to="/markets"
+                to="/"
                 className="hover:text-primary transition-colors"
               >
-                Browse Markets
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/all-products"
+                className="hover:text-primary transition-colors"
+              >
+                Browse Products
               </Link>
             </li>
             <li>

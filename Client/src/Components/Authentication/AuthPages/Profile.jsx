@@ -36,10 +36,10 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen py-30 bg-base-200 px-4 ">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen py-30  px-4 ">
+      <div className="max-w-4xl  mx-auto">
         {/* Profile Card */}
-        <div className="card bg-base-100 shadow-xl p-6 mb-10">
+        <div className="card bg-base-200 shadow-lg shadow-primary p-6 mb-10">
           <h2 className="text-2xl font-bold mb-4 text-center text-primary">
             👤 My Profile
           </h2>
