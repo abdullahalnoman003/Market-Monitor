@@ -81,7 +81,7 @@ const MyProducts = () => {
           You haven’t added any products yet.
         </p>
         <button
-          onClick={() => navigate("/add-product")}
+          onClick={() => navigate("/dashboard/vendor/add-product")}
           className="btn btn-primary btn-lg"
         >
           ➕ Add Product

@@ -41,9 +41,7 @@ const VendorNav = () => {
 
   return (
     <div className="navbar bg-base-100/90 backdrop-blur-md shadow-md fixed px-6 max-md:pl-1 top-0 z-50">
-      {/* Left: Logo + Mobile Dropdown */}
       <div className="navbar-start">
-        {/* Mobile Dropdown */}
         <div className="dropdown">
           <button tabIndex={0} className="btn btn-ghost lg:hidden">
             <svg
@@ -71,7 +69,7 @@ const VendorNav = () => {
         <Link to="/" className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold">
           <img className="max-md:w-8 w-10" src="/logo.png" alt="" />
           <span className="text-primary">Market</span>
-          <span className="text-secondary">Monitor</span>
+          <span className="text-secondary">Monitor <span className="text-sm text-primary-content">(Vendor)</span></span>
         </Link>
       </div>
 

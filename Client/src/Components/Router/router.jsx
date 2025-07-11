@@ -12,6 +12,10 @@ import AddProduct from "../Layout/VendorLayout/AddProduct";
 import MyProducts from "../Layout/VendorLayout/MyProducts";
 import UpdateProduct from "../Layout/VendorLayout/UpdateProduct";
 import ProductNotFound from "../Error/ProductNotFound";
+import Profile from "../Authentication/AuthPages/Profile";
+import AdvertisementForm from "../Layout/VendorLayout/AdvertisementForm";
+import MyAdvertisements from "../Layout/VendorLayout/MyAdvertisements";
+import UpdateAdvertisement from "../Layout/VendorLayout/UpdateAdvertisement";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -42,6 +46,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/profile",
+        element: (
+          <PrivateRoute>
+            <Profile></Profile>
+          </PrivateRoute>
+        ),
+      },
+      {
         path: "/*",
         element: <NotFound></NotFound>,
       },
@@ -65,6 +77,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "profile",
+        element: (
+          <PrivateRoute>
+            <Profile></Profile>
+          </PrivateRoute>
+        ),
+      },
+      {
         path: "my-products",
         element: (
           <PrivateRoute>
@@ -80,6 +100,31 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: "add-advertisement",
+        element: (
+          <PrivateRoute>
+            <AdvertisementForm></AdvertisementForm>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-advertisements",
+        element: (
+          <PrivateRoute>
+            <MyAdvertisements></MyAdvertisements>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "update-advertisement/:id",
+        element: (
+          <PrivateRoute>
+           <UpdateAdvertisement></UpdateAdvertisement>
+          </PrivateRoute>
+        ),
+      },
+
     ],
   },
   {
