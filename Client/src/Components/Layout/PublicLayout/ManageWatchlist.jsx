@@ -72,7 +72,7 @@ const ManageWatchlist = () => {
         View and manage all your watchlisted items.
       </p>
 
-      <div className="overflow-x-auto shadow-md rounded-lg">
+      <div className="overflow-x-auto shadow-md shadow-primary rounded-lg">
         <table className="table w-full">
           <thead className="bg-accent text-white text-sm sm:text-base">
             <tr>
@@ -118,7 +118,7 @@ const ManageWatchlist = () => {
           </tbody>
         </table>
       </div>
-      
+
       <div className="text-center my-15"> <button
         onClick={() => navigate("/all-products")}
         className="btn hover:btn-primary text-center btn-accent"

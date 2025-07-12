@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { FaRegBookmark } from "react-icons/fa";
 import { FaCartPlus } from "react-icons/fa6";
 import Swal from "sweetalert2";
@@ -34,6 +34,7 @@ const ProductDetails = () => {
 
   const [role] = useUserRole(user.email);
   const isAdminOrVendor = role === "admin" || role === "vendor";
+  const navigate = useNavigate();
 
   useEffect(() => {
     axiosInstance
@@ -86,11 +87,8 @@ const ProductDetails = () => {
       });
   };
 
-  const handleBuyProduct = () => {
-    axiosInstance
-      .post("/create-payment", { productId: id })
-      .then((res) => (window.location.href = res.data.url))
-      .catch(() => Swal.fire("Error starting payment", "", "error"));
+  const handleBuyProduct = (id) => {
+    navigate(`/payment/${id}`)
   };
 
   const handleSubmitReview = () => {
@@ -242,7 +240,7 @@ const ProductDetails = () => {
             ))}
           </ul>
           <div className="flex gap-4 mt-4">
-            <button onClick={handleBuyProduct} className="btn btn-primary">
+            <button onClick={()=>handleBuyProduct(product._id)} className="btn btn-primary">
               <FaCartPlus /> Buy Product
             </button>
             <button

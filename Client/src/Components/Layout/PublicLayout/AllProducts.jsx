@@ -13,7 +13,7 @@ const LoadingSpinner = () => (
   <div className="min-h-screen w-full flex items-center justify-center bg-base">
     <div className="text-center space-y-3">
       <span className="loading loading-bars loading-lg text-primary"></span>
-      <p className="text-xl font-semibold text-yellow-800">Please Wait...</p>
+      <p className="text-xl font-semibold ">Please Wait...</p>
     </div>
   </div>
 );
