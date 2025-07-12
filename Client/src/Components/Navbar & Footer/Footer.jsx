@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="text-center sm:text-left">
           <div className="flex items-center justify-center sm:justify-start">
             <img src="/logo.png" alt="" className="h-10 w-fit" />
-            <h2 className="text-3xl font-extrabold flex items-center justify-center sm:justify-start gap-2 text-primary">
+            <h2 className="text-2xl font-extrabold flex items-center justify-center sm:justify-start gap-2 text-primary">
               Market<span className="text-secondary">Monitor</span>
             </h2>
           </div>

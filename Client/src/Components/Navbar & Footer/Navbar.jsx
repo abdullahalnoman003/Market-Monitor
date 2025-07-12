@@ -46,7 +46,7 @@ const Navbar = () => {
     if (!role) return null;
     if (role === "admin") return <NavLink to="/dashboard/admin">Admin Dashboard</NavLink>;
     if (role === "vendor") return <NavLink to="/dashboard/vendor">Vendor Dashboard</NavLink>;
-    return <NavLink to="/dashboard">Dashboard</NavLink>;
+    return <NavLink to="/dashboard/user">Dashboard</NavLink>;
   };
 
   return (
