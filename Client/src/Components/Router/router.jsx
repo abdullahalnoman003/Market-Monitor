@@ -25,6 +25,8 @@ import AllAdvertisements from "../Layout/AdminLayout/AllAdvertisements";
 import AllProductsAdmin from "../Layout/AdminLayout/AllProductsAdmin";
 import UserLayout from "../Layout/PublicLayout/UserLayout";
 import ManageWatchlist from "../Layout/PublicLayout/ManageWatchlist";
+import Payment from "../Layout/PublicLayout/Payment/Payment";
+import MyOrders from "../Layout/PublicLayout/MyOrders";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -74,6 +76,15 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: "payment/:id",
+        element: (
+          <PrivateRoute>
+           <Payment></Payment>
+          </PrivateRoute>
+        ),
+      },
+      
       {
         path: "/*",
         element: <NotFound></NotFound>,
@@ -137,7 +148,15 @@ const router = createBrowserRouter([
       {
         path:"manage-watchlist",
         element: <ManageWatchlist></ManageWatchlist>
-      }
+      },
+      {
+        path: "orders",
+        element: (
+          <PrivateRoute>
+           <MyOrders></MyOrders>
+          </PrivateRoute>
+        ),
+      },
     ]
   },
   {
