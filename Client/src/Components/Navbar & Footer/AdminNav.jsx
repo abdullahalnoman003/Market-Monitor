@@ -62,6 +62,7 @@ const AdminNav = () => {
             <li><NavLink to="/dashboard/admin/all-products">All Products</NavLink></li>
             <li><NavLink to="/dashboard/admin/all-ads">All Advertisements</NavLink></li>
             <li><NavLink to="/dashboard/admin/all-orders">All Orders</NavLink></li>
+            <li><NavLink to="/dashboard/admin/create-offer">Create Offer</NavLink></li>
           </ul>
         </div>
 
@@ -79,6 +80,7 @@ const AdminNav = () => {
           <li><NavLink to="/dashboard/admin/all-products">All Products</NavLink></li>
           <li><NavLink to="/dashboard/admin/all-ads">All Advertisements</NavLink></li>
           <li><NavLink to="/dashboard/admin/all-orders">All Orders</NavLink></li>
+          <li><NavLink to="/dashboard/admin/create-offer">Create Offer</NavLink></li>
         </ul>
       </div>
 

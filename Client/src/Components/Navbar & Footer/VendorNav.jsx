@@ -62,14 +62,15 @@ const VendorNav = () => {
             <li><NavLink to="/dashboard/vendor/my-products">My Products</NavLink></li>
             <li><NavLink to="/dashboard/vendor/add-advertisement">Add Advertisement</NavLink></li>
             <li><NavLink to="/dashboard/vendor/my-advertisements">My Advertisements</NavLink></li>
+            <li><NavLink to="/">Back to Home</NavLink></li>
           </ul>
         </div>
 
         {/* Logo */}
         <Link to="/dashboard/vendor" className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold">
           <img className="max-md:w-8 w-10" src="/logo.png" alt="" />
-          <span className="text-primary">Market</span>
-          <span className="text-secondary">Monitor <span className="text-sm text-primary-content">(Vendor)</span></span>
+          <span className="text-primary">Vendor</span>
+          <span className="text-secondary">Dashboard </span> 
         </Link>
       </div>
 
@@ -79,7 +80,7 @@ const VendorNav = () => {
           <li><NavLink to="/dashboard/vendor/add-product">Add Product</NavLink></li>
           <li><NavLink to="/dashboard/vendor/my-products">My Products</NavLink></li>
           <li><NavLink to="/dashboard/vendor/add-advertisement">Add Advertisement</NavLink></li>
-          <li><NavLink to="/dashboard/vendor/my-advertisements">My Advertisements</NavLink></li>
+          <li><NavLink to="/">Back To Home</NavLink></li>
         </ul>
       </div>
 

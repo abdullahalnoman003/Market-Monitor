@@ -12,11 +12,11 @@ const useUserRole = (email) => {
         .then((res) => {
           const fetchedRole = res.data?.role || "user";
           setRole(fetchedRole);
-          localStorage.setItem("userRole", fetchedRole); // optional
+          localStorage.setItem("userRole", fetchedRole);
         })
         .catch((err) => {
           console.error("Failed to fetch user role:", err);
-          setRole("user"); // default fallback
+          setRole("user"); 
         });
     }
   }, [email, axios]);

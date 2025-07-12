@@ -27,13 +27,13 @@ const AdminOrderList = () => {
 
   return (
     <div className="min-h-screen px-4 py-10 ">
-      <h2 className="text-3xl text-center font-bold mb-6  border-b border-blue-600 pb-2">
+      <h2 className="text-3xl text-center font-bold mb-6  border-b border-primary pb-2">
         📦 All Orders (Admin View)
       </h2>
 
-      <div className="overflow-x-auto rounded-xl shadow-lg shadow-blue-900 border border-blue-800 max-w-7xl mx-auto">
+      <div className="overflow-x-auto rounded-xl shadow-md shadow-primary border max-w-7xl mx-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-[#1f1f2e] text-blue-300 uppercase text-xs tracking-wider border-b border-blue-600">
+          <thead className="bg-accent  uppercase text-xs tracking-wider border-b border-primary">
             <tr>
               <th className="px-5 py-3">#</th>
               <th className="px-5 py-3">Product Name</th>
@@ -45,23 +45,23 @@ const AdminOrderList = () => {
               <th className="px-5 py-3">Action</th>
             </tr>
           </thead>
-          <tbody className="bg-[#1a1a28] divide-y divide-blue-900">
+          <tbody className="divide-y divide-blue-900">
             {orders.map((order, index) => (
               <tr
                 key={order._id}
                 className="hover:bg-[#2a2a3d] transition-colors duration-200"
               >
                 <td className="px-5 py-3">{index + 1}</td>
-                <td className="px-5 py-3 font-semibold text-blue-300">
+                <td className="px-5 py-3 font-semibold ">
                   {order.productName}
                 </td>
-                <td className="px-5 py-3 text-gray-400">{order.marketName || "Unknown"}</td>
-                <td className="px-5 py-3 text-xs text-gray-400">
+                <td className="px-5 py-3 ">{order.marketName || "Unknown"}</td>
+                <td className="px-5 py-3 text-xs ">
                   {order.buyerEmail}
                 </td>
-                <td className="px-5 py-3 text-green-400">${order.unitPrice}</td>
-                <td className="px-5 py-3 text-green-400">${order.price}</td>
-                <td className="px-5 py-3 text-yellow-400">
+                <td className="px-5 py-3 text-secondary">${order.unitPrice}</td>
+                <td className="px-5 py-3 text-secondary">${order.price}</td>
+                <td className="px-5 py-3 text-accent-content ">
                   {new Date(order.date).toLocaleDateString("en-GB")}
                 </td>
                 <td className="px-5 py-3 ">

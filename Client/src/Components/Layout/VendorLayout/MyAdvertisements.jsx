@@ -17,6 +17,8 @@ const MyAdvertisements = () => {
   useEffect(() => {
     if (!user?.email) return;
     setLoading(true);
+    console.log(user.email);
+    
     axiosInstance
       .get(`/my-advertisements?email=${user.email}`)
       .then((res) => {
@@ -65,7 +67,7 @@ const MyAdvertisements = () => {
       <div className="h-80 w-full min-h-screen flex items-center justify-center rounded-xl mt-8">
         <div className="text-center space-y-3">
           <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold text-yellow-800">
+          <p className="text-xl font-semibold text-primary">
             Loading Your Advertisements...
           </p>
         </div>
@@ -133,6 +135,7 @@ const MyAdvertisements = () => {
                   >
                     {ad.status.toUpperCase()}
                   </span>
+                  {ad.status === "rejected" && <p>{ad.rejectionFeedback}</p>}
                 </div>
 
                 <div className="card-actions justify-end mt-4">

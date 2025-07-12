@@ -28,6 +28,16 @@ import ManageWatchlist from "../Layout/PublicLayout/ManageWatchlist";
 import Payment from "../Layout/PublicLayout/Payment/Payment";
 import MyOrders from "../Layout/PublicLayout/MyOrders";
 import AdminOrderList from "../Layout/AdminLayout/AdminOrderList";
+import PriceTrends from "../Layout/PublicLayout/PriceTrends";
+import Privacy from "../T&C/Privacy";
+import Terms from "../T&C/Terms";
+import Contact from "../T&C/Contact";
+import About from "../T&C/About";
+import SpecialOffer from "../Layout/PublicLayout/SpecialOffer";
+import CreateOffer from "../Layout/AdminLayout/CreateOffer";
+import Unauthorized from "../Error/Unauthorized";
+import AdminRoute from "../Authentication/Routes/AdminRoute";
+import VendorRoute from "../Authentication/Routes/VendorRoute";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -81,20 +91,49 @@ const router = createBrowserRouter([
         path: "payment/:id",
         element: (
           <PrivateRoute>
-           <Payment></Payment>
+            <Payment></Payment>
           </PrivateRoute>
         ),
       },
-      
+      {
+        path: "privacy",
+        element: <Privacy></Privacy>,
+      },
+      {
+        path: "terms",
+        element: <Terms />,
+      },
+      {
+        path: "contact-us",
+        element: <Contact />,
+      },
+      {
+        path: "about",
+        element: <About />,
+      },
+      {
+        path: "offers",
+        element: <SpecialOffer />,
+      },
+      {
+        path: "unauthorized",
+        element: <Unauthorized />,
+      },
+
       {
         path: "/*",
         element: <NotFound></NotFound>,
       },
     ],
   },
+  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADMIN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   {
     path: "/dashboard/admin",
-    element: <AdminLayout />,
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
     children: [
       {
         path: "",
@@ -102,139 +141,103 @@ const router = createBrowserRouter([
       },
       {
         path: "all-users",
-        element: (
-          <PrivateRoute>
-            <AllUsers></AllUsers>
-          </PrivateRoute>
-        ),
+        element: <AllUsers></AllUsers>,
       },
       {
         path: "all-products",
-        element: (
-          <PrivateRoute>
-            <AllProductsAdmin></AllProductsAdmin>
-          </PrivateRoute>
-        ),
+        element: <AllProductsAdmin></AllProductsAdmin>,
       },
       {
         path: "all-orders",
-        element: (
-          <PrivateRoute>
-            <AdminOrderList></AdminOrderList>
-          </PrivateRoute>
-        ),
+        element: <AdminOrderList></AdminOrderList>,
       },
       {
         path: "all-ads",
-        element: (
-          <PrivateRoute>
-            <AllAdvertisements></AllAdvertisements>
-          </PrivateRoute>
-        ),
+        element: <AllAdvertisements></AllAdvertisements>,
+      },
+      {
+        path: "create-offer",
+        element: <CreateOffer />,
       },
       {
         path: "update-product/:id",
-        element: (
-          <PrivateRoute>
-            <UpdateProduct></UpdateProduct>
-          </PrivateRoute>
-        ),
+        element: <UpdateProduct></UpdateProduct>,
       },
       {
         path: "product/:id",
+        element: <ProductDetails></ProductDetails>,
+      },
+    ],
+  },
+  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  {
+    path: "/dashboard/user",
+    element: (
+      <PrivateRoute>
+        {" "}
+        <UserLayout></UserLayout>
+      </PrivateRoute>
+    ),
+    children: [
+      {
+        path: "manage-watchlist",
+        element: <ManageWatchlist></ManageWatchlist>,
+      },
+      {
+        path: "orders",
+        element: <MyOrders></MyOrders>,
+      },
+      {
+        path: "price-trends",
         element: (
           <PrivateRoute>
-            <ProductDetails></ProductDetails>
+            <PriceTrends></PriceTrends>
           </PrivateRoute>
         ),
       },
     ],
   },
-  {
-    path:"/dashboard/user",
-    element: <UserLayout></UserLayout>,
-    children:[
-      {
-        path:"manage-watchlist",
-        element: <ManageWatchlist></ManageWatchlist>
-      },
-      {
-        path: "orders",
-        element: (
-          <PrivateRoute>
-           <MyOrders></MyOrders>
-          </PrivateRoute>
-        ),
-      },
-    ]
-  },
+  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Vendor <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   {
     path: "/dashboard/vendor",
-    element: <VendorLayout></VendorLayout>,
+
+    element: (
+      <VendorRoute>
+        <VendorLayout></VendorLayout>
+      </VendorRoute>
+    ),
     children: [
       {
         path: "",
-        element: (
-          <PrivateRoute>
-            <WelcomeVendor></WelcomeVendor>
-          </PrivateRoute>
-        ),
+        element: <WelcomeVendor></WelcomeVendor>,
       },
       {
         path: "add-product",
-        element: (
-          <PrivateRoute>
-            <AddProduct></AddProduct>
-          </PrivateRoute>
-        ),
+        element: <AddProduct></AddProduct>,
       },
       {
         path: "profile",
-        element: (
-          <PrivateRoute>
-            <Profile></Profile>
-          </PrivateRoute>
-        ),
+        element: <Profile></Profile>,
       },
       {
         path: "my-products",
-        element: (
-          <PrivateRoute>
-            <MyProducts></MyProducts>
-          </PrivateRoute>
-        ),
+        element: <MyProducts></MyProducts>,
       },
       {
         path: "update-product/:id",
-        element: (
-          <PrivateRoute>
-            <UpdateProduct></UpdateProduct>
-          </PrivateRoute>
-        ),
+        element: <UpdateProduct></UpdateProduct>,
       },
       {
         path: "add-advertisement",
-        element: (
-          <PrivateRoute>
-            <AdvertisementForm></AdvertisementForm>
-          </PrivateRoute>
-        ),
+        element: <AdvertisementForm></AdvertisementForm>,
       },
       {
         path: "my-advertisements",
-        element: (
-          <PrivateRoute>
-            <MyAdvertisements></MyAdvertisements>
-          </PrivateRoute>
-        ),
+        element: <MyAdvertisements></MyAdvertisements>,
       },
       {
         path: "update-advertisement/:id",
-        element: (
-          <PrivateRoute>
-            <UpdateAdvertisement></UpdateAdvertisement>
-          </PrivateRoute>
-        ),
+        element: <UpdateAdvertisement></UpdateAdvertisement>,
       },
     ],
   },

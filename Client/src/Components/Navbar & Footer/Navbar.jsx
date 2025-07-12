@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { TfiBarChart } from "react-icons/tfi";
 import Swal from "sweetalert2";
 import ThemeToggle from "./ThemeToggle";
 import { AuthContext } from "../Authentication/Context/AuthContext";
