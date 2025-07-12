@@ -49,23 +49,23 @@ const Footer = () => {
             </li>
             <li>
               <Link
-                to="/compare"
+                to="/terms"
                 className="hover:text-primary transition-colors"
               >
-                Compare Prices
+                Terms And Conditions
               </Link>
             </li>
             <li>
               <Link
-                to="/vendors"
+                to="/privacy"
                 className="hover:text-primary transition-colors"
               >
-                Vendor Portal
+                Privacy and Policy
               </Link>
             </li>
             <li>
-              <Link to="/ads" className="hover:text-primary transition-colors">
-                Sponsor With Us
+              <Link to="/contact-us" className="hover:text-primary transition-colors">
+                Became a Vendor
               </Link>
             </li>
           </ul>

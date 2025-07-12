@@ -71,8 +71,7 @@ const Navbar = () => {
           >
             <li className="font-bold"><NavLink to="/">Home</NavLink></li>
             <li className="font-bold"><NavLink to="/all-products">All Products</NavLink></li>
-            <li className="font-bold"><NavLink to="/markets">Markets</NavLink></li>
-            <li className="font-bold"><NavLink to="/compare">Compare</NavLink></li>
+            <li className="font-bold"><NavLink to="/offers">Offers</NavLink></li>
             {user && (
               <li className="font-bold">{renderDashboardLink()}</li>
             )}
@@ -93,8 +92,7 @@ const Navbar = () => {
         <ul className="menu menu-horizontal gap-3 px-1">
           <li><NavLink to="/" className="font-bold">Home</NavLink></li>
           <li><NavLink to="/all-products" className="font-bold">All Products</NavLink></li>
-          <li><NavLink to="/markets" className="font-bold">Markets</NavLink></li>
-          <li><NavLink to="/compare" className="font-bold">Compare</NavLink></li>
+          <li><NavLink to="/offers" className="font-bold">Offer</NavLink></li>
           {user && (
             <li className="font-bold">{renderDashboardLink()}</li>
           )}
