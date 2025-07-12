@@ -21,6 +21,8 @@ import ProductDetails from "../Layout/PublicLayout/ProductDetails";
 import HomeLayout from "../Layout/Home/HomeLayout";
 import WelcomeAdmin from "../Layout/AdminLayout/WelcomeAdmin";
 import AllUsers from "../Layout/AdminLayout/AllUsers";
+import AllAdvertisements from "../Layout/AdminLayout/AllAdvertisements";
+import AllProductsAdmin from "../Layout/AdminLayout/AllProductsAdmin";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -86,11 +88,36 @@ const router = createBrowserRouter([
       },
       {
         path: "all-users",
-        element: <PrivateRoute> <AllUsers></AllUsers> </PrivateRoute> ,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <AllUsers></AllUsers>{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "all-products",
-        element: <PrivateRoute><AllProducts></AllProducts></PrivateRoute> ,
+        element: (
+          <PrivateRoute>
+            <AllProductsAdmin></AllProductsAdmin>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "all-ads",
+        element: (
+          <PrivateRoute>
+            <AllAdvertisements></AllAdvertisements>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "update-product/:id",
+        element: (
+          <PrivateRoute>
+            <UpdateProduct></UpdateProduct>
+          </PrivateRoute>
+        ),
       },
       {
         path: "product/:id",
@@ -100,7 +127,6 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-      
     ],
   },
   {

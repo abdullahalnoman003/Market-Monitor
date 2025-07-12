@@ -62,6 +62,9 @@ const ProductDetails = () => {
 
     const data = {
       productId: product._id,
+      productName : product.item_name,
+      market: product.market_name,
+      date: product.date,
       userEmail: user.email,
       addedAt: new Date(),
     };
