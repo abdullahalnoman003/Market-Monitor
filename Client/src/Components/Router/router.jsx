@@ -23,6 +23,8 @@ import WelcomeAdmin from "../Layout/AdminLayout/WelcomeAdmin";
 import AllUsers from "../Layout/AdminLayout/AllUsers";
 import AllAdvertisements from "../Layout/AdminLayout/AllAdvertisements";
 import AllProductsAdmin from "../Layout/AdminLayout/AllProductsAdmin";
+import UserLayout from "../Layout/PublicLayout/UserLayout";
+import ManageWatchlist from "../Layout/PublicLayout/ManageWatchlist";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -90,8 +92,7 @@ const router = createBrowserRouter([
         path: "all-users",
         element: (
           <PrivateRoute>
-            {" "}
-            <AllUsers></AllUsers>{" "}
+            <AllUsers></AllUsers>
           </PrivateRoute>
         ),
       },
@@ -128,6 +129,16 @@ const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path:"/dashboard/user",
+    element: <UserLayout></UserLayout>,
+    children:[
+      {
+        path:"manage-watchlist",
+        element: <ManageWatchlist></ManageWatchlist>
+      }
+    ]
   },
   {
     path: "/dashboard/vendor",
