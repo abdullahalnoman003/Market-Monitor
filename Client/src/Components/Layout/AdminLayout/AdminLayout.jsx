@@ -8,7 +8,6 @@ const AdminLayout = () => {
         <div>
             <AdminNav></AdminNav>
             <Outlet></Outlet>
-            This is the layout for adminn,
             <Footer></Footer>
         </div>
     );

@@ -63,13 +63,14 @@ const AdminNav = () => {
             <li><NavLink to="/dashboard/admin/all-ads">All Advertisements</NavLink></li>
             <li><NavLink to="/dashboard/admin/all-orders">All Orders</NavLink></li>
             <li><NavLink to="/dashboard/admin/create-offer">Create Offer</NavLink></li>
+            <li><NavLink to="/">Back to Home</NavLink></li>
           </ul>
         </div>
 
         <Link to="/dashboard/admin" className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold">
           <img className="max-md:w-8 w-10" src="/logo.png" alt="Admin Logo" />
-          <span className="text-primary">Market</span>
-          <span className="text-secondary">Monitor <span className="text-sm text-primary-content">(Admin)</span></span>
+          <span className="text-primary">Admin</span>
+          <span className="text-secondary">Panel</span>
         </Link>
       </div>
 
@@ -81,6 +82,7 @@ const AdminNav = () => {
           <li><NavLink to="/dashboard/admin/all-ads">All Advertisements</NavLink></li>
           <li><NavLink to="/dashboard/admin/all-orders">All Orders</NavLink></li>
           <li><NavLink to="/dashboard/admin/create-offer">Create Offer</NavLink></li>
+          <li><NavLink to="/">Back to home</NavLink></li>
         </ul>
       </div>
 

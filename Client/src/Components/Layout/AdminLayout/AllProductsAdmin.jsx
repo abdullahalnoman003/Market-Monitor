@@ -110,15 +110,15 @@ const AllProductsAdmin = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-primary">
+    <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <h2 className="text-3xl  sm:text-4xl font-bold text-center mb-4 text-primary">
         🛒 All Products Management
       </h2>
       <p className="text-center mb-6 text-sm sm:text-base">
         Admin can approve, reject (with feedback), update, or remove vendor products.
       </p>
 
-      <div className="overflow-x-auto shadow-lg rounded-md">
+      <div className="overflow-x-auto shadow-md rounded-xl shadow-primary">
         <table className="table w-full">
           <thead className="bg-accent text-white">
             <tr>

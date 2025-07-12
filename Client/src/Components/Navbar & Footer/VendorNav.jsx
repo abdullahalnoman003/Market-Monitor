@@ -70,7 +70,7 @@ const VendorNav = () => {
         <Link to="/dashboard/vendor" className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold">
           <img className="max-md:w-8 w-10" src="/logo.png" alt="" />
           <span className="text-primary">Vendor</span>
-          <span className="text-secondary">Dashboard </span> 
+          <span className="text-secondary">Panel </span> 
         </Link>
       </div>
 

@@ -9,7 +9,6 @@ const VendorLayout = () => {
             <VendorNav></VendorNav>
             <Outlet></Outlet>
             <Footer></Footer>
-
         </div>
     );
 };
