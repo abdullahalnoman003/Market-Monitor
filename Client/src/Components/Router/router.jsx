@@ -27,6 +27,7 @@ import UserLayout from "../Layout/PublicLayout/UserLayout";
 import ManageWatchlist from "../Layout/PublicLayout/ManageWatchlist";
 import Payment from "../Layout/PublicLayout/Payment/Payment";
 import MyOrders from "../Layout/PublicLayout/MyOrders";
+import AdminOrderList from "../Layout/AdminLayout/AdminOrderList";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -112,6 +113,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <AllProductsAdmin></AllProductsAdmin>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "all-orders",
+        element: (
+          <PrivateRoute>
+            <AdminOrderList></AdminOrderList>
           </PrivateRoute>
         ),
       },
