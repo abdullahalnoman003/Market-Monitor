@@ -27,7 +27,7 @@ const Login = () => {
   // Loading Spinner
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-base-200">
+      <div className="h-screen flex items-center justify-center">
         <div className="text-center">
           <span className="loading loading-bars loading-lg text-primary"></span>
           <p className="text-xl font-semibold text-primary mt-4">
