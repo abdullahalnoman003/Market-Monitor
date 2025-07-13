@@ -56,7 +56,6 @@ const Login = () => {
         })
         .catch((err) => {
           console.error("Failed to sync Google user to DB:", err);
-          // Even if saving fails, allow login
           Swal.fire("Login Successful", "Welcome!", "success");
           navigate(from, { replace: true });
         });
@@ -106,7 +105,7 @@ const Login = () => {
       data-aos="fade-up"
     >
       <motion.div
-        className="grid md:grid-cols-2 shadow-lg rounded-3xl overflow-hidden border border-primary max-w-4xl w-full bg-white dark:bg-base-200"
+        className="grid md:grid-cols-2 shadow-lg shadow-primary rounded-3xl overflow-hidden border border-primary max-w-4xl w-full bg-white dark:bg-base-200"
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 100 }}
@@ -115,7 +114,7 @@ const Login = () => {
         <motion.div
           className="hidden md:block bg-cover bg-center"
           style={{
-            backgroundImage: "url(https://i.ibb.co/VWmCWhF/market-banner.jpg)",
+            backgroundImage: "url(https://static.vecteezy.com/system/resources/previews/005/879/539/non_2x/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg)",
             minHeight: "100%",
           }}
           initial={{ x: -100, opacity: 0 }}

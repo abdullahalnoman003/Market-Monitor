@@ -157,7 +157,7 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-base-100">
       <motion.div
-        className="grid md:grid-cols-2 shadow-lg rounded-3xl overflow-hidden border border-primary max-w-5xl w-full bg-white dark:bg-base-200 "
+        className="grid md:grid-cols-2 shadow-lg shadow-primary rounded-3xl overflow-hidden border border-primary max-w-5xl w-full bg-white dark:bg-base-200 "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -166,7 +166,7 @@ const Register = () => {
         <motion.div
           className="hidden md:block bg-cover bg-center"
           style={{
-            backgroundImage: `url('https://i.ibb.co/VWmCWhF/market-banner.jpg')`,
+            backgroundImage: `url('https://www.leadquizzes.com/wp-content/uploads/2019/06/New-blog-graphic-16.jpg')`,
             minHeight: "100%",
           }}
           initial={{ x: -100, opacity: 0 }}

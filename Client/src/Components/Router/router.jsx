@@ -15,11 +15,9 @@ import Profile from "../Authentication/AuthPages/Profile";
 import AdvertisementForm from "../Layout/VendorLayout/AdvertisementForm";
 import MyAdvertisements from "../Layout/VendorLayout/MyAdvertisements";
 import UpdateAdvertisement from "../Layout/VendorLayout/UpdateAdvertisement";
-import WelcomeVendor from "../Layout/VendorLayout/WelcomeVendor";
 import AllProducts from "../Layout/PublicLayout/AllProducts";
 import ProductDetails from "../Layout/PublicLayout/ProductDetails";
 import HomeLayout from "../Layout/Home/HomeLayout";
-import WelcomeAdmin from "../Layout/AdminLayout/WelcomeAdmin";
 import AllUsers from "../Layout/AdminLayout/AllUsers";
 import AllAdvertisements from "../Layout/AdminLayout/AllAdvertisements";
 import AllProductsAdmin from "../Layout/AdminLayout/AllProductsAdmin";
@@ -38,6 +36,15 @@ import CreateOffer from "../Layout/AdminLayout/CreateOffer";
 import Unauthorized from "../Error/Unauthorized";
 import AdminRoute from "../Authentication/Routes/AdminRoute";
 import VendorRoute from "../Authentication/Routes/VendorRoute";
+import AdminWelcome from "../Layout/AdminLayout/AdminWelcome";
+import VendorWelcome from "../Layout/VendorLayout/VendorWelcome";
+import UserWelcome from "../Layout/PublicLayout/UserWelcome";
+import FeaturedSection from "../Layout/Home/FeaturedSection";
+import Hero from "../Layout/Home/Hero";
+import ProductSection from "../Layout/Home/ProductSection";
+import AdvertisementCarousel from "../Layout/Home/AdvertisementCarousel";
+import CustomerReviews from "../Layout/Home/CustomerReview";
+import HowItWorks from "../Layout/Home/HowItWorks";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -45,7 +52,14 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <></>,
+        element: <>
+        <Hero></Hero>
+        <HowItWorks/>
+        <AdvertisementCarousel></AdvertisementCarousel>
+        <ProductSection></ProductSection>
+        <FeaturedSection></FeaturedSection>
+        <CustomerReviews></CustomerReviews>
+        </>,
       },
       {
         path: "/login",
@@ -130,14 +144,15 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/admin",
     element: (
-      <AdminRoute>
+      <PrivateRoute><AdminRoute>
         <AdminLayout />
-      </AdminRoute>
+      </AdminRoute></PrivateRoute>
+      
     ),
     children: [
       {
         path: "",
-        element: <WelcomeAdmin></WelcomeAdmin>,
+        element: <AdminWelcome></AdminWelcome> ,
       },
       {
         path: "profile",
@@ -184,6 +199,10 @@ const router = createBrowserRouter([
     ),
     children: [
       {
+        path: "",
+        element: <UserWelcome></UserWelcome>,
+      },
+      {
         path: "manage-watchlist",
         element: <ManageWatchlist></ManageWatchlist>,
       },
@@ -206,14 +225,15 @@ const router = createBrowserRouter([
     path: "/dashboard/vendor",
 
     element: (
-      <VendorRoute>
+      <PrivateRoute><VendorRoute>
         <VendorLayout></VendorLayout>
-      </VendorRoute>
+      </VendorRoute></PrivateRoute>
+      
     ),
     children: [
       {
         path: "",
-        element: <WelcomeVendor></WelcomeVendor>,
+        element: <VendorWelcome></VendorWelcome>,
       },
       {
         path: "add-product",
