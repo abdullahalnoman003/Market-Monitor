@@ -40,7 +40,6 @@ const ProductDetails = () => {
     axiosInstance
       .get(`/product/${id}`)
       .then((res) => {
-        console.log(res.data);
         setProduct(res.data);
         setChartData(res.data.prices || []);
         setLoading(false);

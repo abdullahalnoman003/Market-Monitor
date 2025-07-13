@@ -18,8 +18,6 @@ const PriceTrends = () => {
     enabled: !!userEmail,
     queryFn: async () => {
       const res = await axiosInstance.get(`/watchlist?userEmail=${userEmail}`);
-      console.log(res);
-      
       return res.data;
     },
   });
@@ -42,12 +40,14 @@ const PriceTrends = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0f172a] text-gray-300">
-        <span className="loading loading-bars loading-lg text-info"></span>
+      <div className="h-screen w-full flex items-center justify-center">
+        <div className="text-center space-y-3 ">
+          <span className="loading loading-bars loading-lg text-primary"></span>
+          <p className="text-xl font-semibold text-primary">Please Wait...</p>
+        </div>
       </div>
     );
   }
-console.log(watchlist);
   return (
     <div className="min-h-screen  text-gray-300 flex flex-col md:flex-row gap-6 p-6">
         
