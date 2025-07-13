@@ -60,7 +60,7 @@ const AdminOrderList = () => {
                   {order.buyerEmail}
                 </td>
                 <td className="px-5 py-3 text-secondary">${order.unitPrice}</td>
-                <td className="px-5 py-3 text-secondary">${order.price}</td>
+                <td className="px-5 py-3 text-secondary">${order.totalAmount}</td>
                 <td className="px-5 py-3 text-accent-content ">
                   {new Date(order.date).toLocaleDateString("en-GB")}
                 </td>
