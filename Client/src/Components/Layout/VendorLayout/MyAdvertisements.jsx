@@ -16,9 +16,7 @@ const MyAdvertisements = () => {
 
   useEffect(() => {
     if (!user?.email) return;
-    setLoading(true);
-    console.log(user.email);
-    
+    setLoading(true); 
     axiosInstance
       .get(`/my-advertisements?email=${user.email}`)
       .then((res) => {

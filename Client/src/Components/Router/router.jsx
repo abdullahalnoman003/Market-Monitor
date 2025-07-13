@@ -140,6 +140,10 @@ const router = createBrowserRouter([
         element: <WelcomeAdmin></WelcomeAdmin>,
       },
       {
+        path: "profile",
+        element: <Profile></Profile>,
+      },
+      {
         path: "all-users",
         element: <AllUsers></AllUsers>,
       },
