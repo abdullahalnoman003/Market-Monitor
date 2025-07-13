@@ -30,18 +30,18 @@ const AdvertisementCarousel = () => {
 
   if (ads.length === 0) {
     return (
-      <div className="text-center text-base-content opacity-60 py-10">
-        No approved advertisements to display.
+      <div className="text-center text-xl font-bold bg-gradient-to-b from-base-100 to-base-200 text-base-content opacity-60 py-10">
+        🔊 For Now There is no Advertisement Available. <br /> Stay Tuned.
       </div>
     );
   }
 
   return (
-    <motion.div
+    <div className="bg-gradient-to-b from-base-100 to-base-200"><motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="max-w-6xl mx-auto px-4 py-12"
+      className="max-w-6xl  mx-auto px-4 py-12"
     >
       <h2 className="text-3xl sm:text-4xl font-bold text-center text-primary mb-6">
         📢 Advertisement Highlights
@@ -83,7 +83,8 @@ const AdvertisementCarousel = () => {
           </div>
         ))}
       </Carousel>
-    </motion.div>
+    </motion.div></div>
+    
   );
 };
 
