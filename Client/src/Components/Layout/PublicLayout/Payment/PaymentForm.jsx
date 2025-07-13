@@ -37,8 +37,8 @@ const PaymentForm = () => {
     );
   }
 
-  const unitPrice = Number(productInfo.price_per_unit) || 0;
-  const totalAmount = unitPrice * quantity || 0;
+  const fullAmount = Number(productInfo.price_per_unit) || 0;
+  const totalAmount = fullAmount * quantity || 0;
   const amountInCents = totalAmount * 100;
 
   const handleSubmit = async (e) => {
@@ -96,9 +96,9 @@ const PaymentForm = () => {
           id,
           productName: productInfo.item_name,
           marketName: productInfo.market_name,
-          unitPrice,
+          unitPrice: productInfo.price_per_unit,
           quantity,
-          totalAmount,
+          totalAmount: totalAmount,
           transactionId,
           buyerEmail: user.email,
           buyerName: user.displayName,
@@ -113,9 +113,9 @@ const PaymentForm = () => {
             icon: "success",
             title: "Payment Successful!",
             html: `<strong>Transaction ID:</strong> <code>${transactionId}</code>`,
-            confirmButtonText: "Go to Orders",
+            confirmButtonText: "Okay!",
           });
-          navigate("/dashboard/my-orders");
+          navigate("/all-products");
         } else {
           throw new Error("Order saving failed. Please contact support.");
         }
@@ -162,7 +162,7 @@ const PaymentForm = () => {
 
         <div className=" p-3 rounded-lg shadow shadow-primary text-sm">
           <p>
-            <strong>Unit Price:</strong> ${unitPrice.toFixed(2)}
+            <strong>Unit Price:</strong> ${fullAmount.toFixed(2)}
           </p>
           <p>
             <strong>Total Amount:</strong> ${totalAmount.toFixed(2)}
