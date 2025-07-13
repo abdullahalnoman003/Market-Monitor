@@ -71,10 +71,10 @@ const Navbar = () => {
             <li className="font-bold"><NavLink to="/">Home</NavLink></li>
             <li className="font-bold"><NavLink to="/all-products">All Products</NavLink></li>
             <li className="font-bold"><NavLink to="/offers">Offers</NavLink></li>
+            <li className="font-bold"><NavLink to="/about">About Us</NavLink></li>
             {user && (
               <li className="font-bold">{renderDashboardLink()}</li>
             )}
-            <li className="font-bold"><NavLink to="/about">About</NavLink></li>
           </ul>
         </div>
 
@@ -92,10 +92,11 @@ const Navbar = () => {
           <li><NavLink to="/" className="font-bold">Home</NavLink></li>
           <li><NavLink to="/all-products" className="font-bold">All Products</NavLink></li>
           <li><NavLink to="/offers" className="font-bold">Offer</NavLink></li>
+          <li><NavLink to="/about" className="font-bold">About Us</NavLink></li>
           {user && (
             <li className="font-bold">{renderDashboardLink()}</li>
           )}
-          <li><NavLink to="/about" className="font-bold">About</NavLink></li>
+          
         </ul>
       </div>
 

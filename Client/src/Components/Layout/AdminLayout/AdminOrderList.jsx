@@ -16,9 +16,9 @@ const AdminOrderList = () => {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-[#1e1e2f]">
+      <div className="h-screen w-full flex items-center justify-center">
         <div className="text-center space-y-3 ">
-          <span className="loading loading-bars loading-lg "></span>
+          <span className="loading loading-bars loading-lg text-primary "></span>
           <p className="text-xl font-semibold">Loading All Orders...</p>
         </div>
       </div>

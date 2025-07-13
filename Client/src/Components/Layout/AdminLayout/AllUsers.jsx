@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxios from "../../../Hooks/useAxios";
+import { AuthContext } from "../../Authentication/Context/AuthContext";
 
 const AllUsers = () => {
   const axiosInstance = useAxios();
   const [users, setUsers] = useState([]);
   useDocumentTitle("All Users | Dashboard");
+
+  const {user} = useContext(AuthContext);
 
   useEffect(() => {
     fetchUsers();
@@ -96,12 +99,14 @@ const AllUsers = () => {
                     <button
                       onClick={() => updateRole(u._id, u.email, "vendor")}
                       className="btn btn-xs btn-info "
+                      disabled={user.email===u.email}
                     >
                       Vendor
                     </button>
                     <button
                       onClick={() => updateRole(u._id, u.email, "user")}
-                      className="btn btn-xs btn-neutral"
+                      className="btn btn-xs btn-neutral disabled:"
+                      disabled={user.email===u.email}
                     >
                       User
                     </button>
