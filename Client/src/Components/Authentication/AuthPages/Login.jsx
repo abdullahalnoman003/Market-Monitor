@@ -44,13 +44,11 @@ const Login = () => {
   signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user;
-
       const userInfo = {
         name: user.displayName,
         email: user.email.toLowerCase(),
         role: "user",
       };
-
       axiosInstance.post("/users", userInfo)
         .then(() => {
           Swal.fire("Login Successful", "Welcome to Market Monitor!", "success");
