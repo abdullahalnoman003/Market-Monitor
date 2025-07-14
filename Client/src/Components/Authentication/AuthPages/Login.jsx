@@ -51,12 +51,12 @@ const Login = () => {
       };
       axiosInstance.post("/users", userInfo)
         .then(() => {
-          Swal.fire("Login Successful", "Welcome to Market Monitor!", "success");
+          Swal.fire(`Login Successful", "Welcome! ${user.displayName}`, "success");
           navigate(from, { replace: true });
         })
         .catch((err) => {
           console.error("Failed to sync Google user to DB:", err);
-          Swal.fire("Login Successful", "Welcome!", "success");
+          Swal.fire("Login Successful", `Welcome! ${user.displayName}`, "success");
           navigate(from, { replace: true });
         });
     })
@@ -76,10 +76,13 @@ const Login = () => {
     sessionStorage.setItem("resetEmail", email);
 
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
+      .then((res) => {
+        console.log(res);
         Swal.fire({
           icon: "success",
           title: "Login Successful!",
+          text: `Welcome! ${res.user.displayName}`,
+          background: "primary",
           showConfirmButton: false,
           timer: 2000,
         });

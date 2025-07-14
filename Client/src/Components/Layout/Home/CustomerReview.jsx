@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const reviews = [
   {
@@ -45,80 +45,52 @@ const reviews = [
   },
 ];
 
-const variants = {
-  enter: (direction) => ({
-    x: direction > 0 ? 200 : -200,
-    opacity: 0,
-    position: "absolute",
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    position: "absolute",
-  },
-  exit: (direction) => ({
-    x: direction < 0 ? 200 : -200,
-    opacity: 0,
-    position: "absolute",
-  }),
-};
-
 const CustomerReview = () => {
-  const [[page, direction], setPage] = useState([0, 0]);
-
-  const paginate = (newDirection) => {
-    setPage(([prevPage]) => [
-      (prevPage + newDirection + reviews.length) % reviews.length,
-      newDirection,
-    ]);
-  };
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => paginate(1), 5000);
+    const interval = setInterval(() => {
+      setPage((prev) => (prev + 1) % reviews.length);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
   const review = reviews[page];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-base-100 to-base-200 -mb-5 px-4">
-      <div className="container mx-auto text-center ">
-        <h2 className="text-4xl font-extrabold text-primary mb-12">
+    <section className="pt-20 bg-gradient-to-b from-base-100 to-base-200 px-4">
+      <div className="max-w-3xl mx-auto text-center">
+        <h2 className="text-4xl font-extrabold text-primary mb-10">
           What Our Valued Customers Say 😊
         </h2>
 
-        <div className="relative w-full max-w-xl h-[350px] mx-auto  overflow-hidden">
-          <AnimatePresence initial={false} custom={direction}>
-            <motion.div
-              key={review.id}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="w-full mb-4 h-full bg-base-100 rounded-2xl p-6   border-2 border-primary/50  shadow-primary flex flex-col items-center justify-center gap-4"
-            >
-              <img
-                src={review.avatar}
-                alt={review.name}
-                className="w-16 h-16 rounded-full object-cover border-2 border-primary"
+        <motion.div
+          key={review.id}
+          layout
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="bg-base-100 border-2 border-primary/50 shadow-lg rounded-2xl p-6 flex flex-col items-center gap-4"
+        >
+          <img
+            src={review.avatar}
+            alt={review.name}
+            className="w-16 h-16 rounded-full object-cover border-2 border-primary"
+          />
+          <h3 className="text-lg font-bold text-accent">{review.name}</h3>
+          <div className="flex gap-1 text-yellow-400">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <FaStar
+                key={i}
+                className={i < review.rating ? "text-yellow-400" : "text-gray-400"}
               />
-              <h3 className="text-lg font-bold text-accent">{review.name}</h3>
-              <div className="flex gap-1 text-yellow-400">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <FaStar
-                    key={i}
-                    className={i < review.rating ? "text-yellow-400" : "text-gray-400"}
-                  />
-                ))}
-              </div>
-              <p className="text-base-content/80 italic max-w-md">
-                “{review.comment}”
-              </p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+            ))}
+          </div>
+          <p className="text-base-content/80 italic max-w-md">
+            “{review.comment}”
+          </p>
+        </motion.div>
       </div>
     </section>
   );

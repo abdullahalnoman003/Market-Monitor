@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-      <div className='pt-16'>
+      <div className='pt-16 winkey'>
     <RouterProvider router={router}></RouterProvider>
     </div>
     </QueryClientProvider>

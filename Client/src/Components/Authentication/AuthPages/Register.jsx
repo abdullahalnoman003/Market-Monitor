@@ -86,7 +86,7 @@ const Register = () => {
             .then(() => {
               Swal.fire(
                 "Registration Successful!",
-                `Welcome ${user.displayName}.`,
+                `Welcome to Market Monitor ${user.displayName}.`,
                 "success"
               );
               reset();
@@ -124,13 +124,13 @@ const Register = () => {
         axiosInstance
           .post("/users", userInfo)
           .then(() => {
-            Swal.fire("Google Sign-in Successful", "Welcome!", "success");
+            Swal.fire("Google Registration Successful!", `Welcome! to Market Monitor ${user.displayName}`, "success");
             navigate("/");
           })
           .catch((err) => {
             console.error("Google user DB save failed:", err);
             Swal.fire(
-              "Google Sign-in Failed",
+              "Google Registration Failed",
               "Could not save user info",
               "error"
             );

@@ -7,6 +7,7 @@ import { AuthContext } from "../../Authentication/Context/AuthContext";
 const AllUsers = () => {
   const axiosInstance = useAxios();
   const [users, setUsers] = useState([]);
+  const [loading, setLoading ] = useState(false);
   useDocumentTitle("All Users | Dashboard");
 
   const {user} = useContext(AuthContext);
@@ -17,10 +18,13 @@ const AllUsers = () => {
 
   const fetchUsers = async () => {
     try {
+      setLoading(true);
       const res = await axiosInstance.get("/users");
       setUsers(res.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching users:", error);
+      setLoading(false);
     }
   };
 
@@ -49,7 +53,16 @@ const AllUsers = () => {
       }
     });
   };
-
+  if (loading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <div className="text-center space-y-3 ">
+          <span className="loading loading-bars loading-lg text-primary "></span>
+          <p className="text-xl font-semibold">Loading Users...</p>
+        </div>
+      </div>
+    );
+  }
   const getRoleBadge = (role) => {
     switch (role) {
       case "admin":

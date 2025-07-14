@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import ThemeToggle from "./ThemeToggle";
 import { AuthContext } from "../Authentication/Context/AuthContext";
@@ -9,6 +9,7 @@ const Navbar = () => {
   const { user, logout } = useContext(AuthContext) || {};
   const [userRole] = useUserRole(user?.email);
   const [role, setRole] = useState(() => localStorage.getItem("userRole"));
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userRole) {
@@ -37,6 +38,7 @@ const Navbar = () => {
             timer: 1500,
             showConfirmButton: false,
           });
+          navigate("/")
         } catch (error) {
           Swal.fire({
             title: "Error!",
@@ -48,7 +50,7 @@ const Navbar = () => {
     });
   };
 
-  //Show dashboard link based on role
+
   const renderDashboardLink = () => {
     if (!role) return null;
     if (role === "admin")
@@ -103,8 +105,8 @@ const Navbar = () => {
           className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold"
         >
           <img className="max-md:w-8 w-10" src="/logo.png" alt="" />
-          <span className="text-primary">Market</span>
-          <span className="text-secondary">Monitor</span>
+          <span className="text-primary max-md:hidden">Market</span>
+          <span className="text-secondary  max-md:hidden">Monitor</span>
         </Link>
       </div>
 

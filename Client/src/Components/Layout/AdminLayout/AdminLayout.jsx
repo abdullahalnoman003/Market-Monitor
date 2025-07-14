@@ -7,7 +7,6 @@ import Navbar from "../../Navbar & Footer/Navbar";
 const AdminLayout = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Top Navbar */}
       <Navbar></Navbar>
 
       {/* Drawer Layout */}
@@ -35,11 +34,8 @@ const AdminLayout = () => {
             </svg>
             Open Menu
           </label>
-
-          {/* Main Page Content */}
           <Outlet />
         </div>
-
         {/* Sidebar */}
         <div className="drawer-side z-15">
           <label htmlFor="admin-drawer" className="drawer-overlay"></label>

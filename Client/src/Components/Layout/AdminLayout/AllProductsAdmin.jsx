@@ -52,7 +52,9 @@ const AllProductsAdmin = () => {
           const feedback = document.getElementById("feedback").value.trim();
 
           if (!reason || !feedback) {
-            Swal.showValidationMessage("Please provide both reason and feedback");
+            Swal.showValidationMessage(
+              "Please provide both reason and feedback"
+            );
             return false;
           }
 
@@ -70,7 +72,11 @@ const AllProductsAdmin = () => {
             rejectionFeedback: feedback,
           },
         });
-        Swal.fire("❌ Rejected", "Rejection feedback has been saved.", "success");
+        Swal.fire(
+          "❌ Rejected",
+          "Rejection feedback has been saved.",
+          "success"
+        );
       }
     } else if (newStatus === "approved") {
       statusMutation.mutate({
@@ -109,13 +115,15 @@ const AllProductsAdmin = () => {
     }
   };
 
+
   return (
     <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h2 className="text-3xl  sm:text-4xl font-bold text-center mb-4 text-primary">
         🛒 All Products Management
       </h2>
       <p className="text-center mb-6 text-sm sm:text-base">
-        Admin can approve, reject (with feedback), update, or remove vendor products.
+        Admin can approve, reject (with feedback), update, or remove vendor
+        products.
       </p>
 
       <div className="overflow-x-auto shadow-md rounded-xl shadow-primary">
@@ -134,13 +142,16 @@ const AllProductsAdmin = () => {
             {isLoading ? (
               <tr>
                 <td colSpan="6" className="text-center py-6">
-                  Loading products...
+                  <div className="text-center space-y-3 ">
+                    <span className="loading loading-bars loading-lg text-primary "></span>
+                    <p className="text-xl font-semibold">Loading products</p>
+                  </div>
                 </td>
               </tr>
             ) : products.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-6">
-                  No products found.
+                <td colSpan="6" className="text-center py-6 text-error">
+                  No Products Found
                 </td>
               </tr>
             ) : (
@@ -156,7 +167,9 @@ const AllProductsAdmin = () => {
                       {product.status !== "approved" && (
                         <button
                           className="btn btn-xs btn-success"
-                          onClick={() => changeProductStatus(product._id, "approved")}
+                          onClick={() =>
+                            changeProductStatus(product._id, "approved")
+                          }
                         >
                           Approve
                         </button>
@@ -164,14 +177,20 @@ const AllProductsAdmin = () => {
                       {product.status !== "rejected" && (
                         <button
                           className="btn btn-xs btn-error"
-                          onClick={() => changeProductStatus(product._id, "rejected")}
+                          onClick={() =>
+                            changeProductStatus(product._id, "rejected")
+                          }
                         >
                           Reject
                         </button>
                       )}
                       <button
                         className="btn btn-xs btn-info"
-                        onClick={() => navigate(`/dashboard/admin/update-product/${product._id}`)}
+                        onClick={() =>
+                          navigate(
+                            `/dashboard/admin/update-product/${product._id}`
+                          )
+                        }
                       >
                         Update
                       </button>

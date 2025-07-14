@@ -131,7 +131,10 @@ const AllAdvertisements = () => {
             {isLoading ? (
               <tr>
                 <td colSpan="5" className="text-center py-6">
-                  Loading...
+                  <div className="text-center space-y-3 ">
+                    <span className="loading loading-bars loading-lg text-primary "></span>
+                    <p className="text-xl font-semibold">Loading products</p>
+                  </div>
                 </td>
               </tr>
             ) : ads.length === 0 ? (

@@ -28,7 +28,7 @@ const Hero = () => {
             transition={{ duration: 0.8 }}
             className="flex-1"
           >
-            <Lottie animationData={heroAnimation} loop={true} />
+            <Lottie animationData={heroAnimation} loop={true} className="max-md:max-w-80" />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: -60 }}
@@ -36,15 +36,15 @@ const Hero = () => {
             transition={{ duration: 0.8 }}
             className="flex-1 space-y-6 text-center md:text-left"
           >
-            <div className="h-40">
-            <h1 className=" font-bold mb-5 text-4xl md:text-5xl   text-primary">
+            <div className="h-">
+            <h1 className=" font-bold mb-5 text-4xl md:text-5xl max-md:text-[28px] text-primary">
               Discover the Future of <br />
-              <span className="text-secondary ">
+              <span className="text-secondary text-md max-md:text-[26px] max-lg:text-[24px]">
                 <Typewriter
                   words={[
                     "Online Marketplaces 😍",
-                    "Smart Grocery Shopping 🏪",
-                    "Real-Time Price Tracking 💹",
+                    "Smart Shopping 🏪",
+                    "Price Tracking 💹",
                     "Vendor Empowerment 👷‍♂️",
                   ]}
                   loop

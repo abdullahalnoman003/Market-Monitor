@@ -29,7 +29,7 @@ const FeaturedSection = () => {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Why Choose Us?
+       🤗 Why Choose Us?
       </motion.h2>
 
       <div className="grid md:grid-cols-3 gap-6">

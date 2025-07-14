@@ -19,7 +19,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = () => {
-    localStorage.clear()
+    localStorage.removeItem("userRole");
     signOut(auth);
   };
 
