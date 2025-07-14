@@ -6,11 +6,13 @@ import { format } from "date-fns";
 import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const AddProduct = () => {
   useDocumentTitle("Add Products | Vendor")
   const { user } = useContext(AuthContext);
   const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const [productDate, setProductDate] = useState(new Date()); // for product
   const [priceDate, setPriceDate] = useState(new Date()); // for price history
@@ -55,7 +57,7 @@ const AddProduct = () => {
       item_description: form.item_description.value,
     };
 
-    axiosInstance
+    axiosSecure
       .post("/add-product", newProduct)
       .then((res) => {
         if (res?.data?.insertedId) {
@@ -218,7 +220,7 @@ const AddProduct = () => {
                   <button
                     type="button"
                     onClick={() => handleRemovePrice(idx)}
-                    className="btn btn-xs btn-error"
+                    className="btn btn-xs r"
                   >
                     ❌
                   </button>
