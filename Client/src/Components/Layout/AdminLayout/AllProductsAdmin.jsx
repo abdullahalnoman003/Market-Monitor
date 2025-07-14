@@ -1,13 +1,13 @@
 import React from "react";
 import Swal from "sweetalert2";
-import useAxios from "../../../Hooks/useAxios";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const AllProductsAdmin = () => {
   useDocumentTitle("All Products | Admin");
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -15,7 +15,7 @@ const AllProductsAdmin = () => {
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["all-products"],
     queryFn: async () => {
-      const res = await axiosInstance.get("/all-products");
+      const res = await axiosSecure.get("/all-products");
       return res.data;
     },
   });
@@ -23,7 +23,7 @@ const AllProductsAdmin = () => {
   // Approve/Reject mutation
   const statusMutation = useMutation({
     mutationFn: async ({ id, payload }) => {
-      return await axiosInstance.patch(`/product/status/${id}`, payload);
+      return await axiosSecure.patch(`/product/status/${id}`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["all-products"]);
@@ -33,7 +33,7 @@ const AllProductsAdmin = () => {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
-      return await axiosInstance.delete(`/product/${id}`);
+      return await axiosSecure.delete(`/product/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["all-products"]);
