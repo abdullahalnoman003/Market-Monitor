@@ -3,10 +3,12 @@ import Swal from "sweetalert2";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxios from "../../../Hooks/useAxios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const AllAdvertisements = () => {
   useDocumentTitle("Manage Advertisements | Admin");
   const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
 
   const {
@@ -15,33 +17,60 @@ const AllAdvertisements = () => {
   } = useQuery({
     queryKey: ["advertisements"],
     queryFn: async () => {
-      const res = await axiosInstance.get("/advertisement");
+      const res = await axiosInstance.get("/advertisement");// this is also calling in home so no need to add verification
       return res.data;
     },
   });
 
-  const statusMutation = useMutation({
-    mutationFn: async ({ id, status, reason = "", feedback = "" }) => {
-      const res = await axiosInstance.patch(`/advertisement/status/${id}`, {
-        status,
-        rejectionReason: reason,
-        rejectionFeedback: feedback,
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["advertisements"]);
-    },
-  });
+const statusMutation = useMutation({
+  mutationFn: async ({ id, status, reason = "", feedback = "" }) => {
+    const res = await axiosSecure.patch(`/advertisement/status/${id}`, {
+      status,
+      rejectionReason: reason,
+      rejectionFeedback: feedback,
+    });
+    return res.data;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries(["advertisements"]);
+    Swal.fire({
+      icon: "success",
+      title: "Status updated successfully!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  },
+  onError: (error) => {
+    Swal.fire({
+      icon: "error",
+      title: "Update Failed",
+      text: error?.response?.data?.message || error.message || "Something went wrong!",
+    });
+  },
+});
+
 
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
-      const res = await axiosInstance.delete(`/advertisement/${id}`);
+      const res = await axiosSecure.delete(`/advertisement/${id}`);
       return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["advertisements"]);
+      Swal.fire({
+      icon: "success",
+      title: "Advertisement Deleted!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
     },
+    onError: (error) => {
+    Swal.fire({
+      icon: "error",
+      title: "Update Failed",
+      text: error?.response?.data?.message || error.message || "Something went wrong!",
+    });
+  },
   });
 
   const changeAdStatus = async (id, currentStatus, newStatus) => {
