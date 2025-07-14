@@ -51,7 +51,7 @@ const Login = () => {
       };
       axiosInstance.post("/users", userInfo)
         .then(() => {
-          Swal.fire(`Login Successful", "Welcome! ${user.displayName}`, "success");
+          Swal.fire(`Login Successful`, `Welcome! ${user.displayName}`, "success");
           navigate(from, { replace: true });
         })
         .catch((err) => {

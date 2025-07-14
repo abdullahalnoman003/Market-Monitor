@@ -63,7 +63,7 @@ const MyProducts = () => {
       <div className="h-80 w-full min-h-screen flex items-center justify-center rounded-xl mt-8">
         <div className="text-center space-y-3">
           <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold text-yellow-800">
+          <p className="text-xl font-semibold text-primary">
             Loading Your Products...
           </p>
         </div>
@@ -112,7 +112,7 @@ const MyProducts = () => {
                 <b>📍 Market:</b> {product.market_name}
               </p>
 
-              <p className="text-error">
+              <p className="text-warning">
                 <b>💰 Price/Unit:</b> {product.price_per_unit} /-
               </p>
 
@@ -133,9 +133,11 @@ const MyProducts = () => {
                   {product.status.toUpperCase()}
                 </span>
               </div>
-
+              {product.status=== "rejected" &&(
+                <span className="text-error w-80 overflow-x-auto">⚠️ Reason: {product.rejectionReason} </span>
+              )}
               {product.prices?.length > 0 && (
-                <div className="mt-4">
+                <div className="mt-2">
                   <p className="font-semibold text-sm  mb-2">
                     📊 Recent Price History:
                   </p>

@@ -80,7 +80,7 @@ const AllProducts = () => {
         adjustedEnd.setHours(23, 59, 59, 999);
         params.end = adjustedEnd.toISOString();
       }
-      const res = await axiosInstance.get("/all-products", { params });
+      const res = await axiosInstance.get("/all-products/v1", { params });
       return res.data;
     },
   });
