@@ -1,24 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import useAxios from "../../../Hooks/useAxios";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const SpecialOffer = () => {
-    const axiosInstance = useAxios();
+  useDocumentTitle("Special Offers || Market Monitor")
+  const axiosInstance = useAxios();
   const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchOffers = async () => {
       try {
+        setLoading(true);
         const res = await axiosInstance.get("/special");
         setOffers(res.data || []);
+        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch special offers:", error);
+        setLoading(false);
       }
     };
 
     fetchOffers();
   }, []);
-
+if (loading) {
+    return (
+      <div className="h-80 w-full min-h-screen flex items-center justify-center rounded-xl mt-8">
+        <div className="text-center space-y-3">
+          <span className="loading loading-bars loading-lg text-primary"></span>
+          <p className="text-xl font-semibold text-primary">
+            Loading Offers...
+          </p>
+        </div>
+      </div>
+    );
+  }
   if (!offers.length) {
     return (
       <div className="min-h-[300px] flex justify-center items-center text-primary text-lg">
@@ -26,9 +43,8 @@ const SpecialOffer = () => {
       </div>
     );
   }
-
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl min-h-screen mx-auto px-4 py-12">
       <h2 className="text-3xl font-bold text-center text-primary mb-8">
         🎁 Special Offers Just For You
       </h2>

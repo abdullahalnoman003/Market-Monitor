@@ -79,40 +79,49 @@ const AllProducts = () => {
       </h2>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 justify-center items-center mb-8">
-        <div>
-          <label className="block font-medium mb-1">📅 Start Date</label>
-          <DatePicker
-            selected={startDate}
-            onChange={setStartDate}
-            className="input input-bordered"
-            placeholderText="Start date"
-            dateFormat="yyyy-MM-dd"
-          />
-        </div>
-        <div>
-          <label className="block font-medium mb-1">📅 End Date</label>
-          <DatePicker
-            selected={endDate}
-            onChange={setEndDate}
-            className="input input-bordered"
-            placeholderText="End date"
-            dateFormat="yyyy-MM-dd"
-          />
-        </div>
-        <div>
-          <label className="block font-medium mb-1">💵 Sort by Price</label>
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="select select-bordered"
-          >
-            <option value="">Default</option>
-            <option value="asc">🔼 Low to High</option>
-            <option value="desc">🔽 High to Low</option>
-          </select>
-        </div>
-      </div>
+      {/* Filters */}
+<div className="bg-base-200 rounded-xl p-4 md:p-6 shadow-md mb-8">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {/* Start Date */}
+    <div className="flex flex-col">
+      <label className="font-semibold text-sm mb-1">📅 Start Date</label>
+      <DatePicker
+        selected={startDate}
+        onChange={setStartDate}
+        className="input input-bordered w-full"
+        placeholderText="Start date"
+        dateFormat="yyyy-MM-dd"
+      />
+    </div>
+
+    {/* End Date */}
+    <div className="flex flex-col">
+      <label className="font-semibold text-sm mb-1">📅 End Date</label>
+      <DatePicker
+        selected={endDate}
+        onChange={setEndDate}
+        className="input input-bordered w-full"
+        placeholderText="End date"
+        dateFormat="yyyy-MM-dd"
+      />
+    </div>
+
+    {/* Sort by Price */}
+    <div className="flex flex-col">
+      <label className="font-semibold text-sm mb-1">💵 Sort by Price</label>
+      <select
+        value={sortOrder}
+        onChange={(e) => setSortOrder(e.target.value)}
+        className="select select-bordered w-full"
+      >
+        <option value="">Default</option>
+        <option value="asc">🔼 Low to High</option>
+        <option value="desc">🔽 High to Low</option>
+      </select>
+    </div>
+  </div>
+</div>
+
 
       {/* Show products or fallback */}
       {products.length === 0 ? (

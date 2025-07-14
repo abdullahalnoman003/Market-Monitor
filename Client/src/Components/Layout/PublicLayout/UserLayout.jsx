@@ -2,9 +2,11 @@ import React from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import Navbar from "../../Navbar & Footer/Navbar";
 import Footer from "../../Navbar & Footer/Footer";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 
 const UserLayout = () => {
+  useDocumentTitle("User Dashboard | Market Monitor")
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Navbar */}
@@ -35,8 +37,6 @@ const UserLayout = () => {
             </svg>
             Open Menu
           </label>
-
-          {/* Page Content */}
           <Outlet />
         </div>
 

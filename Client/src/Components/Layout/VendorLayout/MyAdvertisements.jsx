@@ -6,8 +6,10 @@ import Swal from "sweetalert2";
 import { Tooltip } from "react-tooltip";
 import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const MyAdvertisements = () => {
+  useDocumentTitle("My Advertisement | Vendor")
   const { user } = useContext(AuthContext);
   const axiosInstance = useAxios();
   const [ads, setAds] = useState([]);
@@ -66,7 +68,7 @@ const MyAdvertisements = () => {
         <div className="text-center space-y-3">
           <span className="loading loading-bars loading-lg text-primary"></span>
           <p className="text-xl font-semibold text-primary">
-            Loading Your Advertisements...
+            Loading Advertisements...
           </p>
         </div>
       </div>
@@ -80,7 +82,7 @@ const MyAdvertisements = () => {
       </h2>
 
       {ads.length === 0 ? (
-        <div className="text-center mt-16 space-y-5">
+        <div className="text-center mt-16 ">
           <p className="text-xl font-medium">
             You haven’t posted any advertisements yet.
           </p>
@@ -96,7 +98,7 @@ const MyAdvertisements = () => {
           {ads.map((ad) => (
             <div
               key={ad._id}
-              className="card bg-base-100 shadow-primary shadow-lg hover:shadow-xl border border-primary transition duration-300 hover:scale-[1.015]"
+              className="card min-h-fit bg-base-100 shadow-primary shadow-lg hover:shadow-xl border border-primary transition duration-300 hover:scale-[1.015]"
             >
               <figure className="p-5">
                 <img
@@ -105,7 +107,7 @@ const MyAdvertisements = () => {
                   className="rounded-xl h-48 object-cover w-full border border-primary"
                 />
               </figure>
-              <div className="card-body px-6 space-y-3">
+              <div className="card-body px-6">
                 <h3 className="card-title text-xl font-semibold text-primary line-clamp-1">
                   📣 {ad.ad_title}
                 </h3>

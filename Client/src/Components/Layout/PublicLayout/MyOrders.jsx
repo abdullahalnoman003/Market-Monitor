@@ -4,8 +4,10 @@ import { FaEye } from "react-icons/fa";
 import { useContext } from "react";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useAxios from "../../../Hooks/useAxios";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const MyOrders = () => {
+  useDocumentTitle("My Orders | Dashboard")
   const axiosInstance = useAxios();
   const { user } = useContext(AuthContext);
 

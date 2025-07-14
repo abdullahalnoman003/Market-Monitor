@@ -5,8 +5,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const AddProduct = () => {
+  useDocumentTitle("Add Products | Vendor")
   const { user } = useContext(AuthContext);
   const axiosInstance = useAxios();
 

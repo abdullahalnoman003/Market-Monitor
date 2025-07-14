@@ -3,8 +3,10 @@ import { Outlet } from "react-router-dom";
 import Navbar from "../../Navbar & Footer/Navbar";
 import Footer from "../../Navbar & Footer/Footer";
 import { NavLink } from "react-router-dom";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const VendorLayout = () => {
+  useDocumentTitle("Vendor Dashboard || Market Monitor")
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Navbar */}

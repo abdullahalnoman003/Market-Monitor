@@ -5,7 +5,7 @@ const About = () => {
   useDocumentTitle("About || Market Monitor");
 
   return (
-    <div className="bg-base-100 min-h-screen px-6 py-5 text-base-content">
+    <div className=" min-h-screen px-6 py-5 text-base-content">
       <div className="max-w-4xl mx-auto bg-base-200 rounded-xl shadow-md shadow-primary p-8">
         <h1 className="text-3xl font-bold mb-6 text-primary text-center">
           About Market Monitor

@@ -4,15 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const PriceTrends = () => {
+  useDocumentTitle("Price Trends | Dashboard")
   const {user} = useContext(AuthContext);
   const axiosInstance = useAxios();
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedProductData, setSelectedProductData] = useState(null);
   const userEmail = user.email
 
-  // 1. Fetch user's watchlist
+  //  Fetching user's watchlist
   const { data: watchlist = [], isLoading } = useQuery({
     queryKey: ["watchlist", userEmail],
     enabled: !!userEmail,
@@ -22,7 +24,7 @@ const PriceTrends = () => {
     },
   });
 
-  // 2. Fetch selected product details using productId
+  //  Fetching selected product details using productId
   useEffect(() => {
     const fetchProduct = async () => {
       if (selectedProductId) {

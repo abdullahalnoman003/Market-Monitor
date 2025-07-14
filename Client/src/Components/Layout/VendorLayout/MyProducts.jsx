@@ -5,8 +5,10 @@ import { FaTrash, FaEdit } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { Tooltip } from "react-tooltip";
 import useAxios from "../../../Hooks/useAxios";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const MyProducts = () => {
+  useDocumentTitle("My Products | Vendor")
   const { user } = useContext(AuthContext);
   const axiosInstance = useAxios();
   const [products, setProducts] = useState([]);
@@ -92,7 +94,7 @@ const MyProducts = () => {
         {products.map((product) => (
           <div
             key={product._id}
-            className="card bg-base-100 shadow-primary shadow-lg hover:shadow-xl border border-primary transition duration-300 hover:scale-[1.015]"
+            className=" min-h-fit card bg-base-100 shadow-primary shadow-lg hover:shadow-xl border border-primary transition duration-300 hover:scale-[1.015]"
           >
             <figure className="p-5">
               <img
@@ -101,17 +103,17 @@ const MyProducts = () => {
                 className="rounded-xl h-48 object-cover w-full border border-primary"
               />
             </figure>
-            <div className="card-body px-6 space-y-3">
+            <div className="card-body px-6">
               <h3 className="card-title text-xl font-semibold text-primary">
                 🥦 {product.item_name}
               </h3>
 
-              <p className="">
+              <p className="text-info">
                 <b>📍 Market:</b> {product.market_name}
               </p>
 
-              <p className="">
-                <b>💰 Price/Unit:</b> {product.price_per_unit}
+              <p className="text-error">
+                <b>💰 Price/Unit:</b> {product.price_per_unit} /-
               </p>
 
               <p className="">
@@ -120,7 +122,7 @@ const MyProducts = () => {
 
               <div>
                 <span
-                  className={`badge font-bold px-3 py-1 ${
+                  className={`badge  px-3 py-1 ${
                     product.status === "approved"
                       ? "badge-success"
                       : product.status === "pending"
@@ -156,7 +158,7 @@ const MyProducts = () => {
                   data-tooltip-id="edit-tooltip"
                   data-tooltip-content="Edit Product"
                   onClick={() => navigate(`/dashboard/vendor/update-product/${product._id}`)}
-                  className="btn btn-sm btn-outline btn-warning"
+                  className="btn btn-sm btn-outline btn-primary"
                 >
                   <FaEdit className="mr-1" /> Edit
                   <Tooltip id="edit-tooltip" place="bottom" />

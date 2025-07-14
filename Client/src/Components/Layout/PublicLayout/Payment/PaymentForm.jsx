@@ -5,8 +5,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAxios from "../../../../Hooks/useAxios";
 import { AuthContext } from "../../../Authentication/Context/AuthContext";
+import useDocumentTitle from "../../../../Hooks/useDocumentTitle";
 
 const PaymentForm = () => {
+  useDocumentTitle("Payment")
   const stripe = useStripe();
   const elements = useElements();
   const { id } = useParams();
