@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useAxios from "../../../Hooks/useAxios";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const ManageWatchlist = () => {
   useDocumentTitle("Manage Watchlist | Dashboard");
   const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -16,7 +18,7 @@ const ManageWatchlist = () => {
   const { data: watchlist = [], isLoading } = useQuery({
     queryKey: ["watchlist", user?.email],
     queryFn: async () => {
-      const res = await axiosInstance.get("/watchlist", {
+      const res = await axiosSecure.get("/watchlist", {
         params: { userEmail: user?.email },
       });
       return res.data;
@@ -26,7 +28,7 @@ const ManageWatchlist = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
-      const res = await axiosInstance.delete(`/delete-watchlist/${id}`);
+      const res = await axiosSecure.delete(`/delete-watchlist/${id}`);
       return res.data;
     },
     onSuccess: () => {

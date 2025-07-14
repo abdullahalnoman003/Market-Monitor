@@ -45,7 +45,7 @@ const SpecialOffer = () => {
 
   if (!offers.length) {
     return (
-      <div className="min-h-[300px] flex justify-center items-center text-primary text-lg">
+      <div className="min-h-screen flex justify-center items-center text-primary text-lg">
         No special offers available right now...
       </div>
     );

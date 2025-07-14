@@ -3,7 +3,6 @@ import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
-import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
@@ -11,7 +10,6 @@ import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 const AddProduct = () => {
   useDocumentTitle("Add Products | Vendor")
   const { user } = useContext(AuthContext);
-  const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
 
   const [productDate, setProductDate] = useState(new Date()); // for product

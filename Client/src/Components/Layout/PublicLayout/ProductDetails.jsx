@@ -12,9 +12,10 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useUserRole from "../../../Hooks/useUserRole";
+import ProductNotFound from "../../Error/ProductNotFound";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const ProductDetails = () => {
   const { user } = useContext(AuthContext);
@@ -26,7 +27,7 @@ const ProductDetails = () => {
   const [editedComment, setEditedComment] = useState("");
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [chartData, setChartData] = useState([]);
   const [compareData, setCompareData] = useState([]);
   const [compareDate, setCompareDate] = useState("");
@@ -37,7 +38,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axiosInstance
+    axiosSecure
       .get(`/product/${id}`)
       .then((res) => {
         setProduct(res.data);
@@ -51,7 +52,7 @@ const ProductDetails = () => {
   }, [id]);
 
   useEffect(() => {
-    axiosInstance
+    axiosSecure
       .get(`/reviews/${id}`)
       .then((res) => setReviews(Array.isArray(res.data) ? res.data : []))
       .catch(() => setReviews([]));
@@ -69,7 +70,7 @@ const ProductDetails = () => {
       addedAt: new Date(),
     };
 
-    axiosInstance
+    axiosSecure
       .post("/watchlist", data)
       .then(() => Swal.fire("Added to watchlist!", "", "success"))
       .catch((error) => {
@@ -103,7 +104,7 @@ const ProductDetails = () => {
       date: new Date().toISOString().split("T")[0],
     };
 
-    axiosInstance.post("/reviews", reviewData).then((res) => {
+    axiosSecure.post("/reviews", reviewData).then((res) => {
       setReviews((prev) => [reviewData, ...prev]);
       setComment("");
       setRating(0);
@@ -122,7 +123,7 @@ const ProductDetails = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosInstance
+        axiosSecure
           .delete(`/delete-review/${reviewId}`)
           .then(() => {
             setReviews((prev) => prev.filter((r) => r._id !== reviewId));
@@ -136,7 +137,7 @@ const ProductDetails = () => {
   };
   const handleReviewUpdate = () => {
     if (!editedComment.trim()) return;
-    axiosInstance
+    axiosSecure
       .patch(`/update-review/${editingReviewId}`, { comment: editedComment })
       .then(() => {
         setReviews((prev) =>
@@ -187,20 +188,7 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="text-center mt-20">
-        <h2 className="text-4xl font-bold text-error mb-4">
-          Product Not Found!
-        </h2>
-        <p className="text-lg">
-          Sorry, we couldn't find the product you're looking for.
-        </p>
-        <button
-          onClick={() => window.history.back()}
-          className="btn btn-outline btn-primary mt-4"
-        >
-          Go Back
-        </button>
-      </div>
+      <ProductNotFound></ProductNotFound>
     );
   }
 

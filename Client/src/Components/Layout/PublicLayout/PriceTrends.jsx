@@ -5,11 +5,13 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const PriceTrends = () => {
   useDocumentTitle("Price Trends | Dashboard")
   const {user} = useContext(AuthContext);
   const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedProductData, setSelectedProductData] = useState(null);
   const userEmail = user.email
@@ -19,7 +21,7 @@ const PriceTrends = () => {
     queryKey: ["watchlist", userEmail],
     enabled: !!userEmail,
     queryFn: async () => {
-      const res = await axiosInstance.get(`/watchlist?userEmail=${userEmail}`);
+      const res = await axiosSecure.get(`/watchlist?userEmail=${userEmail}`);
       return res.data;
     },
   });

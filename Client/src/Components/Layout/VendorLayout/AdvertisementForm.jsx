@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useAxios from "../../../Hooks/useAxios";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 // Helper to upload image to ImgBB
 const uploadImage = async (imageFile) => {
@@ -28,7 +29,7 @@ const uploadImage = async (imageFile) => {
 const AdvertisementForm = () => {
   useDocumentTitle("Publish Advertisement | Vendor")
   const { user } = useContext(AuthContext);
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const fileInputRef = useRef(null);
 
   const [adTitle, setAdTitle] = useState("");
@@ -89,7 +90,7 @@ const AdvertisementForm = () => {
       };
 
       // Post data  backend
-      const res = await axiosInstance.post("/advertisements", newAdvertisement);
+      const res = await axiosSecure.post("/advertisements", newAdvertisement);
 
       if (res?.data?.insertedId) {
         Swal.fire({

@@ -7,11 +7,13 @@ import { Tooltip } from "react-tooltip";
 import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const MyAdvertisements = () => {
   useDocumentTitle("My Advertisement | Vendor")
   const { user } = useContext(AuthContext);
   const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -43,7 +45,7 @@ const MyAdvertisements = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosInstance
+        axiosSecure
           .delete(`/advertisements/${id}`)
           .then((res) => {
             if (res.data.deletedCount) {

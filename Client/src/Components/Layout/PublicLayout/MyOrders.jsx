@@ -3,19 +3,19 @@ import { Link } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import { useContext } from "react";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
-import useAxios from "../../../Hooks/useAxios";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const MyOrders = () => {
   useDocumentTitle("My Orders | Dashboard")
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["myOrders", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const res = await axiosInstance.get(`/orders?buyerEmail=${user.email}`);
+      const res = await axiosSecure.get(`/orders?buyerEmail=${user.email}`);
       return res.data;
     },
   });
@@ -30,6 +30,14 @@ const MyOrders = () => {
       </div>
     );
   }
+
+  if (orders.length === 0) {
+  return (
+    <div className="min-h-screen flex justify-center items-center text-lg text-primary">
+      No orders found for your account.
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen px-4 py-10 ">
@@ -56,6 +64,7 @@ const MyOrders = () => {
                 key={order._id}
                 className="hover:bg-primary-content transition-all duration-200"
               >
+
                 <td className="px-5 py-3">{index + 1}</td>
                 <td className="px-5 py-3">{order.productName}</td>
                 <td className="px-5 py-3">{order.marketName || "Unknown"}</td>

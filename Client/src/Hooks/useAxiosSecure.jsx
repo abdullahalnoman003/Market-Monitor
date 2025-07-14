@@ -24,7 +24,7 @@ const useAxiosSecure = () => {
     }, error => {
         const status = error.status;
         if (status === 403) {
-            navigate('/forbidden');
+            navigate('/');
         }
         else if (status === 401) {
             logOut()

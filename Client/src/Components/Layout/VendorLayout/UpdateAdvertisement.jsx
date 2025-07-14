@@ -2,14 +2,13 @@ import React, { useContext, useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
-import useAxios from "../../../Hooks/useAxios";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const UpdateAdvertisement = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const axiosInstance = useAxios();
-
+  const axiosSecure = useAxiosSecure();
   const [adData, setAdData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [adTitle, setAdTitle] = useState("");
@@ -20,7 +19,7 @@ const UpdateAdvertisement = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    axiosInstance
+    axiosSecure
       .get(`/my-advertisements/${id}`)
       .then((res) => {
         const ad = res.data;
@@ -34,9 +33,9 @@ const UpdateAdvertisement = () => {
       .catch((err) => {
         console.error("Error loading ad:", err);
         Swal.fire("❌ Error", "Failed to fetch advertisement data!", "error");
-        navigate("/dashboard/vendor");
+        navigate("/");
       });
-  }, [id, axiosInstance, navigate]);
+  }, [id, axiosSecure, navigate]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -81,11 +80,11 @@ const UpdateAdvertisement = () => {
         updatedAt: new Date().toISOString(),
       };
 
-      const res = await axiosInstance.put(`/my-advertisements/${id}`, updatedAd);
+      const res = await axiosSecure.put(`/my-advertisements/${id}`, updatedAd);
 
       if (res.data.modifiedCount > 0) {
         Swal.fire("✅ Updated!", "Advertisement updated successfully!", "success");
-        navigate("/dashboard/my-advertisements");
+        navigate("/dashboard/vendor/my-advertisements");
       } else {
         Swal.fire("ℹ️ Notice", "No changes made.", "info");
       }

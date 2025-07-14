@@ -7,25 +7,34 @@ import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 const AllUsers = () => {
   const axiosSecure = useAxiosSecure();
   const [users, setUsers] = useState([]);
-  const [loading, setLoading ] = useState(false);
-  useDocumentTitle("All Users | Dashboard");
+  const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  useDocumentTitle("All Users | Dashboard");
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [searchQuery]);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axiosSecure.get("/users");
+      const url = searchQuery
+        ? `/users?search=${encodeURIComponent(searchQuery)}`
+        : "/users";
+      const res = await axiosSecure.get(url);
       setUsers(res.data);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching users:", error);
       setLoading(false);
     }
+  };
+
+  const handleSearchClick = () => {
+    setSearchQuery(searchText.trim());
   };
 
   const updateRole = async (id, email, newRole) => {
@@ -53,6 +62,18 @@ const AllUsers = () => {
       }
     });
   };
+
+  const getRoleBadge = (role) => {
+    switch (role) {
+      case "admin":
+        return <span className="badge badge-success font-bold shadow-md hover:shadow-primary transition-all">Admin</span>;
+      case "vendor":
+        return <span className="badge badge-info font-bold shadow-md hover:shadow-primary transition-all">Vendor</span>;
+      default:
+        return <span className="badge badge-neutral font-bold shadow-md hover:shadow-primary transition-all">User</span>;
+    }
+  };
+
   if (loading) {
     return (
       <div className="h-screen w-full flex items-center justify-center">
@@ -63,29 +84,36 @@ const AllUsers = () => {
       </div>
     );
   }
-  const getRoleBadge = (role) => {
-    switch (role) {
-      case "admin":
-        return <span className="badge badge-success font-bold shadow-md hover:shadow-primary transition-all transform-3d  ">Admin</span>;
-      case "vendor":
-        return <span className="badge badge-info font-bold shadow-md hover:shadow-primary transition-all transform-3d">Vendor</span>;
-      default:
-        return <span className="badge badge-neutral font-bold shadow-md hover:shadow-primary transition-all transform-3d">User</span>;
-    }
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-screen">
       <h2 className="text-3xl sm:text-4xl font-bold text-center mb-2 text-primary">
         👤 Manage All Users
       </h2>
-      <p className="text-center text-base sm:text-lg  mb-8">
+      <p className="text-center text-base sm:text-lg mb-6">
         Assign roles: <b>User</b>, <b>Admin</b>, or <b>Vendor</b> to any registered user.
       </p>
 
+      {/* Search Input */}
+      <div className="max-w-md mx-auto mb-6 flex gap-2 items-center">
+        <input
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Search by name or email..."
+          className="flex-grow px-4 py-2 rounded-md border-2 border-primary shadow-primary focus:outline-none"
+        />
+        <button
+          onClick={handleSearchClick}
+          className="px-4 py-2 btn-primary btn font-bold hover:shadow-md hover:shadow-secondary rounded-md transition"
+        >
+          Search
+        </button>
+      </div>
+
       <div className="overflow-x-auto rounded-lg shadow-md shadow-primary">
         <table className="table w-full">
-          <thead className="bg-accent  text-sm sm:text-base">
+          <thead className="bg-accent text-sm sm:text-base">
             <tr>
               <th>#</th>
               <th>Name</th>
@@ -105,21 +133,21 @@ const AllUsers = () => {
                   <div className="flex flex-wrap gap-2 justify-center">
                     <button
                       onClick={() => updateRole(u._id, u.email, "admin")}
-                      className="btn btn-xs btn-success "
+                      className="btn btn-xs btn-success"
                     >
                       Admin
                     </button>
                     <button
                       onClick={() => updateRole(u._id, u.email, "vendor")}
-                      className="btn btn-xs btn-info "
-                      disabled={user.email===u.email}
+                      className="btn btn-xs btn-info"
+                      disabled={user.email === u.email}
                     >
                       Vendor
                     </button>
                     <button
                       onClick={() => updateRole(u._id, u.email, "user")}
-                      className="btn btn-xs btn-neutral disabled:"
-                      disabled={user.email===u.email}
+                      className="btn btn-xs btn-neutral"
+                      disabled={user.email === u.email}
                     >
                       User
                     </button>
@@ -129,7 +157,7 @@ const AllUsers = () => {
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan="5" className="text-center py-6 text-lg ">
+                <td colSpan="5" className="text-center py-6 text-lg text-error font-bold">
                   No users found.
                 </td>
               </tr>

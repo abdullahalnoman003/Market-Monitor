@@ -6,11 +6,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const UpdateProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
 
   const [product, setProduct] = useState(null);
@@ -73,7 +75,7 @@ const UpdateProduct = () => {
       item_description: form.item_description.value,
     };
 
-    axiosInstance
+    axiosSecure
       .put(`/update-product/${id}`, updatedProduct)
       .then((res) => {
         if (res.data.modifiedCount > 0) {
@@ -183,7 +185,7 @@ const UpdateProduct = () => {
               {priceHistory.map((entry, idx) => (
                 <li key={idx} className="flex justify-between items-center p-2 bg-base-100 border rounded-md">
                   <span>📅 {entry.date} — ৳{entry.price}</span>
-                  <button type="button" className="btn btn-xs btn-error" onClick={() => handleRemovePrice(idx)}>
+                  <button type="button" className="btn btn-xs " onClick={() => handleRemovePrice(idx)}>
                     ❌
                   </button>
                 </li>

@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { Tooltip } from "react-tooltip";
-import useAxios from "../../../Hooks/useAxios";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const MyProducts = () => {
   useDocumentTitle("My Products | Vendor")
   const { user } = useContext(AuthContext);
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const MyProducts = () => {
     if (!user?.email) return;
 
     setLoading(true);
-    axiosInstance
+    axiosSecure
       .get(`/my-products?email=${user.email}`)
       .then((res) => {
         setProducts(res.data || []);
@@ -30,7 +30,7 @@ const MyProducts = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [user, axiosInstance]);
+  }, [user, axiosSecure]);
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -43,7 +43,7 @@ const MyProducts = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosInstance
+        axiosSecure
           .delete(`/delete-product/${id}`)
           .then((res) => {
             if (res.data.deletedCount) {
