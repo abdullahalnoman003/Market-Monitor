@@ -16,12 +16,12 @@ const Hero = () => {
         className="hero min-h-[556px] max-h-screen rounded-2xl relative overflow-hidden"
         style={{
           backgroundImage:
-            "url(https://images.unsplash.com/photo-1488459716781-31db52582fe9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dmVnZXRhYmxlJTIwbWFya2V0fGVufDB8fDB8fHww)",
+            "url(https://i.ibb.co/zC0Cm7Z/1798151-colourful-fresh-fruit-fresh-vegetables-fruit-market.jpg)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="hero-overlay bg-black/70 absolute inset-0 rounded-2xl z-0" />
+        <div className="hero-overlay bg-black/50 absolute inset-0 rounded-2xl z-0" />
 
         <div className="hero-content flex-col md:flex-row-reverse text-white z-10 px-4 md:px-12 gap-10 w-full">
           <motion.div
@@ -39,7 +39,7 @@ const Hero = () => {
             className="flex-1 space-y-6 text-center md:text-left"
           >
             <div className="h-">
-            <h1 className=" font-bold mb-5 text-4xl md:text-5xl max-md:text-[28px] text-primary">
+            <h1 className=" font-bold mb-5 text-4xl md:text-5xl max-md:text-[28px]">
               Discover the Future of <br />
               <span className="text-secondary text-md max-md:text-[26px] max-lg:text-[24px]">
                 <Typewriter
