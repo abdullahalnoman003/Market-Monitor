@@ -25,7 +25,7 @@ const ProductSection = () => {
     );
 
   return (
-  <div className="bg-gradient-to-b from-base-200 to-base-100"><div className="max-w-6xl bg-gradient-to-b from-base-200 to-base-100 mx-auto py-14 px-4">
+  <div className="max-w-6xl  mx-auto py-14 px-4">
       {/* Section Heading */}
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
@@ -90,7 +90,7 @@ const ProductSection = () => {
           </motion.div>
         ))}
       </div>
-    </div></div>
+    </div>
     
   );
 };

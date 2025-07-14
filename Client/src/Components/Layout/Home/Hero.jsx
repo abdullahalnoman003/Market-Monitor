@@ -6,15 +6,17 @@ import { FaStore, FaBullhorn } from "react-icons/fa";
 import Lottie from "lottie-react";
 import { Typewriter } from "react-simple-typewriter";
 import heroAnimation from "../../Animation/VendorAnimation.json";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const Hero = () => {
+  useDocumentTitle("Market Monitor || Home")
   return (
     <div>
       <div
         className="hero min-h-[556px] max-h-screen rounded-2xl relative overflow-hidden"
         style={{
           backgroundImage:
-            "url(https://cdn.vox-cdn.com/thumbor/vDMW5aYSrukPibPE_ZtZbp8UEL4=/0x248:2896x1696/fit-in/1200x600/cdn.vox-cdn.com/uploads/chorus_asset/file/19187068/Pike_Place_1_SteFou_.jpg)",
+            "url(https://images.unsplash.com/photo-1488459716781-31db52582fe9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dmVnZXRhYmxlJTIwbWFya2V0fGVufDB8fDB8fHww)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

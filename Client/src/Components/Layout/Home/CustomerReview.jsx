@@ -58,7 +58,7 @@ const CustomerReview = () => {
   const review = reviews[page];
 
   return (
-    <section className="pt-20 bg-gradient-to-b from-base-100 to-base-200 px-4">
+    <section className="pt-20 px-4">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-4xl font-extrabold text-primary mb-10">
           What Our Valued Customers Say 😊

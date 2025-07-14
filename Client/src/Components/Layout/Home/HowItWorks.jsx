@@ -21,7 +21,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-base-200 to-base-100">
+    <section className="py-20 px-4">
       <div className="max-w-6xl mx-auto text-center">
         <motion.h2
           className="text-4xl md:text-5xl font-bold text-primary mb-12"
