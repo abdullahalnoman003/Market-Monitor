@@ -4,6 +4,7 @@ import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useAxios from "../../../Hooks/useAxios";
 import { UNSAFE_decodeViaTurboStream } from "react-router-dom";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 // Helper to upload image to ImgBB
 const uploadImage = async (imageFile) => {
@@ -29,7 +30,7 @@ const uploadImage = async (imageFile) => {
 const CreateOffer = () => {
   useDocumentTitle("Create Offer | Admin");
   const { user } = useContext(AuthContext);
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const fileInputRef = useRef(null);
 
   const [adTitle, setAdTitle] = useState("");
@@ -89,7 +90,7 @@ const CreateOffer = () => {
       };
 
       // Post data  backend
-      const res = await axiosInstance.post("/special", newOffer);
+      const res = await axiosSecure.post("/special", newOffer);
 
       if (res?.data?.insertedId) {
         Swal.fire({
@@ -194,7 +195,7 @@ const CreateOffer = () => {
         <div className="pt-4">
           <button
             type="submit"
-            className={`btn btn-primary w-full text-sm ${isSubmitting ? "loading" : ""}`}
+            className={`btn btn-primary w-full text-sm ${isSubmitting ? "loading loading-bars text-primary" : ""}`}
             disabled={isSubmitting}
           >
             {isSubmitting ? "Submitting..." : "✅ Post Offer"}
