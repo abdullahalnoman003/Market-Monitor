@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import useAxios from "../../../Hooks/useAxios";
 import { useState } from "react";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const AdminOrderList = () => {
+  useDocumentTitle("All Orders | Admin")
   const axiosInstance = useAxios();
 
   const [searchText, setSearchText] = useState("");

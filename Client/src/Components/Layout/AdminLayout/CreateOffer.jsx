@@ -2,6 +2,8 @@ import React, { useContext, useState, useRef } from "react";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useAxios from "../../../Hooks/useAxios";
+import { UNSAFE_decodeViaTurboStream } from "react-router-dom";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 // Helper to upload image to ImgBB
 const uploadImage = async (imageFile) => {
@@ -25,6 +27,7 @@ const uploadImage = async (imageFile) => {
 };
 
 const CreateOffer = () => {
+  useDocumentTitle("Create Offer | Admin");
   const { user } = useContext(AuthContext);
   const axiosInstance = useAxios();
   const fileInputRef = useRef(null);

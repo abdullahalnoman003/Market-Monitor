@@ -3,8 +3,10 @@ import { Outlet, NavLink } from "react-router-dom";
 
 import Footer from "../../Navbar & Footer/Footer";
 import Navbar from "../../Navbar & Footer/Navbar";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const AdminLayout = () => {
+  useDocumentTitle("Admin Dashboard | Market Monitor");
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar></Navbar>

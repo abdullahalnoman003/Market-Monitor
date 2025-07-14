@@ -5,9 +5,9 @@ import useAxios from "../../../Hooks/useAxios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const AllAdvertisements = () => {
+  useDocumentTitle("Manage Advertisements | Admin");
   const axiosInstance = useAxios();
   const queryClient = useQueryClient();
-  useDocumentTitle("All Advertisements | Dashboard");
 
   const {
     data: ads = [],
