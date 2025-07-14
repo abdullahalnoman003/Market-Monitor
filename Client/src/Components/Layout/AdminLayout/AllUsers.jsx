@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
-import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const AllUsers = () => {
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [users, setUsers] = useState([]);
   const [loading, setLoading ] = useState(false);
   useDocumentTitle("All Users | Dashboard");
@@ -19,7 +19,7 @@ const AllUsers = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/users");
+      const res = await axiosSecure.get("/users");
       setUsers(res.data);
       setLoading(false);
     } catch (error) {
@@ -37,7 +37,7 @@ const AllUsers = () => {
       confirmButtonText: `Yes, make ${newRole}`,
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosInstance
+        axiosSecure
           .patch(`/users/role/${id}`, { role: newRole })
           .then((res) => {
             if (res.data.modifiedCount > 0) {
