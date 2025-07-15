@@ -9,20 +9,19 @@ const axiosSecure = axios.create({
 });
 
 const useAxiosSecure = () => {
-  const { logOut } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("access-token");
-    if (!token) {
-      logOut().then(() => navigate("/login"));
-    }
     axiosSecure.interceptors.request.handlers = [];
     axiosSecure.interceptors.response.handlers = [];
 
     axiosSecure.interceptors.request.use(
       (config) => {
-        config.headers.Authorization = `Bearer ${token}`;
+         const token = localStorage.getItem("access-token");
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
         return config;
       },
       (error) => Promise.reject(error)
@@ -36,7 +35,7 @@ const useAxiosSecure = () => {
         if (status === 403) {
           navigate("/unauthorized");
         } else if (status === 401) {
-          logOut()
+          logout()
             .then(() => navigate("/login"))
             .catch(() => {});
         }
@@ -44,12 +43,13 @@ const useAxiosSecure = () => {
         return Promise.reject(error);
       }
     );
-  }, [logOut, navigate]);
+  }, [logout, navigate]);
 
   return axiosSecure;
 };
 
 export default useAxiosSecure;
+
 
 // import axios from 'axios';
 // import React, { useContext } from 'react';

@@ -63,8 +63,6 @@ const UpdateProduct = () => {
     const form = e.target;
 
     const updatedProduct = {
-      vendor_email: user?.email,
-      vendor_name: user?.displayName,
       market_name: form.market_name.value,
       market_description: form.market_description.value,
       date: format(productDate, "yyyy-MM-dd"),
