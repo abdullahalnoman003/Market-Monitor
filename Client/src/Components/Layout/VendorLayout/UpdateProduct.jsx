@@ -80,7 +80,7 @@ const UpdateProduct = () => {
       .then((res) => {
         if (res.data.modifiedCount > 0) {
           Swal.fire("✅ Updated!", "Product updated successfully!", "success");
-          navigate("/dashboard/vendor/my-products");
+          navigate(-1);
         } else {
           Swal.fire("ℹ️ Notice", "No changes made.", "info");
         }
