@@ -1,7 +1,3 @@
-Sure! Here's a **polished, merged, and enriched version** of your `README.md` for **Market Monitor**, with redundant parts removed, improved flow, and a brief section about **you (Abdullah Al Noman)** added near the end. Let me know if you want your photo, email, or social links included too.
-
----
-
 # 🌐 Market Monitor
 
 **Market Monitor** is a real-time, role-based MERN Stack application built to monitor, manage, and analyze local market product prices. With user-friendly dashboards, vendor controls, Stripe payments, live filtering, dynamic ads, and interactive price charts — this platform empowers users, vendors, and admins with complete insight and control over marketplace dynamics.
