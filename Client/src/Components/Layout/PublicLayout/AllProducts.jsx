@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import useAxios from "../../../Hooks/useAxios";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import ProductNotFound from "../../Error/ProductNotFound";
+import { MdErrorOutline } from "react-icons/md";
+import { motion } from "framer-motion";
 
 const LoadingSpinner = () => (
   <div className="min-h-screen w-full flex items-center justify-center bg-base">
@@ -86,12 +88,29 @@ const AllProducts = () => {
   });
 
   if (isLoading) return <LoadingSpinner />;
-  if (isError)
-    return (
-      <p className="text-center text-red-500 mt-10">
-        ❌ Failed to load products
+if (isError)
+  return (
+    <motion.div
+      className="min-h-screen flex flex-col items-center justify-center text-red-500 space-y-4"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <MdErrorOutline className="text-6xl animate-pulse" />
+      <h2 className="text-2xl font-semibold">Oops! Something went wrong.</h2>
+      <p className="text-base opacity-80 text-center px-4 max-w-md">
+        We couldn’t load the products at this time. Please check your connection
+        or try again later.
       </p>
-    );
+      <button
+        onClick={() => window.location.reload()}
+        className="btn btn-error text-white mt-2"
+      >
+        🔁 Reload Page
+      </button>
+    </motion.div>
+  );
+
 
   return (
     <div className="max-w-7xl mx-auto p-6">

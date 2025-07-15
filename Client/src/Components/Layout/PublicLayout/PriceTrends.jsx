@@ -6,6 +6,8 @@ import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+  import { motion } from "framer-motion";
+import { FaBoxOpen } from "react-icons/fa";
 
 const PriceTrends = () => {
   useDocumentTitle("Price Trends | Dashboard")
@@ -52,6 +54,7 @@ const PriceTrends = () => {
       </div>
     );
   }
+
   return (
     <div className="min-h-screen  text-gray-300 flex flex-col md:flex-row gap-6 p-6">
         
@@ -60,6 +63,22 @@ const PriceTrends = () => {
       <div className="md:w-1/3  p-4 rounded-xl shadow-md shadow-primary">
         <h2 className="text-xl font-bold mb-4 text-primary text-center">📝 Watchlisted Products</h2>
         <ul className="space-y-3">
+
+          {watchlist.length === 0 &&(
+    <motion.div
+      className="min-h-screen flex flex-col items-center justify-center px-4 text-primary space-y-4"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <FaBoxOpen className="text-6xl text-accent animate-pulse" />
+      <h2 className="text-2xl text-center font-bold">No Orders Found</h2>
+      <p className="text-base-content text-center opacity-70 max-w-md">
+        You haven’t Watchlisted any Products yet. Explore products and make your Wachlist today!
+      </p>
+    </motion.div>
+          )}
+
           {watchlist.map((item) => (
             <li key={item._id}>
               <button

@@ -78,7 +78,7 @@ const MyProducts = () => {
     </h2>
 
     {products.length === 0 ? (
-      <div className="text-center mt-16 space-y-5">
+      <div className="text-center min-h-screen mt-16 space-y-5">
         <p className="text-xl font-medium ">
           You haven’t added any products yet.
         </p>

@@ -30,8 +30,8 @@ const AdvertisementCarousel = () => {
 
   if (ads.length === 0) {
     return (
-      <div className="text-center text-xl font-bold bg-gradient-to-b from-base-100 to-base-200 text-base-content opacity-60 py-10">
-        🔊 For Now There is no Advertisement Available. <br /> Stay Tuned.
+      <div className="text-center text-xl font-bold bg-gradient-to-br from-base-200 via-base-100 to-base-200 text-base-content opacity-60 py-10">
+        📢 For Now There is no Advertisement Available. <br /> Stay Tuned.
       </div>
     );
   }

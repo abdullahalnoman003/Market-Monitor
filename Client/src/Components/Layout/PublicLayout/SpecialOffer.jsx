@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import useAxios from "../../../Hooks/useAxios";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
-
+import { FaGift } from "react-icons/fa";
 const SpecialOffer = () => {
   useDocumentTitle("Special Offers || Market Monitor");
   const axiosInstance = useAxios();
@@ -44,13 +44,22 @@ const SpecialOffer = () => {
   }
 
   if (!offers.length) {
-    return (
-      <div className="min-h-screen flex justify-center items-center text-primary text-lg">
-        No special offers available right now...
-      </div>
-    );
-  }
-
+  return (
+    <motion.div
+      className="min-h-screen flex flex-col items-center justify-center text-primary space-y-4 px-4"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <FaGift className="text-6xl animate-bounce drop-shadow-md" />
+      <h2 className="text-2xl font-bold">No Special Offers Available</h2>
+      <p className="text-center text-base-content opacity-70 max-w-md">
+        🎉 Looks like we’re fresh out of offers at the moment. Please check back
+        later — something amazing is on the way!
+      </p>
+    </motion.div>
+  );
+}
   return (
     <div className="max-w-7xl min-h-screen mx-auto px-4 py-12">
       <h2 className="text-3xl font-bold text-center text-primary mb-8">

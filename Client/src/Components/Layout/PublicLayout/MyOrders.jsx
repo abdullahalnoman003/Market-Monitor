@@ -5,6 +5,9 @@ import { useContext } from "react";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { motion } from "framer-motion";
+import { FaBoxOpen } from "react-icons/fa";
+
 
 const MyOrders = () => {
   useDocumentTitle("My Orders | Dashboard")
@@ -31,13 +34,24 @@ const MyOrders = () => {
     );
   }
 
-  if (orders.length === 0) {
+
+if (orders.length === 0) {
   return (
-    <div className="min-h-screen flex justify-center items-center text-lg text-primary">
-      No orders found for your account.
-    </div>
+    <motion.div
+      className="min-h-screen flex flex-col items-center justify-center px-4 text-primary space-y-4"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <FaBoxOpen className="text-6xl text-accent animate-pulse" />
+      <h2 className="text-2xl font-bold">No Orders Found</h2>
+      <p className="text-base-content text-center opacity-70 max-w-md">
+        You haven’t placed any orders yet. Explore products and make your first purchase today!
+      </p>
+    </motion.div>
   );
 }
+
 
   return (
     <div className="min-h-screen px-4 py-10 ">

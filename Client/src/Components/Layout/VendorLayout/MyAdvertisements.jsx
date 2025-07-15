@@ -8,9 +8,10 @@ import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { motion } from "framer-motion";
 
 const MyAdvertisements = () => {
-  useDocumentTitle("My Advertisement | Vendor")
+  useDocumentTitle("My Advertisement | Vendor");
   const { user } = useContext(AuthContext);
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
@@ -20,7 +21,7 @@ const MyAdvertisements = () => {
 
   useEffect(() => {
     if (!user?.email) return;
-    setLoading(true); 
+    setLoading(true);
     axiosInstance
       .get(`/my-advertisements?email=${user.email}`)
       .then((res) => {
@@ -84,16 +85,42 @@ const MyAdvertisements = () => {
       </h2>
 
       {ads.length === 0 ? (
-        <div className="text-center mt-16 ">
-          <p className="text-xl font-medium">
-            You haven’t posted any advertisements yet.
-          </p>
-          <button
-            onClick={() => navigate("/dashboard/vendor/add-advertisement")}
-            className="btn btn-primary btn-lg"
+        <div className="min-h-screen flex flex-col justify-center items-center text-center px-4 space-y-6 bg-base-200 rounded-lg shadow-xl">
+          <motion.div
+            className="text-6xl text-accent"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
           >
-            ➕ Post Advertisement
-          </button>
+            📢
+          </motion.div>
+
+          <motion.p
+            className="text-3xl font-extrabold text-primary"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            No Advertisements Yet!
+          </motion.p>
+
+          <motion.p
+            className="text-base text-base-content max-w-md opacity-75"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            Start promoting your amazing products today to attract more
+            customers and maximize your reach.
+          </motion.p>
+
+          <motion.button
+            onClick={() => navigate("/dashboard/vendor/add-advertisement")}
+            className="btn btn-primary btn-lg shadow-md"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            ➕ Post Your First Advertisement
+          </motion.button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
