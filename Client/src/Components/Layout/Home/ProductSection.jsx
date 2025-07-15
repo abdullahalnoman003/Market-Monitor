@@ -33,10 +33,10 @@ const ProductSection = () => {
         transition={{ duration: 0.7, ease: "easeInOut" }}
         className="text-4xl font-extrabold text-center text-primary mb-10 tracking-tight"
       >
-        🌟 Featured Market Products
+        🌟 Featured Markets & Products 🌟
         {products.length === 0 && (
-          <div className="text-center text-xl mt-10 font-bold bg-gradient-to-bl from-base-200 via-base-100 to-base-200 text-base-content opacity-60 py-10">
-            📢 For Now There is no Advertisement Available. <br /> Stay Tuned.
+          <div className="text-center text-xl mt-10 font-bold rounded-2xl bg-gradient-to-bl from-base-200 via-base-100 to-base-200 text-base-content opacity-60 py-10">
+            📢 For Now There is no Markets Available. <br /> Stay Tuned.
           </div>
         )}
       </motion.h2>
@@ -75,9 +75,18 @@ const ProductSection = () => {
                   🧺 {product.item_name} —{" "}
                   <span className="font-semibold text-green-600">
                     ৳
+                    {product.price_per_unit ??
+                      "N/A"}
+                    /kg - Letast
+                  </span>
+                </p>
+                <p className="mt-2 text-base-content">
+                  🧺 {product.item_name} —{" "}
+                  <span className="font-semibold text-orange-500">
+                    ৳
                     {product.prices?.[product.prices.length - 1]?.price ??
                       "N/A"}
-                    /kg
+                    /kg - Previous
                   </span>
                 </p>
               </div>
