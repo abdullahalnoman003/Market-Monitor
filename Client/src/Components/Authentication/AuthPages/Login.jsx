@@ -14,7 +14,7 @@ import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxios from "../../../Hooks/useAxios";
 
 const Login = () => {
-  useDocumentTitle("Login | Market Monitor")
+  useDocumentTitle("Login | Market Monitor");
   const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,33 +39,43 @@ const Login = () => {
   }
 
   // Google Login function
- const handleGoogleSignin = () => {
-  setLoading(true);
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      const userInfo = {
-        name: user.displayName,
-        email: user.email.toLowerCase(),
-        role: "user",
-      };
-      axiosInstance.post("/users", userInfo)
-        .then(() => {
-          Swal.fire(`Login Successful`, `Welcome! ${user.displayName}`, "success");
-          navigate(from, { replace: true });
-        })
-        .catch((err) => {
-          console.error("Failed to sync Google user to DB:", err);
-          Swal.fire("Login Successful", `Welcome! ${user.displayName}`, "success");
-          navigate(from, { replace: true });
-        });
-    })
-    .catch((error) => {
-      Swal.fire("Google Login Failed", error.message, "error");
-    })
-    .finally(() => setLoading(false));
-};
-
+  const handleGoogleSignin = () => {
+    setLoading(true);
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const user = result.user;
+        const token = await user.getIdToken();
+        localStorage.setItem("access-token", token);
+        const userInfo = {
+          name: user.displayName,
+          email: user.email.toLowerCase(),
+          role: "user",
+        };
+        axiosInstance
+          .post("/users", userInfo)
+          .then(() => {
+            Swal.fire(
+              `Login Successful`,
+              `Welcome! ${user.displayName}`,
+              "success"
+            );
+            navigate(from, { replace: true });
+          })
+          .catch((err) => {
+            console.error("Failed to sync Google user to DB:", err);
+            Swal.fire(
+              "Login Successful",
+              `Welcome! ${user.displayName}`,
+              "success"
+            );
+            navigate(from, { replace: true });
+          });
+      })
+      .catch((error) => {
+        Swal.fire("Google Login Failed", error.message, "error");
+      })
+      .finally(() => setLoading(false));
+  };
 
   // Email/Password Login function
   const handleEmailLogin = (e) => {
@@ -76,8 +86,10 @@ const Login = () => {
     sessionStorage.setItem("resetEmail", email);
 
     signInWithEmailAndPassword(auth, email, password)
-      .then((res) => {
-        console.log(res);
+      .then(async (res) => {
+        const user = res.user;
+        const token = await user.getIdToken();
+        localStorage.setItem("access-token", token);
         Swal.fire({
           icon: "success",
           title: "Login Successful!",
@@ -95,7 +107,7 @@ const Login = () => {
           text: error.message,
           timer: 2000,
         });
-        setLoading(false)
+        setLoading(false);
       });
   };
 
@@ -117,7 +129,8 @@ const Login = () => {
         <motion.div
           className="hidden md:block bg-cover bg-center"
           style={{
-            backgroundImage: "url(https://static.vecteezy.com/system/resources/previews/005/879/539/non_2x/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg)",
+            backgroundImage:
+              "url(https://static.vecteezy.com/system/resources/previews/005/879/539/non_2x/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg)",
             minHeight: "100%",
           }}
           initial={{ x: -100, opacity: 0 }}

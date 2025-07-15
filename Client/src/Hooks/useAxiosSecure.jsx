@@ -16,14 +16,15 @@ const useAxiosSecure = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user?.accessToken) return;
+    const token = localStorage.getItem('access-token');
+    if (!token) return;
 
     axiosSecure.interceptors.request.handlers = [];
     axiosSecure.interceptors.response.handlers = [];
 
     axiosSecure.interceptors.request.use(
       (config) => {
-        config.headers.Authorization = `Bearer ${user.accessToken}`;
+        config.headers.Authorization = `Bearer ${token}`;
         return config;
       },
       (error) => Promise.reject(error)
@@ -45,7 +46,7 @@ const useAxiosSecure = () => {
         return Promise.reject(error);
       }
     );
-  }, [user?.accessToken, logOut, navigate]);
+  }, [logOut, navigate]);
 
   return axiosSecure;
 };

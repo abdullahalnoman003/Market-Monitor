@@ -35,7 +35,7 @@ const Register = () => {
     const formData = new FormData();
     formData.append("image", imageFile);
 
-    // image upload into imgbb 
+    // image upload into imgbb
     setUploadingImage(true);
     try {
       const res = await fetch(
@@ -67,9 +67,10 @@ const Register = () => {
     }
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         const user = userCredential.user;
-
+        const token = await user.getIdToken();
+        localStorage.setItem("access-token", token);
         updateProfile(user, {
           displayName: name,
           photoURL,
@@ -110,21 +111,27 @@ const Register = () => {
       });
   };
 
-  //  Google Sign-In with DB submission, here sending tyhe data to database to store the default is user 
+  //  Google Sign-In with DB submission, here sending tyhe data to database to store the default is user
   const handleGoogleSignin = () => {
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         const user = result.user;
+        const token = await user.getIdToken();
+        localStorage.setItem("access-token", token);
         const userInfo = {
           name: user.displayName,
           email: user.email.toLowerCase(),
           role: "user",
         };
-// sending data to backendd
+        // sending data to backendd
         axiosInstance
           .post("/users", userInfo)
           .then(() => {
-            Swal.fire("Google Registration Successful!", `Welcome! to Market Monitor ${user.displayName}`, "success");
+            Swal.fire(
+              "Google Registration Successful!",
+              `Welcome! to Market Monitor ${user.displayName}`,
+              "success"
+            );
             navigate("/");
           })
           .catch((err) => {

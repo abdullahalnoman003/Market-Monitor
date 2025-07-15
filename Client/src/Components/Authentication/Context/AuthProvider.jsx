@@ -20,6 +20,7 @@ const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("userRole");
+    localStorage.removeItem("access-token");
     signOut(auth);
   };
 
