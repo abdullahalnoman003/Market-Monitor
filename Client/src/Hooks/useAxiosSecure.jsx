@@ -1,24 +1,22 @@
-
-
-import axios from 'axios';
-import { useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../Components/Authentication/Context/AuthContext';
+import axios from "axios";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../Components/Authentication/Context/AuthContext";
 
 const axiosSecure = axios.create({
-    baseURL: `https://monitor-market-server.vercel.app/`
-        // baseURL: `http://localhost:3000/`
-
-})
+  baseURL: `https://monitor-market-server.vercel.app/`,
+  // baseURL: `http://localhost:3000/`
+});
 
 const useAxiosSecure = () => {
-  const { user, logOut } = useContext(AuthContext);
+  const { logOut } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('access-token');
-    if (!token) return;
-
+    const token = localStorage.getItem("access-token");
+    if (!token) {
+      logOut().then(() => navigate("/login"));
+    }
     axiosSecure.interceptors.request.handlers = [];
     axiosSecure.interceptors.response.handlers = [];
 
@@ -36,10 +34,10 @@ const useAxiosSecure = () => {
         const status = error?.response?.status;
 
         if (status === 403) {
-          navigate('/unauthorized');
+          navigate("/unauthorized");
         } else if (status === 401) {
           logOut()
-            .then(() => navigate('/login'))
+            .then(() => navigate("/login"))
             .catch(() => {});
         }
 
@@ -52,7 +50,6 @@ const useAxiosSecure = () => {
 };
 
 export default useAxiosSecure;
-
 
 // import axios from 'axios';
 // import React, { useContext } from 'react';
