@@ -32,7 +32,7 @@ const AuthProvider = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-base-content">
+      <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-base-100 via-base-200 to-base-300">
         <div className="text-center space-y-3">
           <span className="loading loading-bars loading-lg text-primary"></span>
           <p className="text-xl font-semibold text-primary ">

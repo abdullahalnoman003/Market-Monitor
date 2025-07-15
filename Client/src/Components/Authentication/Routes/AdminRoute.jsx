@@ -11,7 +11,7 @@ const VendorRoute = ({ children }) => {
 
  if (!role) {
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div className="h-screen w-full flex items-center justify-center">
         <div className="text-center">
           <span className="loading loading-bars loading-lg text-primary"></span>
           <p className="text-xl font-semibold text-primary mt-4">
