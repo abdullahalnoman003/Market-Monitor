@@ -46,16 +46,16 @@ const AdvertisementCarousel = () => {
       <h2 className="text-3xl sm:text-4xl font-bold text-center text-primary mb-6">
         📢 Advertisement Highlights
       </h2>
-
-      <Carousel
+      <div className="touch-pan-y">
+<Carousel
         showThumbs={false}
         showStatus={false}
         autoPlay
-        infiniteLoop
-        interval={4000}
-        transitionTime={600}
-        emulateTouch
-        swipeable
+        infiniteLoop={true}
+        interval={3000}
+        transitionTime={1500}
+        emulateTouch={true}
+        swipeable={false}
         showArrows={true}
         className="shadow-lg shadow-primary rounded-2xl p-2"
       >
@@ -83,6 +83,8 @@ const AdvertisementCarousel = () => {
           </div>
         ))}
       </Carousel>
+      </div>
+      
     </motion.div></div>
     
   );
