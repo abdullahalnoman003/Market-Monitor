@@ -53,7 +53,7 @@ const ForgotPassword = () => {
       data-aos="fade-up"
     >
       <motion.div
-        className="w-full max-w-lg shadow-lg rounded-3xl border border-primary p-10 bg-white dark:bg-base-200"
+        className="w-full max-w-lg shadow-lg rounded-3xl border border-primary p-10 bg-white bg-base-200"
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 100 }}
