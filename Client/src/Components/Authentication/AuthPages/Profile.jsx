@@ -2,13 +2,14 @@ import React, { useContext, useState } from "react";
 import { updateProfile } from "firebase/auth";
 import Swal from "sweetalert2";
 import { AuthContext } from "../Context/AuthContext";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const Profile = () => {
+  const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
   const [name, setName] = useState(user?.displayName || "");
   const [photoURL, setPhotoURL] = useState(user?.photoURL || "");
   const [loading, setLoading] = useState(false);
-
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -17,6 +18,11 @@ const Profile = () => {
         displayName: name,
         photoURL: photoURL,
       });
+      const updateUser ={
+        name : name,
+      }
+      axiosSecure.patch(`/users/update?email=${user.email}`, updateUser);
+      
       Swal.fire({
         icon: "success",
         title: "Profile Updated",
