@@ -34,12 +34,10 @@ admin.initializeApp({
 const verifyFireBaseToken = async (req, res, next) => {
   const authHeader = req.headers?.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer")) {
-    return res
-      .status(401)
-      .send({
-        message:
-          "Wait! Who are you?  You have no permission to see the data boss! 😉",
-      });
+    return res.status(401).send({
+      message:
+        "Wait! Who are you?  You have no permission to see the data boss! 😉",
+    });
   }
   const token = authHeader.split(" ")[1];
   try {
@@ -70,16 +68,20 @@ async function run() {
       const email = req.decoded.email;
       const user = await UserCollection.findOne({ email });
       if (user?.role !== "admin") {
-        return res.status(403).send({ message: "Forbidden: Hey you are Not an admin" });
+        return res
+          .status(403)
+          .send({ message: "Forbidden: Hey you are Not an admin" });
       }
       next();
     };
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<Verify Admin >>>>>>>>>>>>>>>>>>
-    const verifyVendor= async (req, res, next) => {
+    const verifyVendor = async (req, res, next) => {
       const email = req.decoded.email;
       const user = await UserCollection.findOne({ email });
       if (user?.role !== "vendor") {
-        return res.status(403).send({ message: "Forbidden: Hey you are Not an Vendor" });
+        return res
+          .status(403)
+          .send({ message: "Forbidden: Hey you are Not an Vendor" });
       }
       next();
     };
@@ -97,41 +99,56 @@ async function run() {
     });
 
     app.get("/users", verifyFireBaseToken, verifyAdmin, async (req, res) => {
-  try {
-    const search = req.query.search?.trim() || "";
+      try {
+        const search = req.query.search?.trim() || "";
 
-    let query = {};
-    if (search) {
-      query = {
-        $or: [
-          { name: { $regex: new RegExp(search, "i") } },
-          { email: { $regex: new RegExp(search, "i") } },
-        ],
-      };
-    }
+        let query = {};
+        if (search) {
+          query = {
+            $or: [
+              { name: { $regex: new RegExp(search, "i") } },
+              { email: { $regex: new RegExp(search, "i") } },
+            ],
+          };
+        }
 
-    const users = await UserCollection.find(query).toArray();
-    res.send(users);
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).send({ message: "Failed to fetch users" });
-  }
-});
+        const users = await UserCollection.find(query).toArray();
+        res.send(users);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).send({ message: "Failed to fetch users" });
+      }
+    });
 
     // app.get("/users", verifyFireBaseToken, verifyAdmin, async (req, res) => {
     //   const User = await UserCollection.find().toArray();
     //   res.send(User);
     // });
 
-    app.patch("/users/role/:id",verifyFireBaseToken, verifyAdmin, async (req, res) => {
-      const id = req.params.id;
-      const { role } = req.body;
+    app.patch("/users/update", async (req, res) => {
+      const email = req.query.email;
+      const { name } = req.body;
       const result = await UserCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { role } }
+        { email: email },
+        { $set: { name } }
       );
       res.send(result);
     });
+
+    app.patch(
+      "/users/role/:id",
+      verifyFireBaseToken,
+      verifyAdmin,
+      async (req, res) => {
+        const id = req.params.id;
+        const { role } = req.body;
+        const result = await UserCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: { role } }
+        );
+        res.send(result);
+      }
+    );
 
     // ------------------------------------------------------Add user to database
     app.post("/users", async (req, res) => {
@@ -177,13 +194,18 @@ async function run() {
       }
     });
     // --------------------------- ADDing PRoduct
-    app.post("/add-product",verifyFireBaseToken, verifyVendor, async (req, res) => {
-      const productData = req.body;
-      const result = await ProductCollection.insertOne(productData);
-      res.send(result);
-    });
+    app.post(
+      "/add-product",
+      verifyFireBaseToken,
+      verifyVendor,
+      async (req, res) => {
+        const productData = req.body;
+        const result = await ProductCollection.insertOne(productData);
+        res.send(result);
+      }
+    );
     // -----------------------------------------Updating Products ----
-    app.put("/update-product/:id",verifyFireBaseToken, async (req, res) => {
+    app.put("/update-product/:id", verifyFireBaseToken, async (req, res) => {
       const { id } = req.params;
       const updatedProduct = req.body;
       const result = await ProductCollection.updateOne(
@@ -193,22 +215,32 @@ async function run() {
       res.send(result);
     });
     // -------------------------------------- Delete Products---------------------
-    app.delete("/delete-product/:id",verifyFireBaseToken,verifyVendor, async (req, res) => {
-      const id = req.params.id;
-      console.log(id);
-      const result = await ProductCollection.deleteOne({
-        _id: new ObjectId(id),
-      });
-      res.send(result);
-    });
+    app.delete(
+      "/delete-product/:id",
+      verifyFireBaseToken,
+      verifyVendor,
+      async (req, res) => {
+        const id = req.params.id;
+        console.log(id);
+        const result = await ProductCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+        res.send(result);
+      }
+    );
     //--------------------------------------------// private route used in vendors specific product
-    app.get("/my-products",verifyFireBaseToken,verifyVendor, async (req, res) => {
-      const email = req.query.email;
-      const prod = await ProductCollection.find({
-        vendor_email: email,
-      }).toArray();
-      res.send(prod);
-    });
+    app.get(
+      "/my-products",
+      verifyFireBaseToken,
+      verifyVendor,
+      async (req, res) => {
+        const email = req.query.email;
+        const prod = await ProductCollection.find({
+          vendor_email: email,
+        }).toArray();
+        res.send(prod);
+      }
+    );
 
     // --------------------------------------------------all Product API in the public route
     app.get("/all-products/v1", async (req, res) => {
@@ -246,44 +278,56 @@ async function run() {
       }
     });
 
-    app.delete("/product/:id",verifyFireBaseToken,verifyAdmin, async (req, res) => {
-      const { id } = req.params;
-      const result = await ProductCollection.deleteOne({
-        _id: new ObjectId(id),
-      });
-      res.send(result);
-    });
-
-    app.patch("/product/status/:id",verifyFireBaseToken,verifyAdmin, async (req, res) => {
-      try {
+    app.delete(
+      "/product/:id",
+      verifyFireBaseToken,
+      verifyAdmin,
+      async (req, res) => {
         const { id } = req.params;
-        const { status, rejectionReason, rejectionFeedback } = req.body;
-
-        const updateFields = { status };
-        if (status === "rejected") {
-          updateFields.rejectionReason = rejectionReason;
-          updateFields.rejectionFeedback = rejectionFeedback;
-        } else {
-          updateFields.rejectionReason = "";
-          updateFields.rejectionFeedback = "";
-        }
-
-        const updatedProduct = await ProductCollection.updateOne(
-          { _id: new ObjectId(id) },
-          { $set: updateFields }
-        );
-
-        if (updatedProduct.modifiedCount > 0) {
-          res
-            .status(200)
-            .send({ message: "Status updated", result: updatedProduct });
-        } else {
-          res.status(400).send({ message: "Failed to update status" });
-        }
-      } catch (error) {
-        res.status(500).send({ message: "Server error", error: error.message });
+        const result = await ProductCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+        res.send(result);
       }
-    });
+    );
+
+    app.patch(
+      "/product/status/:id",
+      verifyFireBaseToken,
+      verifyAdmin,
+      async (req, res) => {
+        try {
+          const { id } = req.params;
+          const { status, rejectionReason, rejectionFeedback } = req.body;
+
+          const updateFields = { status };
+          if (status === "rejected") {
+            updateFields.rejectionReason = rejectionReason;
+            updateFields.rejectionFeedback = rejectionFeedback;
+          } else {
+            updateFields.rejectionReason = "";
+            updateFields.rejectionFeedback = "";
+          }
+
+          const updatedProduct = await ProductCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: updateFields }
+          );
+
+          if (updatedProduct.modifiedCount > 0) {
+            res
+              .status(200)
+              .send({ message: "Status updated", result: updatedProduct });
+          } else {
+            res.status(400).send({ message: "Failed to update status" });
+          }
+        } catch (error) {
+          res
+            .status(500)
+            .send({ message: "Server error", error: error.message });
+        }
+      }
+    );
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Special Offer by Admin <<<<<<<<<<<<<<<<<<
     app.get("/special", async (req, res) => {
@@ -305,25 +349,33 @@ async function run() {
       }
     });
 
-    app.get("/all-products", verifyFireBaseToken, verifyAdmin, async (req, res) => {
-      try {
-        const { sort, start, end } = req.query;
-        const filter = {};
-        if (start || end) {
-          filter.date = {};
-          if (start) filter.date.$gte = start;
-          if (end) filter.date.$lte = end;
+    app.get(
+      "/all-products",
+      verifyFireBaseToken,
+      verifyAdmin,
+      async (req, res) => {
+        try {
+          const { sort, start, end } = req.query;
+          const filter = {};
+          if (start || end) {
+            filter.date = {};
+            if (start) filter.date.$gte = start;
+            if (end) filter.date.$lte = end;
+          }
+          let cursor = ProductCollection.find(filter);
+          if (sort === "asc") cursor = cursor.sort({ price_per_unit: 1 });
+          else if (sort === "desc")
+            cursor = cursor.sort({ price_per_unit: -1 });
+          const products = await cursor.toArray();
+          res.json(products);
+        } catch (err) {
+          console.error("all-products route error:", err);
+          res
+            .status(500)
+            .json({ error: err.message || "Internal Server Error" });
         }
-        let cursor = ProductCollection.find(filter);
-        if (sort === "asc") cursor = cursor.sort({ price_per_unit: 1 });
-        else if (sort === "desc") cursor = cursor.sort({ price_per_unit: -1 });
-        const products = await cursor.toArray();
-        res.json(products);
-      } catch (err) {
-        console.error("all-products route error:", err);
-        res.status(500).json({ error: err.message || "Internal Server Error" });
       }
-    });
+    );
     app.post("/special", async (req, res) => {
       const OfferData = req.body;
       const result = await OfferCollection.insertOne(OfferData);
@@ -338,34 +390,44 @@ async function run() {
 
     // ---------------------------------------- To update the advertisement status
 
-    app.patch("/advertisement/status/:id",verifyFireBaseToken,verifyAdmin, async (req, res) => {
-      const { id } = req.params;
-      const { status, rejectionReason, rejectionFeedback } = req.body;
+    app.patch(
+      "/advertisement/status/:id",
+      verifyFireBaseToken,
+      verifyAdmin,
+      async (req, res) => {
+        const { id } = req.params;
+        const { status, rejectionReason, rejectionFeedback } = req.body;
 
-      const updatedAd = await AdCollection.updateOne(
-        { _id: new ObjectId(id) },
-        {
-          $set: {
-            status: status,
-            rejectionReason: rejectionReason,
-            rejectionFeedback: rejectionFeedback,
-          },
+        const updatedAd = await AdCollection.updateOne(
+          { _id: new ObjectId(id) },
+          {
+            $set: {
+              status: status,
+              rejectionReason: rejectionReason,
+              rejectionFeedback: rejectionFeedback,
+            },
+          }
+        );
+
+        if (updatedAd.modifiedCount > 0) {
+          res.status(200).send(updatedAd);
+        } else {
+          res.status(400).send({ message: "Failed to update status" });
         }
-      );
-
-      if (updatedAd.modifiedCount > 0) {
-        res.status(200).send(updatedAd);
-      } else {
-        res.status(400).send({ message: "Failed to update status" });
       }
-    });
+    );
 
     //----------------------------------------------- To delete the advertisement
-    app.delete("/advertisement/:id",verifyFireBaseToken,verifyAdmin, async (req, res) => {
-      const { id } = req.params;
-      const result = await AdCollection.deleteOne({ _id: new ObjectId(id) });
-      res.send(result);
-    });
+    app.delete(
+      "/advertisement/:id",
+      verifyFireBaseToken,
+      verifyAdmin,
+      async (req, res) => {
+        const { id } = req.params;
+        const result = await AdCollection.deleteOne({ _id: new ObjectId(id) });
+        res.send(result);
+      }
+    );
 
     app.get("/my-advertisements/:id", async (req, res) => {
       const { id } = req.params;
@@ -383,14 +445,19 @@ async function run() {
       res.send(prod);
     });
     // _--------------------------------- Add advertisements to database
-    app.post("/advertisements",verifyFireBaseToken,verifyVendor, async (req, res) => {
-      const AdData = req.body;
-      const result = await AdCollection.insertOne(AdData);
-      res.send(result);
-    });
+    app.post(
+      "/advertisements",
+      verifyFireBaseToken,
+      verifyVendor,
+      async (req, res) => {
+        const AdData = req.body;
+        const result = await AdCollection.insertOne(AdData);
+        res.send(result);
+      }
+    );
 
     //--------------------------------  User Specific advertisements
-    app.put("/my-advertisements/:id",verifyFireBaseToken, async (req, res) => {
+    app.put("/my-advertisements/:id", verifyFireBaseToken, async (req, res) => {
       const { id } = req.params;
       const updatedProduct = req.body;
       const result = await AdCollection.updateOne(
@@ -400,17 +467,22 @@ async function run() {
       res.send(result);
     });
     // ------------------------------ Delete Advertisements
-    app.delete("/advertisements/:id",verifyFireBaseToken,verifyVendor, async (req, res) => {
-      const id = req.params.id;
-      console.log(id);
-      const result = await AdCollection.deleteOne({
-        _id: new ObjectId(id),
-      });
-      res.send(result);
-    });
+    app.delete(
+      "/advertisements/:id",
+      verifyFireBaseToken,
+      verifyVendor,
+      async (req, res) => {
+        const id = req.params.id;
+        console.log(id);
+        const result = await AdCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+        res.send(result);
+      }
+    );
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Review APIS >>>>>>>>>>>>>>>>>>>>>>>
 
-    app.get("/reviews/:id",verifyFireBaseToken, async (req, res) => {
+    app.get("/reviews/:id", verifyFireBaseToken, async (req, res) => {
       const { id } = req.params;
       const reviewsData = await RevCollection.find({ productId: id })
         .sort({ created_at: -1 })
@@ -418,19 +490,19 @@ async function run() {
 
       res.send(reviewsData);
     });
-    app.post("/reviews",verifyFireBaseToken, async (req, res) => {
+    app.post("/reviews", verifyFireBaseToken, async (req, res) => {
       const RevData = req.body;
       const result = await RevCollection.insertOne(RevData);
       res.send(result);
     });
-    app.delete("/delete-review/:id",verifyFireBaseToken, async (req, res) => {
+    app.delete("/delete-review/:id", verifyFireBaseToken, async (req, res) => {
       const id = req.params.id;
       const result = await RevCollection.deleteOne({
         _id: new ObjectId(id),
       });
       res.send(result);
     });
-    app.patch("/update-review/:id",verifyFireBaseToken, async (req, res) => {
+    app.patch("/update-review/:id", verifyFireBaseToken, async (req, res) => {
       const id = req.params.id;
       console.log(id);
       const { comment } = req.body;
@@ -443,7 +515,7 @@ async function run() {
     });
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> watch list >>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    app.get("/watchlist",verifyFireBaseToken, async (req, res) => {
+    app.get("/watchlist", verifyFireBaseToken, async (req, res) => {
       try {
         const email = req.query.userEmail;
         const userWlist = await WatchCollection.find({
@@ -456,7 +528,7 @@ async function run() {
       }
     });
 
-    app.post("/watchlist",verifyFireBaseToken, async (req, res) => {
+    app.post("/watchlist", verifyFireBaseToken, async (req, res) => {
       const watchData = req.body; // here chekingh if duplicate or not
       const exists = await WatchCollection.findOne({
         userEmail: watchData.userEmail,
@@ -468,13 +540,17 @@ async function run() {
       const result = await WatchCollection.insertOne(watchData);
       res.send(result);
     });
-    app.delete("/delete-watchlist/:id",verifyFireBaseToken, async (req, res) => {
-      const id = req.params.id;
-      const result = await WatchCollection.deleteOne({
-        _id: new ObjectId(id),
-      });
-      res.send(result);
-    });
+    app.delete(
+      "/delete-watchlist/:id",
+      verifyFireBaseToken,
+      async (req, res) => {
+        const id = req.params.id;
+        const result = await WatchCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+        res.send(result);
+      }
+    );
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Stripe
     app.post("/create-payment-intent", async (req, res) => {
@@ -505,7 +581,7 @@ async function run() {
         res.status(500).send({ message: "Failed to save order" });
       }
     });
-    app.get("/orders",verifyFireBaseToken, async (req, res) => {
+    app.get("/orders", verifyFireBaseToken, async (req, res) => {
       try {
         const email = req.query.buyerEmail;
         const OrderList = await OrderCollection.find({
