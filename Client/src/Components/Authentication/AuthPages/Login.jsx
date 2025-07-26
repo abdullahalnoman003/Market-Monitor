@@ -120,7 +120,7 @@ const Login = () => {
       data-aos="fade-up"
     >
       <motion.div
-        className="grid md:grid-cols-2 shadow-lg shadow-primary rounded-3xl overflow-hidden border border-primary max-w-4xl w-full bg-white bg-base-200"
+        className="grid md:grid-cols-2 shadow-lg shadow-primary rounded-3xl overflow-hidden border border-primary max-w-4xl w-full  bg-base-200"
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 100 }}

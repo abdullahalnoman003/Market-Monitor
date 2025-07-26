@@ -164,7 +164,7 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-base-100">
       <motion.div
-        className="grid md:grid-cols-2 shadow-lg shadow-primary rounded-3xl overflow-hidden border border-primary max-w-5xl w-full bg-white bg-base-200 "
+        className="grid md:grid-cols-2 shadow-lg shadow-primary rounded-3xl overflow-hidden border border-primary max-w-5xl w-full bg-base-200 "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
