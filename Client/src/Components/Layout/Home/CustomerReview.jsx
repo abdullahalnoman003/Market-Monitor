@@ -71,7 +71,7 @@ const CustomerReview = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="bg-base-100 border-2 border-primary/50 shadow-lg rounded-2xl p-6 flex flex-col items-center gap-4"
+          className="bg-base-100 border-2 border-primary/50 shadow-md shadow-primary rounded-2xl p-6 flex flex-col items-center gap-4"
         >
           <img
             src={review.avatar}
