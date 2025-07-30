@@ -12,8 +12,10 @@ import { auth } from "../../../Firebase/firebase.init";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import useAxios from "../../../Hooks/useAxios";
+import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const Register = () => {
+  useDocumentTitle("Register | Let's Explore Market Monitor")
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
   const imgbbApiKey = import.meta.env.VITE_IMGBB_API_KEY;
