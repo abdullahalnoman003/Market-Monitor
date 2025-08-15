@@ -186,6 +186,71 @@ npm run dev
 ```
 
 ---
+## 📦 Dependencies
+
+See below for a list of major libraries and tools used in the frontend.
+Sure! Here's the **README section** with just the dependencies, formatted and ready to copy:
+
+---
+### 🧩 **Frontend Dependencies** (`client/`)
+
+#### ✅ Core Libraries
+
+* **react**
+* **react-dom**
+* **react-router-dom**
+
+#### 🎨 Styling & UI
+
+* **tailwindcss**
+* **daisyui**
+* **aos** (scroll animations)
+* **lottie-react** (vector animations)
+* **react-icons**
+* **react-responsive-carousel**
+
+#### 📊 Data & Visualization
+
+* **recharts**
+* **react-countup**
+* **react-datepicker**
+
+#### 🔍 Forms & UX
+
+* **react-hook-form**
+* **react-toastify**
+* **sweetalert2**
+* **react-tooltip**
+* **react-simple-typewriter**
+
+#### ⚙️ Functionality
+
+* **axios**
+* **firebase**
+* **@tanstack/react-query**
+* **react-infinite-scroll-component**
+
+#### 💳 Payments
+
+* **@stripe/react-stripe-js**
+* **@stripe/stripe-js**
+
+---
+
+### 🛠️ Dev Dependencies
+
+* **vite**
+* **@vitejs/plugin-react**
+* **eslint**
+* **@eslint/js**
+* **eslint-plugin-react-hooks**
+* **eslint-plugin-react-refresh**
+* **@types/react**
+* **@types/react-dom**
+* **globals**
+
+---
+
 
 ## ✅ Deployment Checklist
 
