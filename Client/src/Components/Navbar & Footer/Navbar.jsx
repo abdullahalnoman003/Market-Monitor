@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import ThemeToggle from "./ThemeToggle";
 import { AuthContext } from "../Authentication/Context/AuthContext";
 import useUserRole from "../../Hooks/useUserRole";
 
@@ -139,7 +138,6 @@ const Navbar = () => {
 
       {/* Theme & Auth */}
       <div className="navbar-end flex items-center gap-2">
-        <ThemeToggle />
         {!user ? (
           <>
             <NavLink to="/login" className="font-bold">
