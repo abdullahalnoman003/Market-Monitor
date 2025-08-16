@@ -8,7 +8,8 @@ import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 const UserLayout = () => {
   useDocumentTitle("User Dashboard | Market Monitor")
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="max-w-[1537px] mx-auto">
+      <div className="min-h-screen flex flex-col">
       {/* Top Navbar */}
       <Navbar />
 
@@ -71,6 +72,7 @@ const UserLayout = () => {
 
       {/* Footer */}
       <Footer />
+    </div>
     </div>
   );
 };
