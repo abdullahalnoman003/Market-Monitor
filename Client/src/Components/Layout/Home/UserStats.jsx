@@ -28,7 +28,7 @@ const stats = [
 
 const UserStats = () => {
   return (
-    <div className=" -mb-2">
+    <div className=" -mb-2 max-w-[1537px] mx-auto">
     <div className="py-12  rounded-2xl mx-4 md:mx-12  ">
       <h2 className="text-3xl md:text-4xl font-bold text-center text-primary mb-10">
         📊 Our Platform in Numbers

@@ -11,7 +11,7 @@ import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 const Hero = () => {
   useDocumentTitle("Market Monitor || Home")
   return (
-    <div>
+    <div className="max-w-[1537px] mx-auto">
       <div
         className="hero min-h-[556px] max-h-screen rounded-2xl relative overflow-hidden"
         style={{

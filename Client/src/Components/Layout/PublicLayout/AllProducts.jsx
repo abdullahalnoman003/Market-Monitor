@@ -19,7 +19,7 @@ const LoadingSpinner = () => (
 );
 
 const ProductCard = ({ product }) => (
-  <div className="card bg-base-100 shadow-primary shadow-md hover:shadow-xl border border-primary-300 transition-all duration-300">
+  <div className="card bg-base-100 shadow-primary shadow-md hover:shadow-lg border border-primary-300 transition-all duration-300">
     <figure className="p-5">
       <img
         src={product.product_image}
