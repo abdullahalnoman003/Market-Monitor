@@ -46,33 +46,65 @@ const Login = () => {
         const user = result.user;
         const token = await user.getIdToken();
         localStorage.setItem("access-token", token);
+        
+        // Create comprehensive user info object for Google sign-in
         const userInfo = {
           name: user.displayName,
           email: user.email.toLowerCase(),
           role: "user",
+          photoURL: user.photoURL || null,
+          phone: null,
+          address: null,
+          dateOfBirth: null,
+          bio: null,
+          joinDate: new Date().toISOString(),
+          isVerified: true, // Google accounts are pre-verified
+          lastLogin: new Date().toISOString(),
         };
-        axiosInstance
-          .post("/users", userInfo)
-          .then(() => {
-            Swal.fire(
-              `Login Successful`,
-              `Welcome! ${user.displayName}`,
-              "success"
-            );
-            navigate(from, { replace: true });
-          })
-          .catch((err) => {
-            console.error("Failed to sync Google user to DB:", err);
-            Swal.fire(
-              "Login Successful",
-              `Welcome! ${user.displayName}`,
-              "success"
-            );
-            navigate(from, { replace: true });
+        
+        // Try to sync user data with backend (for new Google users)
+        try {
+          await axiosInstance.post("/users", userInfo);
+        } catch (err) {
+          // User might already exist, that's okay
+          console.log("User might already exist in DB:", err.message);
+        }
+        
+        // Update last login regardless
+        try {
+          await axiosInstance.patch(`/users/update?email=${user.email}`, {
+            lastLogin: new Date().toISOString(),
           });
+        } catch (err) {
+          console.log("Failed to update last login:", err.message);
+        }
+        
+        Swal.fire({
+          icon: "success",
+          title: "Login Successful!",
+          text: `Welcome back, ${user.displayName}!`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        navigate(from, { replace: true });
       })
       .catch((error) => {
-        Swal.fire("Google Login Failed", error.message, "error");
+        console.error("Google login error:", error);
+        let errorMessage = "Google login failed. Please try again.";
+        
+        if (error.code === "auth/popup-closed-by-user") {
+          errorMessage = "Sign-in was cancelled. Please try again.";
+        } else if (error.code === "auth/network-request-failed") {
+          errorMessage = "Network error. Please check your connection and try again.";
+        } else if (error.code === "auth/account-exists-with-different-credential") {
+          errorMessage = "An account with this email already exists. Please sign in with your email and password.";
+        }
+        
+        Swal.fire({
+          icon: "error",
+          title: "Google Login Failed",
+          text: errorMessage,
+        });
       })
       .finally(() => setLoading(false));
   };
@@ -90,22 +122,46 @@ const Login = () => {
         const user = res.user;
         const token = await user.getIdToken();
         localStorage.setItem("access-token", token);
+        
+        // Update last login in backend
+        try {
+          await axiosInstance.patch(`/users/update?email=${user.email}`, {
+            lastLogin: new Date().toISOString(),
+          });
+        } catch (err) {
+          console.log("Failed to update last login:", err.message);
+        }
+        
         Swal.fire({
           icon: "success",
           title: "Login Successful!",
-          text: `Welcome! ${res.user.displayName}`,
-          background: "primary",
-          showConfirmButton: false,
+          text: `Welcome back, ${user.displayName || 'User'}!`,
           timer: 2000,
+          showConfirmButton: false,
         });
         navigate(from, { replace: true });
       })
       .catch((error) => {
+        console.error("Email login error:", error);
+        let errorMessage = "Login failed. Please check your credentials.";
+        
+        if (error.code === "auth/user-not-found") {
+          errorMessage = "No account found with this email. Please register first.";
+        } else if (error.code === "auth/wrong-password") {
+          errorMessage = "Incorrect password. Please try again.";
+        } else if (error.code === "auth/invalid-email") {
+          errorMessage = "Invalid email address. Please enter a valid email.";
+        } else if (error.code === "auth/user-disabled") {
+          errorMessage = "This account has been disabled. Please contact support.";
+        } else if (error.code === "auth/too-many-requests") {
+          errorMessage = "Too many failed login attempts. Please try again later.";
+        }
+        
         Swal.fire({
           icon: "error",
           title: "Login Failed!",
-          text: error.message,
-          timer: 2000,
+          text: errorMessage,
+          timer: 3000,
         });
         setLoading(false);
       });
@@ -113,7 +169,7 @@ const Login = () => {
 
   return (
     <motion.div
-      className="min-h-screen flex justify-center items-center px-4 py-12 bg-base-100"
+      className="min-h-screen flex justify-center items-center px-4 py-12 "
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
