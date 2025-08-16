@@ -62,10 +62,15 @@ const Register = () => {
     setLoading(true);
     const { name, email, password, image } = data;
 
-    const photoURL = await handleImageUpload(image[0]);
-    if (!photoURL) {
-      setLoading(false);
-      return;
+    let photoURL = null;
+    
+    // Only upload image if one is selected
+    if (image && image[0]) {
+      photoURL = await handleImageUpload(image[0]);
+      if (!photoURL) {
+        setLoading(false);
+        return;
+      }
     }
 
     createUserWithEmailAndPassword(auth, email, password)
@@ -73,80 +78,144 @@ const Register = () => {
         const user = userCredential.user;
         const token = await user.getIdToken();
         localStorage.setItem("access-token", token);
-        updateProfile(user, {
+        
+        // Update Firebase profile with available data
+        const profileData = {
           displayName: name,
-          photoURL,
-        }).then(() => {
-          // creating object to store user info, here data means the form data in data the name and thefield name
+        };
+        if (photoURL) {
+          profileData.photoURL = photoURL;
+        }
+        
+        updateProfile(user, profileData).then(() => {
+          // Create comprehensive user info object for backend
           const userInfo = {
             name: data.name,
             email: data.email.toLowerCase(),
             role: "user",
+            photoURL: photoURL || null,
+            phone: null,
+            address: null,
+            dateOfBirth: null,
+            bio: null,
+            joinDate: new Date().toISOString(),
+            isVerified: false,
+            lastLogin: new Date().toISOString(),
           };
-          // post send to backend to store the user info
+          
+          // Send user info to backend
           axiosInstance
             .post("/users", userInfo)
             .then(() => {
-              Swal.fire(
-                "Registration Successful!",
-                `Welcome to Market Monitor ${user.displayName}.`,
-                "success"
-              );
+              Swal.fire({
+                icon: "success",
+                title: "Registration Successful!",
+                text: `Welcome to Market Monitor, ${user.displayName}!`,
+                timer: 2500,
+                showConfirmButton: false,
+              });
               reset();
               setLoading(false);
               navigate("/");
-            }) // in catch if any error happend then it will send error..
+            })
             .catch((err) => {
               console.error("Error saving user to DB:", err);
-              Swal.fire(
-                "Registration Failed",
-                "Failed to save user to DB",
-                "error"
-              );
+              Swal.fire({
+                icon: "error",
+                title: "Registration Failed",
+                text: "Failed to save user information. Please try again.",
+              });
               setLoading(false);
             });
         });
       })
       .catch((error) => {
-        Swal.fire("Registration Failed", error.message, "error");
+        console.error("Registration error:", error);
+        let errorMessage = "Registration failed. Please try again.";
+        
+        if (error.code === "auth/email-already-in-use") {
+          errorMessage = "This email is already registered. Please use a different email or try logging in.";
+        } else if (error.code === "auth/weak-password") {
+          errorMessage = "Password is too weak. Please choose a stronger password.";
+        } else if (error.code === "auth/invalid-email") {
+          errorMessage = "Invalid email address. Please enter a valid email.";
+        }
+        
+        Swal.fire({
+          icon: "error",
+          title: "Registration Failed",
+          text: errorMessage,
+        });
         setLoading(false);
       });
   };
 
-  //  Google Sign-In with DB submission, here sending tyhe data to database to store the default is user
+  //  Google Sign-In with DB submission, here sending the data to database to store with default user role
   const handleGoogleSignin = () => {
+    setLoading(true);
     signInWithPopup(auth, provider)
       .then(async (result) => {
         const user = result.user;
         const token = await user.getIdToken();
         localStorage.setItem("access-token", token);
+        
+        // Create comprehensive user info object for Google sign-in
         const userInfo = {
           name: user.displayName,
           email: user.email.toLowerCase(),
           role: "user",
+          photoURL: user.photoURL || null,
+          phone: null,
+          address: null,
+          dateOfBirth: null,
+          bio: null,
+          joinDate: new Date().toISOString(),
+          isVerified: true, // Google accounts are pre-verified
+          lastLogin: new Date().toISOString(),
         };
-        // sending data to backendd
+        
+        // Send user data to backend
         axiosInstance
           .post("/users", userInfo)
           .then(() => {
-            Swal.fire(
-              "Google Registration Successful!",
-              `Welcome! to Market Monitor ${user.displayName}`,
-              "success"
-            );
+            Swal.fire({
+              icon: "success",
+              title: "Google Registration Successful!",
+              text: `Welcome to Market Monitor, ${user.displayName}!`,
+              timer: 2500,
+              showConfirmButton: false,
+            });
             navigate("/");
           })
           .catch((err) => {
             console.error("Google user DB save failed:", err);
-            Swal.fire(
-              "Google Registration Failed",
-              "Could not save user info",
-              "error"
-            );
+            // Even if DB save fails, let user proceed as Firebase auth succeeded
+            Swal.fire({
+              icon: "success",
+              title: "Welcome!",
+              text: `Successfully signed in with Google, ${user.displayName}!`,
+              timer: 2500,
+              showConfirmButton: false,
+            });
+            navigate("/");
           });
       })
       .catch((error) => {
-        Swal.fire("Google Sign-in Failed", error.message, "error");
+        console.error("Google sign-in error:", error);
+        let errorMessage = "Google sign-in failed. Please try again.";
+        
+        if (error.code === "auth/popup-closed-by-user") {
+          errorMessage = "Sign-in was cancelled. Please try again.";
+        } else if (error.code === "auth/network-request-failed") {
+          errorMessage = "Network error. Please check your connection and try again.";
+        }
+        
+        Swal.fire({
+          icon: "error",
+          title: "Google Sign-in Failed",
+          text: errorMessage,
+        });
+        setLoading(false);
       });
   };
 
@@ -164,7 +233,7 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-base-100">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10 ">
       <motion.div
         className="grid md:grid-cols-2 shadow-lg shadow-primary rounded-3xl overflow-hidden border border-primary max-w-5xl w-full bg-base-200 "
         initial={{ opacity: 0 }}
@@ -265,13 +334,16 @@ const Register = () => {
 
             {/* Image Upload */}
             <div>
-              <label className="label font-semibold">Profile Image</label>
+              <label className="label font-semibold">Profile Image (Optional)</label>
               <input
                 type="file"
                 accept="image/*"
                 {...register("image")}
                 className="file-input file-input-bordered w-full file-input-primary"
               />
+              <label className="label">
+                <span className="label-text-alt">You can add a profile image now or later from your profile page</span>
+              </label>
               {errors.image && (
                 <p className="text-red-600 text-sm">{errors.image.message}</p>
               )}

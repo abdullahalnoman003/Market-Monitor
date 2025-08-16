@@ -59,7 +59,6 @@ const Navbar = () => {
     return <NavLink to="/dashboard/user">Dashboard</NavLink>;
   };
   return (
-    <div className="">
       <div className=" place-items-center bg-base-100/90 ">
       <div className="navbar max-w-[1537px]  backdrop-blur-2xl shadow-md fixed px-6 max-md:pl-1 top-0 z-20">
       <div className="navbar-start">
@@ -184,7 +183,6 @@ const Navbar = () => {
           </div>
         )}
       </div>
-    </div>
     </div>
     </div>
     
