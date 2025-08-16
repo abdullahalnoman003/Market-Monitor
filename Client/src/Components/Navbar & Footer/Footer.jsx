@@ -6,7 +6,9 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-base-300 text-base-content py-10 px-6 z-20 rounded-t-2xl shadow-inner transition-colors duration-300">
+    <div className="bg-base-300">
+      <div className="max-w-[1537px] mx-auto ">
+      <footer className=" text-base-content py-10 px-6 z-20 rounded-t-2xl shadow-inner transition-colors duration-300">
       <div className="max-w-screen mx-auto grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         {/* Branding */}
         <div className="text-center sm:text-left">
@@ -114,6 +116,8 @@ const Footer = () => {
         </div>
       </div>
     </footer>
+    </div>
+    </div>
   );
 };
 

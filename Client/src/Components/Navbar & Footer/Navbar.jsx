@@ -59,7 +59,9 @@ const Navbar = () => {
     return <NavLink to="/dashboard/user">Dashboard</NavLink>;
   };
   return (
-    <div className="navbar bg-base-100/90 backdrop-blur-md shadow-md fixed px-6 max-md:pl-1 top-0 z-20">
+    <div className="">
+      <div className=" place-items-center bg-base-100/90 ">
+      <div className="navbar max-w-[1537px]  backdrop-blur-2xl shadow-md fixed px-6 max-md:pl-1 top-0 z-20">
       <div className="navbar-start">
         <div className="dropdown">
           <button tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -183,6 +185,9 @@ const Navbar = () => {
         )}
       </div>
     </div>
+    </div>
+    </div>
+    
   );
 };
 
