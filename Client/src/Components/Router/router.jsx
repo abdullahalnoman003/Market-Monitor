@@ -46,6 +46,7 @@ import AdvertisementCarousel from "../Layout/Home/AdvertisementCarousel";
 import CustomerReviews from "../Layout/Home/CustomerReview";
 import HowItWorks from "../Layout/Home/HowItWorks";
 import UserStats from "../Layout/Home/UserStats";
+import MarketTrends from "../Layout/Home/MarketTrends";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
         <HowItWorks/>
         <AdvertisementCarousel></AdvertisementCarousel>
         <ProductSection></ProductSection>
+        <MarketTrends></MarketTrends>
         <FeaturedSection></FeaturedSection>
         <CustomerReviews></CustomerReviews>
         <UserStats/>
