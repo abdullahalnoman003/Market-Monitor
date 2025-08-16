@@ -55,6 +55,11 @@ const VendorLayout = () => {
             </li>
 
             <li>
+              <NavLink to="/dashboard/vendor/profile">
+                🧑‍🏫 Profile
+              </NavLink>
+            </li>
+            <li>
               <NavLink to="/dashboard/vendor/add-product">
                 ➕ Add Product
               </NavLink>

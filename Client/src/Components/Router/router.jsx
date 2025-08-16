@@ -161,6 +161,10 @@ const router = createBrowserRouter([
         element: <Profile></Profile>,
       },
       {
+        path: "profile",
+        element: <Profile></Profile>,
+      },
+      {
         path: "all-users",
         element: <AllUsers></AllUsers>,
       },
@@ -205,6 +209,10 @@ const router = createBrowserRouter([
         element: <UserWelcome></UserWelcome>,
       },
       {
+        path: "profile",
+        element: <Profile></Profile>,
+      },
+      {
         path: "manage-watchlist",
         element: <ManageWatchlist></ManageWatchlist>,
       },
@@ -236,6 +244,10 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <VendorWelcome></VendorWelcome>,
+      },
+      {
+        path: "profile",
+        element: <Profile></Profile>,
       },
       {
         path: "add-product",

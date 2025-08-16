@@ -167,11 +167,6 @@ const Navbar = () => {
               className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-40"
             >
               <li>
-                <NavLink to="/profile" className="text-sm">
-                  Profile
-                </NavLink>
-              </li>
-              <li>
                 <button
                   onClick={handleLogout}
                   className="text-red-600 hover:text-red-800 font-semibold text-sm"

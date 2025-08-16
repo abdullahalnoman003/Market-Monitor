@@ -58,6 +58,9 @@ const UserLayout = () => {
 
             {/* Sidebar Links */}
             <li>
+              <NavLink to="/dashboard/user/profile">🧑‍🏫 Profile</NavLink>
+            </li>
+            <li>
               <NavLink to="/dashboard/user/manage-watchlist">⭐ Manage Watchlist</NavLink>
             </li>
             <li>

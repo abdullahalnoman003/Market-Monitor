@@ -56,6 +56,9 @@ const AdminLayout = () => {
 
             {/* Admin Sidebar Links */}
             <li>
+              <NavLink to="/dashboard/admin/profile">🧑‍🏫 Profile</NavLink>
+            </li>
+            <li>
               <NavLink to="/dashboard/admin/all-users">👥 All Users</NavLink>
             </li>
             <li>
