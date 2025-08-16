@@ -87,6 +87,36 @@ async function run() {
     };
 
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<   USER APIS here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    // GET user profile by email (for the enhanced profile page)
+    app.get("/users/profile", async (req, res) => {
+      try {
+        const email = req.query.email;
+        if (!email) {
+          return res.status(400).send({ message: "Email is required" });
+        }
+        
+        const user = await UserCollection.findOne({ email });
+        if (!user) {
+          return res.status(404).send({ message: "User not found" });
+        }
+        const profileData = {
+          displayName: user.name,
+          email: user.email,
+          photoURL: user.photoURL,
+          phone: user.phone,
+          address: user.address,
+          dateOfBirth: user.dateOfBirth,
+          bio: user.bio,
+          joinDate: user.joinDate,
+        };
+        
+        res.send(profileData);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        res.status(500).send({ message: "Failed to fetch user profile" });
+      }
+    });
+
     // GET user role by email
     app.get("/users/role/:email", async (req, res) => {
       const email = req.params.email;
@@ -126,13 +156,28 @@ async function run() {
     // });
 
     app.patch("/users/update", async (req, res) => {
-      const email = req.query.email;
-      const { name } = req.body;
-      const result = await UserCollection.updateOne(
-        { email: email },
-        { $set: { name } }
-      );
-      res.send(result);
+      try {
+        const email = req.query.email;
+        if (!email) {
+          return res.status(400).send({ message: "Email is required" });
+        }
+
+        const updateData = req.body;
+        
+        const result = await UserCollection.updateOne(
+          { email: email },
+          { $set: updateData }
+        );
+        
+        if (result.matchedCount === 0) {
+          return res.status(404).send({ message: "User not found" });
+        }
+        
+        res.send({ message: "Profile updated successfully", result });
+      } catch (error) {
+        console.error("Error updating user profile:", error);
+        res.status(500).send({ message: "Failed to update user profile" });
+      }
     });
 
     app.patch(
@@ -150,18 +195,39 @@ async function run() {
       }
     );
 
-    // ------------------------------------------------------Add user to database
     app.post("/users", async (req, res) => {
-      const userInfo = req.body;
       try {
+        const userInfo = req.body;
         const existingUser = await UserCollection.findOne({
           email: userInfo.email,
         });
+        
         if (existingUser) {
-          return res.status(200).send({ message: "User already exists" });
+          return res.status(200).send({ 
+            message: "User already exists",
+            isExisting: true 
+          });
         }
-        const result = await UserCollection.insertOne(userInfo);
-        res.status(201).send(result);
+        const newUser = {
+          name: userInfo.name || null,
+          email: userInfo.email,
+          role: userInfo.role || "user",
+          photoURL: userInfo.photoURL || null,
+          phone: userInfo.phone || null,
+          address: userInfo.address || null,
+          dateOfBirth: userInfo.dateOfBirth || null,
+          bio: userInfo.bio || null,
+          joinDate: userInfo.joinDate || new Date().toISOString(),
+          isVerified: userInfo.isVerified || false,
+          lastLogin: userInfo.lastLogin || new Date().toISOString(),
+        };
+        
+        const result = await UserCollection.insertOne(newUser);
+        res.status(201).send({ 
+          message: "User created successfully", 
+          result,
+          isExisting: false 
+        });
       } catch (err) {
         console.error("DB error:", err);
         res.status(500).send({ error: "Failed to save user" });
