@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { HiBars3, HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { AuthContext } from "../Authentication/Context/AuthContext";
 import useUserRole from "../../Hooks/useUserRole";
 
@@ -13,174 +14,165 @@ const Navbar = () => {
   useEffect(() => {
     if (userRole) {
       localStorage.setItem("userRole", userRole);
-      setRole(userRole); 
+      setRole(userRole);
     }
   }, [userRole]);
 
   const handleLogout = async () => {
-    Swal.fire({
+    const result = await Swal.fire({
       title: "Are you sure?",
-      text: "You will be logged out!",
+      text: "You will be logged out from your account.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, logout!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await logout();
-          Swal.fire({
-            title: "Logged out!",
-            text: "You have successfully logged out.",
-            icon: "success",
-            timer: 1500,
-            showConfirmButton: false,
-          });
-          navigate("/")
-        } catch (error) {
-          Swal.fire({
-            title: "Error!",
-            text: `Logout failed: ${error.message}`,
-            icon: "error",
-          });
-        }
-      }
+      confirmButtonText: "Yes, logout",
     });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await logout();
+      Swal.fire({
+        title: "Logged out",
+        text: "You have been logged out successfully.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      navigate("/");
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: `Logout failed: ${error.message}`,
+        icon: "error",
+      });
+    }
   };
 
+  const dashboardPath =
+    role === "admin"
+      ? "/dashboard/admin"
+      : role === "vendor"
+      ? "/dashboard/vendor"
+      : "/dashboard/user";
 
-  const renderDashboardLink = () => {
-    if (!role) return null;
-    if (role === "admin")
-      return <NavLink to="/dashboard/admin">Admin Dashboard</NavLink>;
-    if (role === "vendor")
-      return <NavLink to="/dashboard/vendor">Vendor Dashboard</NavLink>;
-    return <NavLink to="/dashboard/user">Dashboard</NavLink>;
-  };
+  const navLinkClass = ({ isActive }) =>
+    `rounded-lg px-3 py-2 text-sm font-semibold transition-colors duration-200 ${
+      isActive ? "text-primary bg-primary/10" : "text-base-content/80 hover:text-primary hover:bg-base-200"
+    }`;
+
+  const navItems = (
+    <>
+      <li>
+        <NavLink to="/" className={navLinkClass}>
+          Home
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/all-products" className={navLinkClass}>
+          All Products
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/offers" className={navLinkClass}>
+          Offers
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/about" className={navLinkClass}>
+          About Us
+        </NavLink>
+      </li>
+      {user && (
+        <li>
+          <NavLink to={dashboardPath} className={navLinkClass}>
+            Dashboard
+          </NavLink>
+        </li>
+      )}
+    </>
+  );
+
   return (
-      <div className=" place-items-center bg-base-100/90 ">
-      <div className="navbar max-w-[1537px]  backdrop-blur-2xl shadow-md fixed px-6 max-md:pl-1 top-0 z-20">
-      <div className="navbar-start">
-        <div className="dropdown">
-          <button tabIndex={0} className="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 z-50"
-          >
-            <li className="font-bold">
-              <NavLink to="/">Home</NavLink>
-            </li>
-            <li className="font-bold">
-              <NavLink to="/all-products">All Products</NavLink>
-            </li>
-            <li className="font-bold">
-              <NavLink to="/offers">Offers</NavLink>
-            </li>
-            <li className="font-bold">
-              <NavLink to="/about">About Us</NavLink>
-            </li>
-            {user && <li className="font-bold">{renderDashboardLink()}</li>}
-          </ul>
-        </div>
-
-        {/* Logo */}
-        <Link
-          to="/"
-          className="flex items-center gap-1 text-2xl max-md:text-sm font-extrabold"
-        >
-          <img className="max-md:w-8 w-10" src="/logo.png" alt="" />
-          <span className="text-primary max-md:hidden">Market</span>
-          <span className="text-secondary  max-md:hidden">Monitor</span>
-        </Link>
-      </div>
-
-      {/* Desktop Menu */}
-      <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal gap-3 px-1">
-          <li>
-            <NavLink to="/" className="font-bold">
-              Home
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/all-products" className="font-bold">
-              All Products
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/offers" className="font-bold">
-              Offer
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/about" className="font-bold">
-              About Us
-            </NavLink>
-          </li>
-          {user && <li className="font-bold">{renderDashboardLink()}</li>}
-        </ul>
-      </div>
-
-      {/* Theme & Auth */}
-      <div className="navbar-end flex items-center gap-2">
-        {!user ? (
-          <>
-            <NavLink to="/login" className="font-bold">
-              Login
-            </NavLink>
-            <NavLink to="/register" className="font-bold">
-              Register
-            </NavLink>
-          </>
-        ) : (
-          <div className="dropdown dropdown-end">
-            <div
+    <header className="fixed inset-x-0 top-0 z-30 border-b border-base-300/60 bg-base-100/85 backdrop-blur-xl">
+      <div className="navbar mx-auto min-h-[4.25rem] w-full max-w-7xl px-3 sm:px-6 lg:px-8">
+        <div className="navbar-start gap-1 sm:gap-2">
+          <div className="dropdown lg:hidden">
+            <button
+              type="button"
               tabIndex={0}
-              className="btn btn-ghost btn-circle avatar tooltip tooltip-left"
-              data-tip={user.displayName || "User"}
+              className="btn btn-ghost btn-sm sm:btn-md"
+              aria-label="Open menu"
             >
-              <div className="w-10 rounded-full border hover:shadow-sm border-primary shadow-primary">
-                <img
-                  src={user.photoURL || "/default-user.png"}
-                  alt="User Avatar"
-                />
-              </div>
-            </div>
+              <HiBars3 className="text-xl" />
+            </button>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-40"
+              className="menu dropdown-content z-[40] mt-3 w-56 rounded-2xl border border-base-300/60 bg-base-100 p-2 shadow-xl"
             >
-              <li>
-                <button
-                  onClick={handleLogout}
-                  className="text-red-600 hover:text-red-800 font-semibold text-sm"
-                >
-                  Logout
-                </button>
-              </li>
+              {navItems}
             </ul>
           </div>
-        )}
+
+          <Link to="/" className="flex items-center gap-2 rounded-xl px-1 py-1 sm:px-2">
+            <img className="h-8 w-8 sm:h-10 sm:w-10" src="/logo.png" alt="Market Monitor logo" />
+            <span className="flex flex-col leading-none">
+              <span className="text-sm font-extrabold text-primary sm:text-lg">Market</span>
+              <span className="text-xs font-bold text-secondary sm:text-base">Monitor</span>
+            </span>
+          </Link>
+        </div>
+
+        <div className="navbar-center hidden lg:flex">
+          <ul className="menu menu-horizontal gap-1 px-1">{navItems}</ul>
+        </div>
+
+        <div className="navbar-end gap-2">
+          {!user ? (
+            <div className="flex items-center gap-1 sm:gap-2">
+              <NavLink to="/login" className="btn btn-ghost btn-sm sm:btn-md">
+                Login
+              </NavLink>
+              <NavLink to="/register" className="btn btn-primary btn-sm sm:btn-md">
+                Register
+              </NavLink>
+            </div>
+          ) : (
+            <div className="dropdown dropdown-end">
+              <button
+                type="button"
+                tabIndex={0}
+                className="btn btn-ghost btn-circle avatar border border-primary/30"
+                aria-label="Open user menu"
+              >
+                <div className="w-9 rounded-full sm:w-10">
+                  <img src={user.photoURL || "/default-user.png"} alt={user.displayName || "User avatar"} />
+                </div>
+              </button>
+              <ul
+                tabIndex={0}
+                className="menu dropdown-content z-[40] mt-3 w-56 rounded-2xl border border-base-300/60 bg-base-100 p-2 shadow-xl"
+              >
+                <li className="menu-title px-3 py-2 text-xs text-base-content/60">
+                  {user.displayName || "Signed in user"}
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 font-semibold text-error"
+                  >
+                    <HiOutlineArrowRightOnRectangle className="text-lg" />
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-    </div>
-    
+    </header>
   );
 };
 
