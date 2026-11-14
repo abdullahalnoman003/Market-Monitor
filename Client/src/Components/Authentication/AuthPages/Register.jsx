@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FcGoogle } from "react-icons/fc";
+import { FaUserPlus } from "react-icons/fa";
 import { auth } from "../../../Firebase/firebase.init";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -15,7 +16,7 @@ import useAxios from "../../../Hooks/useAxios";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 
 const Register = () => {
-  useDocumentTitle("Register | Let's Explore Market Monitor")
+  useDocumentTitle("Register | Market Monitor");
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
   const imgbbApiKey = import.meta.env.VITE_IMGBB_API_KEY;
@@ -23,9 +24,8 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const axiosInstance = useAxios(); // imoporting axios instance from the axios hook
+  const axiosInstance = useAxios();
 
-  // here is the initialization for the   React hook form
   const {
     register,
     handleSubmit,
@@ -36,23 +36,18 @@ const Register = () => {
   const handleImageUpload = async (imageFile) => {
     const formData = new FormData();
     formData.append("image", imageFile);
-
-    // image upload into imgbb
     setUploadingImage(true);
     try {
-      const res = await fetch(
-        `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
+        method: "POST",
+        body: formData,
+      });
       const data = await res.json();
       setUploadingImage(false);
       return data.data.url;
     } catch (err) {
       console.error("Image upload error:", err);
-      Swal.fire("Image Upload Failed", "Please try again later", "error");
+      Swal.fire("Image Upload Failed", "Please try again later.", "error");
       setUploadingImage(false);
       return null;
     }
@@ -63,8 +58,6 @@ const Register = () => {
     const { name, email, password, image } = data;
 
     let photoURL = null;
-    
-    // Only upload image if one is selected
     if (image && image[0]) {
       photoURL = await handleImageUpload(image[0]);
       if (!photoURL) {
@@ -78,17 +71,11 @@ const Register = () => {
         const user = userCredential.user;
         const token = await user.getIdToken();
         localStorage.setItem("access-token", token);
-        
-        // Update Firebase profile with available data
-        const profileData = {
-          displayName: name,
-        };
-        if (photoURL) {
-          profileData.photoURL = photoURL;
-        }
-        
+
+        const profileData = { displayName: name };
+        if (photoURL) profileData.photoURL = photoURL;
+
         updateProfile(user, profileData).then(() => {
-          // Create comprehensive user info object for backend
           const userInfo = {
             name: data.name,
             email: data.email.toLowerCase(),
@@ -102,16 +89,15 @@ const Register = () => {
             isVerified: false,
             lastLogin: new Date().toISOString(),
           };
-          
-          // Send user info to backend
+
           axiosInstance
             .post("/users", userInfo)
             .then(() => {
               Swal.fire({
                 icon: "success",
-                title: "Registration Successful!",
-                text: `Welcome to Market Monitor, ${user.displayName}!`,
-                timer: 2500,
+                title: "Registration Successful",
+                text: `Welcome to Market Monitor, ${user.displayName || name}.`,
+                timer: 2200,
                 showConfirmButton: false,
               });
               reset();
@@ -120,11 +106,7 @@ const Register = () => {
             })
             .catch((err) => {
               console.error("Error saving user to DB:", err);
-              Swal.fire({
-                icon: "error",
-                title: "Registration Failed",
-                text: "Failed to save user information. Please try again.",
-              });
+              Swal.fire({ icon: "error", title: "Registration Failed", text: "Failed to save user information. Please try again." });
               setLoading(false);
             });
         });
@@ -132,25 +114,14 @@ const Register = () => {
       .catch((error) => {
         console.error("Registration error:", error);
         let errorMessage = "Registration failed. Please try again.";
-        
-        if (error.code === "auth/email-already-in-use") {
-          errorMessage = "This email is already registered. Please use a different email or try logging in.";
-        } else if (error.code === "auth/weak-password") {
-          errorMessage = "Password is too weak. Please choose a stronger password.";
-        } else if (error.code === "auth/invalid-email") {
-          errorMessage = "Invalid email address. Please enter a valid email.";
-        }
-        
-        Swal.fire({
-          icon: "error",
-          title: "Registration Failed",
-          text: errorMessage,
-        });
+        if (error.code === "auth/email-already-in-use") errorMessage = "This email is already registered. Please use a different email or log in.";
+        else if (error.code === "auth/weak-password") errorMessage = "Password is too weak. Please choose a stronger password.";
+        else if (error.code === "auth/invalid-email") errorMessage = "Invalid email address. Please enter a valid email.";
+        Swal.fire({ icon: "error", title: "Registration Failed", text: errorMessage });
         setLoading(false);
       });
   };
 
-  //  Google Sign-In with DB submission, here sending the data to database to store with default user role
   const handleGoogleSignin = () => {
     setLoading(true);
     signInWithPopup(auth, provider)
@@ -158,8 +129,7 @@ const Register = () => {
         const user = result.user;
         const token = await user.getIdToken();
         localStorage.setItem("access-token", token);
-        
-        // Create comprehensive user info object for Google sign-in
+
         const userInfo = {
           name: user.displayName,
           email: user.email.toLowerCase(),
@@ -170,31 +140,29 @@ const Register = () => {
           dateOfBirth: null,
           bio: null,
           joinDate: new Date().toISOString(),
-          isVerified: true, // Google accounts are pre-verified
+          isVerified: true,
           lastLogin: new Date().toISOString(),
         };
-        
-        // Send user data to backend
+
         axiosInstance
           .post("/users", userInfo)
           .then(() => {
             Swal.fire({
               icon: "success",
-              title: "Google Registration Successful!",
-              text: `Welcome to Market Monitor, ${user.displayName}!`,
-              timer: 2500,
+              title: "Registration Successful",
+              text: `Welcome to Market Monitor, ${user.displayName || "User"}.`,
+              timer: 2200,
               showConfirmButton: false,
             });
             navigate("/");
           })
           .catch((err) => {
             console.error("Google user DB save failed:", err);
-            // Even if DB save fails, let user proceed as Firebase auth succeeded
             Swal.fire({
               icon: "success",
-              title: "Welcome!",
-              text: `Successfully signed in with Google, ${user.displayName}!`,
-              timer: 2500,
+              title: "Welcome",
+              text: `Successfully signed in with Google, ${user.displayName || "User"}.`,
+              timer: 2200,
               showConfirmButton: false,
             });
             navigate("/");
@@ -203,29 +171,20 @@ const Register = () => {
       .catch((error) => {
         console.error("Google sign-in error:", error);
         let errorMessage = "Google sign-in failed. Please try again.";
-        
-        if (error.code === "auth/popup-closed-by-user") {
-          errorMessage = "Sign-in was cancelled. Please try again.";
-        } else if (error.code === "auth/network-request-failed") {
-          errorMessage = "Network error. Please check your connection and try again.";
-        }
-        
-        Swal.fire({
-          icon: "error",
-          title: "Google Sign-in Failed",
-          text: errorMessage,
-        });
+        if (error.code === "auth/popup-closed-by-user") errorMessage = "Sign-in was cancelled. Please try again.";
+        else if (error.code === "auth/network-request-failed") errorMessage = "Network error. Please check your connection and try again.";
+        Swal.fire({ icon: "error", title: "Google Sign-in Failed", text: errorMessage });
         setLoading(false);
       });
   };
 
   if (loading || uploadingImage) {
     return (
-      <div className="h-screen flex justify-center items-center bg-base-200">
+      <div className="section-shell flex min-h-[70vh] items-center justify-center">
         <div className="text-center">
           <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold text-primary mt-4">
-            Registering... Please wait.
+          <p className="mt-4 text-sm font-semibold text-base-content/80 sm:text-base">
+            {uploadingImage ? "Uploading image..." : "Creating your account..."}
           </p>
         </div>
       </div>
@@ -233,159 +192,102 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 ">
+    <motion.section
+      className="section-shell flex min-h-[calc(100vh-6rem)] items-center justify-center py-8 sm:py-12"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.35 }}
+    >
       <motion.div
-        className="grid md:grid-cols-2 shadow-lg shadow-primary rounded-3xl overflow-hidden border border-primary max-w-5xl w-full bg-base-200 "
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        className="grid w-full max-w-5xl overflow-hidden rounded-3xl border border-base-300/60 bg-base-200/40 shadow-xl md:grid-cols-2"
+        initial={{ y: 12, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4 }}
       >
-        {/* Left Side Image */}
-        <motion.div
-          className="hidden md:block bg-cover bg-center"
+        <div
+          className="hidden bg-cover bg-center md:block"
           style={{
-            backgroundImage: `url('https://www.leadquizzes.com/wp-content/uploads/2019/06/New-blog-graphic-16.jpg')`,
+            backgroundImage: "url('https://www.leadquizzes.com/wp-content/uploads/2019/06/New-blog-graphic-16.jpg')",
             minHeight: "100%",
           }}
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        ></motion.div>
+        />
 
-        {/* Form Side */}
-        <div className="p-10 w-full">
-          <h1 className="text-4xl font-extrabold text-center text-primary mb-2">
-            📝 Create Your Account
-          </h1>
-          <p className="text-center text-base-content mb-6 text-sm">
-            Register to track prices, connect with vendors, and compare markets.
-          </p>
+        <div className="p-6 sm:p-8 lg:p-10">
+          <div className="mb-6 text-center md:text-left">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary sm:text-sm">
+              <FaUserPlus /> Create Account
+            </div>
+            <h1 className="text-3xl font-extrabold text-base-content sm:text-4xl">Join Market Monitor</h1>
+            <p className="mt-2 text-sm text-base-content/70 sm:text-base">
+              Register to track prices, compare markets, and access personalized dashboards.
+            </p>
+          </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Full Name */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="label font-semibold">Full Name</label>
               <input
                 type="text"
                 {...register("name", { required: "Name is required" })}
-                className="input input-bordered w-full input-primary"
-                placeholder="Your Name"
+                className="input input-bordered w-full"
+                placeholder="Your name"
               />
-              {errors.name && (
-                <p className="text-red-600 text-sm">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="mt-1 text-sm text-error">{errors.name.message}</p>}
             </div>
 
-            {/* Email */}
             <div>
-              <label className="label">
-                <span className="label-text font-medium">Email</span>
-              </label>
+              <label className="label font-semibold">Email</label>
               <input
                 type="email"
-                placeholder="someone@example.com"
-                className="input input-bordered w-full input-primary"
+                placeholder="name@example.com"
+                className="input input-bordered w-full"
                 {...register("email", {
                   required: "Email is required",
-                  pattern: {
-                    value: /^\S+@\S+\.\S+$/,
-                    message: "Please enter a valid email address",
-                  },
+                  pattern: { value: /^\S+@\S+\.\S+$/, message: "Please enter a valid email address" },
                 })}
               />
-              {errors.email && (
-                <p className="text-red-600 text-sm mt-1">
-                  {errors.email.message}
-                </p>
-              )}
+              {errors.email && <p className="mt-1 text-sm text-error">{errors.email.message}</p>}
             </div>
 
-            {/* Password */}
             <div>
-              <label className="label">
-                <span className="label-text font-medium">Password</span>
-              </label>
+              <label className="label font-semibold">Password</label>
               <input
                 type="password"
                 placeholder="Minimum 8 characters"
-                className="input input-bordered w-full input-primary"
-                minLength={8}
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                title="Must contain at least 1 number, 1 uppercase and 1 lowercase letter, and at least 8 characters"
+                className="input input-bordered w-full"
                 {...register("password", {
                   required: "Password is required",
-                  minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters",
-                  },
+                  minLength: { value: 8, message: "Password must be at least 8 characters" },
                   pattern: {
                     value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
-                    message:
-                      "Must contain at least 1 number, 1 uppercase and 1 lowercase letter",
+                    message: "Include at least 1 number, 1 uppercase, and 1 lowercase letter",
                   },
                 })}
               />
-              {errors.password && (
-                <p className="text-red-600 text-sm mt-1">
-                  {errors.password.message}
-                </p>
-              )}
+              {errors.password && <p className="mt-1 text-sm text-error">{errors.password.message}</p>}
             </div>
 
-            {/* Image Upload */}
             <div>
               <label className="label font-semibold">Profile Image (Optional)</label>
-              <input
-                type="file"
-                accept="image/*"
-                {...register("image")}
-                className="file-input file-input-bordered w-full file-input-primary"
-              />
-              <label className="label">
-                <span className="label-text-alt">You can add a profile image now or later from your profile page</span>
-              </label>
-              {errors.image && (
-                <p className="text-red-600 text-sm">{errors.image.message}</p>
-              )}
+              <input type="file" accept="image/*" {...register("image")} className="file-input file-input-bordered w-full" />
+              <p className="mt-1 text-xs text-base-content/60">You can add a profile image now or update it later.</p>
             </div>
 
-            {/* Submit Button */}
-            <motion.button
-              type="submit"
-              className="btn btn-primary w-full text-base-100 font-bold"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Register
-            </motion.button>
+            <button type="submit" className="btn btn-primary w-full">Register</button>
 
-            <div className="divider text-sm">OR</div>
+            <div className="divider text-xs sm:text-sm">OR</div>
 
-            {/* Google Sign-up */}
-            <motion.button
-              type="button"
-              onClick={handleGoogleSignin}
-              className="btn w-full border flex items-center justify-center gap-3 hover:bg-base-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FcGoogle size={22} />
-              Sign Up with Google
-            </motion.button>
+            <button type="button" onClick={handleGoogleSignin} className="btn btn-outline w-full gap-3">
+              <FcGoogle size={20} /> Sign Up with Google
+            </button>
 
-            <p className="text-center text-sm mt-3">
-              Already have an account?
-              <Link
-                to="/login"
-                className="text-blue-600 font-semibold hover:underline ml-1"
-              >
-                Login
-              </Link>
+            <p className="pt-1 text-center text-sm text-base-content/70">
+              Already have an account? <Link to="/login" className="link link-primary font-semibold">Login</Link>
             </p>
           </form>
         </div>
       </motion.div>
-    </div>
+    </motion.section>
   );
 };
 

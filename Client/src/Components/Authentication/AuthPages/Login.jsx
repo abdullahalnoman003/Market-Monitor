@@ -6,7 +6,7 @@ import {
 } from "firebase/auth";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { FaEyeSlash, FaEye } from "react-icons/fa";
+import { FaEyeSlash, FaEye, FaChartLine } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import { auth } from "../../../Firebase/firebase.init";
@@ -24,21 +24,17 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Loading Spinner
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div className="section-shell flex min-h-[70vh] items-center justify-center">
         <div className="text-center">
           <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold text-primary mt-4">
-            Logging in... Please wait.
-          </p>
+          <p className="mt-4 text-sm font-semibold text-base-content/80 sm:text-base">Signing you in...</p>
         </div>
       </div>
     );
   }
 
-  // Google Login function
   const handleGoogleSignin = () => {
     setLoading(true);
     signInWithPopup(auth, provider)
@@ -46,8 +42,7 @@ const Login = () => {
         const user = result.user;
         const token = await user.getIdToken();
         localStorage.setItem("access-token", token);
-        
-        // Create comprehensive user info object for Google sign-in
+
         const userInfo = {
           name: user.displayName,
           email: user.email.toLowerCase(),
@@ -58,19 +53,16 @@ const Login = () => {
           dateOfBirth: null,
           bio: null,
           joinDate: new Date().toISOString(),
-          isVerified: true, // Google accounts are pre-verified
+          isVerified: true,
           lastLogin: new Date().toISOString(),
         };
-        
-        // Try to sync user data with backend (for new Google users)
+
         try {
           await axiosInstance.post("/users", userInfo);
         } catch (err) {
-          // User might already exist, that's okay
           console.log("User might already exist in DB:", err.message);
         }
-        
-        // Update last login regardless
+
         try {
           await axiosInstance.patch(`/users/update?email=${user.email}`, {
             lastLogin: new Date().toISOString(),
@@ -78,12 +70,12 @@ const Login = () => {
         } catch (err) {
           console.log("Failed to update last login:", err.message);
         }
-        
+
         Swal.fire({
           icon: "success",
-          title: "Login Successful!",
-          text: `Welcome back, ${user.displayName}!`,
-          timer: 2000,
+          title: "Login Successful",
+          text: `Welcome back, ${user.displayName || "User"}.`,
+          timer: 1800,
           showConfirmButton: false,
         });
         navigate(from, { replace: true });
@@ -91,25 +83,14 @@ const Login = () => {
       .catch((error) => {
         console.error("Google login error:", error);
         let errorMessage = "Google login failed. Please try again.";
-        
-        if (error.code === "auth/popup-closed-by-user") {
-          errorMessage = "Sign-in was cancelled. Please try again.";
-        } else if (error.code === "auth/network-request-failed") {
-          errorMessage = "Network error. Please check your connection and try again.";
-        } else if (error.code === "auth/account-exists-with-different-credential") {
-          errorMessage = "An account with this email already exists. Please sign in with your email and password.";
-        }
-        
-        Swal.fire({
-          icon: "error",
-          title: "Google Login Failed",
-          text: errorMessage,
-        });
+        if (error.code === "auth/popup-closed-by-user") errorMessage = "Sign-in was cancelled. Please try again.";
+        else if (error.code === "auth/network-request-failed") errorMessage = "Network error. Please check your connection.";
+        else if (error.code === "auth/account-exists-with-different-credential") errorMessage = "An account with this email already exists. Please sign in with email and password.";
+        Swal.fire({ icon: "error", title: "Google Login Failed", text: errorMessage });
       })
       .finally(() => setLoading(false));
   };
 
-  // Email/Password Login function
   const handleEmailLogin = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
@@ -122,8 +103,6 @@ const Login = () => {
         const user = res.user;
         const token = await user.getIdToken();
         localStorage.setItem("access-token", token);
-        
-        // Update last login in backend
         try {
           await axiosInstance.patch(`/users/update?email=${user.email}`, {
             lastLogin: new Date().toISOString(),
@@ -131,12 +110,11 @@ const Login = () => {
         } catch (err) {
           console.log("Failed to update last login:", err.message);
         }
-        
         Swal.fire({
           icon: "success",
-          title: "Login Successful!",
-          text: `Welcome back, ${user.displayName || 'User'}!`,
-          timer: 2000,
+          title: "Login Successful",
+          text: `Welcome back, ${user.displayName || "User"}.`,
+          timer: 1800,
           showConfirmButton: false,
         });
         navigate(from, { replace: true });
@@ -144,84 +122,55 @@ const Login = () => {
       .catch((error) => {
         console.error("Email login error:", error);
         let errorMessage = "Login failed. Please check your credentials.";
-        
-        if (error.code === "auth/user-not-found") {
-          errorMessage = "No account found with this email. Please register first.";
-        } else if (error.code === "auth/wrong-password") {
-          errorMessage = "Incorrect password. Please try again.";
-        } else if (error.code === "auth/invalid-email") {
-          errorMessage = "Invalid email address. Please enter a valid email.";
-        } else if (error.code === "auth/user-disabled") {
-          errorMessage = "This account has been disabled. Please contact support.";
-        } else if (error.code === "auth/too-many-requests") {
-          errorMessage = "Too many failed login attempts. Please try again later.";
-        }
-        
-        Swal.fire({
-          icon: "error",
-          title: "Login Failed!",
-          text: errorMessage,
-          timer: 3000,
-        });
+        if (error.code === "auth/user-not-found") errorMessage = "No account found with this email. Please register first.";
+        else if (error.code === "auth/wrong-password") errorMessage = "Incorrect password. Please try again.";
+        else if (error.code === "auth/invalid-email") errorMessage = "Invalid email address.";
+        else if (error.code === "auth/user-disabled") errorMessage = "This account has been disabled. Please contact support.";
+        else if (error.code === "auth/too-many-requests") errorMessage = "Too many failed attempts. Please try again later.";
+        Swal.fire({ icon: "error", title: "Login Failed", text: errorMessage, timer: 3000 });
         setLoading(false);
       });
   };
 
   return (
-    <motion.div
-      className="min-h-screen flex justify-center items-center px-4 py-12 "
+    <motion.section
+      className="section-shell flex min-h-[calc(100vh-6rem)] items-center justify-center py-8 sm:py-12"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
-      data-aos="fade-up"
+      transition={{ duration: 0.35 }}
     >
       <motion.div
-        className="grid md:grid-cols-2 shadow-lg shadow-primary rounded-3xl overflow-hidden border border-primary max-w-4xl w-full  bg-base-200"
-        initial={{ scale: 0.95 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", stiffness: 100 }}
+        className="grid w-full max-w-5xl overflow-hidden rounded-3xl border border-base-300/60 bg-base-200/40 shadow-xl md:grid-cols-2"
+        initial={{ y: 12, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4 }}
       >
-        {/* Left Side Image */}
-        <motion.div
-          className="hidden md:block bg-cover bg-center"
+        <div
+          className="hidden bg-cover bg-center md:block"
           style={{
             backgroundImage:
               "url(https://static.vecteezy.com/system/resources/previews/005/879/539/non_2x/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg)",
             minHeight: "100%",
           }}
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        ></motion.div>
+        />
 
-        {/* Right Side Form */}
-        <motion.div
-          className="p-10 w-full"
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="text-4xl font-extrabold text-center text-primary mb-2">
-            📊 Welcome to Market Monitor
-          </h1>
-          <p className="text-center text-base-content mb-8 text-sm">
-            Log in to access real-time market data, vendor tools, and more.
-          </p>
+        <div className="p-6 sm:p-8 lg:p-10">
+          <div className="mb-6 text-center md:text-left">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary sm:text-sm">
+              <FaChartLine /> Market Monitor Access
+            </div>
+            <h1 className="text-3xl font-extrabold text-base-content sm:text-4xl">Welcome Back</h1>
+            <p className="mt-2 text-sm text-base-content/70 sm:text-base">
+              Sign in to access market data, dashboards, and role-based tools.
+            </p>
+          </div>
 
-          <form onSubmit={handleEmailLogin} className="space-y-5">
-            {/* Email */}
+          <form onSubmit={handleEmailLogin} className="space-y-4 sm:space-y-5">
             <div className="form-control">
               <label className="label font-semibold">Email</label>
-              <input
-                type="email"
-                name="email"
-                className="input input-bordered w-full"
-                placeholder="Enter your email"
-                required
-              />
+              <input type="email" name="email" className="input input-bordered w-full" placeholder="Enter your email" required />
             </div>
 
-            {/* Password */}
             <div className="form-control">
               <label className="label font-semibold">Password</label>
               <div className="relative">
@@ -234,58 +183,34 @@ const Login = () => {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-3 z-5"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/70 hover:text-base-content"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              <div className="text-right mt-1">
-                <Link to="/forgot-password" className="text-blue-600 text-sm">
-                  Forgot password?
-                </Link>
+              <div className="mt-1 text-right">
+                <Link to="/forgot-password" className="link link-primary text-sm">Forgot password?</Link>
               </div>
             </div>
 
-            {/* Login Button */}
-            <motion.button
-              type="submit"
-              className="btn btn-primary w-full text-base-100 font-bold"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Login
-            </motion.button>
+            <button type="submit" className="btn btn-primary w-full">Login</button>
 
-            {/* OR Divider */}
-            <div className="divider text-sm">OR</div>
+            <div className="divider text-xs sm:text-sm">OR</div>
 
-            {/* Google Login */}
-            <motion.button
-              type="button"
-              onClick={handleGoogleSignin}
-              className="btn w-full border flex items-center justify-center gap-3 hover:bg-base-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FcGoogle size={22} />
-              Continue with Google
-            </motion.button>
+            <button type="button" onClick={handleGoogleSignin} className="btn btn-outline w-full gap-3">
+              <FcGoogle size={20} /> Continue with Google
+            </button>
 
-            {/* Register Prompt */}
-            <p className="text-center text-sm mt-3">
-              Don’t have an account?
-              <Link
-                to="/register"
-                className="text-blue-600 font-semibold hover:underline ml-1"
-              >
-                Register
-              </Link>
+            <p className="pt-1 text-center text-sm text-base-content/70">
+              Don&apos;t have an account?{" "}
+              <Link to="/register" className="link link-primary font-semibold">Register</Link>
             </p>
           </form>
-        </motion.div>
+        </div>
       </motion.div>
-    </motion.div>
+    </motion.section>
   );
 };
 
