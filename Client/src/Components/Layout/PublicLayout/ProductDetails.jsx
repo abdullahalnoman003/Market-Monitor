@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FaRegBookmark } from "react-icons/fa";
+import { FaRegBookmark, FaComments, FaChartBar, FaStar } from "react-icons/fa";
 import { FaCartPlus } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import {
@@ -10,7 +10,6 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useUserRole from "../../../Hooks/useUserRole";
@@ -49,14 +48,14 @@ const ProductDetails = () => {
         setProduct(null);
         setLoading(false);
       });
-  }, [id]);
+  }, [id, axiosSecure]);
 
   useEffect(() => {
     axiosSecure
       .get(`/reviews/${id}`)
       .then((res) => setReviews(Array.isArray(res.data) ? res.data : []))
       .catch(() => setReviews([]));
-  }, [id]);
+  }, [id, axiosSecure]);
 
   const handleAddToWatchlist = () => {
     if (!user || isAdminOrVendor) return;
@@ -104,11 +103,11 @@ const ProductDetails = () => {
       date: new Date().toISOString().split("T")[0],
     };
 
-    axiosSecure.post("/reviews", reviewData).then((res) => {
+    axiosSecure.post("/reviews", reviewData).then(() => {
       setReviews((prev) => [reviewData, ...prev]);
       setComment("");
       setRating(0);
-      Swal.fire("Review submitted!", "", "success");
+      Swal.fire("Review submitted", "", "success");
     });
   };
 
@@ -157,20 +156,20 @@ const ProductDetails = () => {
     if (!compareDate) return;
 
     const baseDatePrice = chartData.find((d) => d.date === compareDate);
-    const latestPrice = chartData[chartData.length - 1]; // most recent
+    const latestPrice = chartData[chartData.length - 1];
 
     if (baseDatePrice) {
       const diff = latestPrice.price - baseDatePrice.price;
       const changeText =
         diff > 0
-          ? `🔺 Price increased by ৳${diff} since ${compareDate}`
+          ? `Price increased by ৳${diff} since ${compareDate}`
           : diff < 0
-          ? `🔻 Price decreased by ৳${Math.abs(diff)} since ${compareDate}`
+          ? `Price decreased by ৳${Math.abs(diff)} since ${compareDate}`
           : `Price remained the same since ${compareDate}`;
       setCompareSummary(changeText);
-      setCompareData(chartData); // show all data
+      setCompareData(chartData);
     } else {
-      Swal.fire("No data found for selected date","Select Another please","info");
+      Swal.fire("No data found for selected date", "Please select another date.", "info");
     }
   };
 
@@ -242,13 +241,13 @@ const ProductDetails = () => {
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-2xl font-semibold text-primary">
-          💬 User Comments
+        <h3 className="flex items-center gap-2 text-2xl font-semibold text-primary">
+          <FaComments /> User Reviews
         </h3>
         {reviews.map((r, i) => (
           <div key={i} className="bg-base-200 p-4 rounded-lg space-y-2">
             <p>
-              <b>{r.name}</b> ({r.email}) - ⭐ {r.rating} on {r.date}
+              <b>{r.name}</b> ({r.email}) - <span className="inline-flex items-center gap-1"><FaStar className="text-warning" /> {r.rating}</span> on {r.date}
             </p>
             <p>{r.comment}</p>
             {editingReviewId === r._id && (
@@ -321,15 +320,15 @@ const ProductDetails = () => {
               <div>
                 Rating:
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <span
+                  <button
+                    type="button"
                     key={star}
                     onClick={() => setRating(star)}
-                    className={`cursor-pointer text-xl ${
-                      star <= rating ? "text-yellow-500" : "text-gray-400"
-                    }`}
+                    className={`cursor-pointer text-xl ${star <= rating ? "text-warning" : "text-base-content/30"}`}
+                    aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
                   >
                     ★
-                  </span>
+                  </button>
                 ))}
               </div>
               <button type="submit" className="btn btn-success btn-sm">
@@ -341,8 +340,8 @@ const ProductDetails = () => {
       </div>
 
       <div>
-        <h3 className="text-xl font-semibold mb-3 text-primary">
-          📊 Price Comparison
+        <h3 className="text-xl font-semibold mb-3 text-primary flex items-center gap-2">
+          <FaChartBar /> Price Comparison
         </h3>
 
         {/* Date Input + Buttons */}

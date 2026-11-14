@@ -6,63 +6,75 @@ import { Link } from "react-router-dom";
 import useAxios from "../../../Hooks/useAxios";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import ProductNotFound from "../../Error/ProductNotFound";
-import { MdErrorOutline } from "react-icons/md";
 import { motion } from "framer-motion";
+import {
+  MdErrorOutline,
+  MdCalendarMonth,
+  MdSort,
+  MdSearch,
+  MdStorefront,
+  MdPerson,
+  MdAttachMoney,
+} from "react-icons/md";
+import { FaArrowRight } from "react-icons/fa";
 
 const LoadingSpinner = () => (
-  <div className="min-h-screen w-full flex items-center justify-center bg-base">
-    <div className="text-center space-y-3">
+  <div className="section-shell flex min-h-[60vh] items-center justify-center">
+    <div className="space-y-3 text-center">
       <span className="loading loading-bars loading-lg text-primary"></span>
-      <p className="text-xl font-semibold">Please Wait...</p>
+      <p className="text-sm font-medium text-base-content/70 sm:text-base">Loading products...</p>
     </div>
   </div>
 );
 
 const ProductCard = ({ product }) => (
-  <div className="card bg-base-100 shadow-primary shadow-md hover:shadow-lg border border-primary-300 transition-all duration-300">
-    <figure className="p-5">
+  <article className="surface-card flex h-full flex-col overflow-hidden">
+    <figure className="relative">
       <img
         src={product.product_image}
-        alt={product.item_name}
-        className="rounded-xl h-48 w-full object-cover"
+        alt={product.item_name || "Product"}
+        className="h-48 w-full object-cover"
+        loading="lazy"
       />
     </figure>
-    <div className="card-body space-y-2 px-5">
-      <h3 className="card-title text-primary font-semibold text-lg">
-        🥦 {product.item_name}
-      </h3>
-      <p>
-        <b>💰 Price:</b> ৳{product.price_per_unit}
-      </p>
-      <p>
-        <b>📅 Date:</b> {product.date}
-      </p>
-      <p>
-        <b>🏪 Market:</b> {product.market_name}
-      </p>
-      <p>
-        <b>👨‍🌾 Vendor:</b> {product.vendor_name}
-      </p>
-      <div className="mt-4">
+    <div className="flex flex-1 flex-col p-5">
+      <h3 className="text-lg font-bold text-base-content">{product.item_name}</h3>
+      <div className="mt-3 space-y-2 text-sm text-base-content/75">
+        <p className="flex items-center gap-2">
+          <MdAttachMoney className="text-success" /> Price: <span className="font-semibold text-base-content">৳{product.price_per_unit}</span>
+        </p>
+        <p className="flex items-center gap-2">
+          <MdCalendarMonth className="text-primary" /> Date: {product.date}
+        </p>
+        <p className="flex items-center gap-2">
+          <MdStorefront className="text-secondary" /> Market: {product.market_name}
+        </p>
+        <p className="flex items-center gap-2">
+          <MdPerson className="text-accent" /> Vendor: {product.vendor_name}
+        </p>
+      </div>
+      <div className="mt-5">
         <Link to={`/product/${product._id}`}>
-          <button className="btn btn-sm btn-primary w-full">
-            🔍 View Details
+          <button className="btn btn-primary btn-sm w-full gap-2 sm:btn-md">
+            View Details
+            <FaArrowRight />
           </button>
         </Link>
       </div>
     </div>
-  </div>
+  </article>
 );
 
 const AllProducts = () => {
   const axiosInstance = useAxios();
-  useDocumentTitle("All Products || Market Monitor");
+  useDocumentTitle("All Products | Market Monitor");
 
   const [sortOrder, setSortOrder] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [page, setPage] = useState(1);
   const limit = 6;
+
   useEffect(() => {
     setPage(1);
   }, [startDate, endDate, sortOrder]);
@@ -88,64 +100,65 @@ const AllProducts = () => {
   });
 
   if (isLoading) return <LoadingSpinner />;
-if (isError)
-  return (
-    <motion.div
-      className="min-h-screen flex flex-col items-center justify-center text-red-500 space-y-4"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-    >
-      <MdErrorOutline className="text-6xl animate-pulse" />
-      <h2 className="text-2xl font-semibold">Oops! Something went wrong.</h2>
-      <p className="text-base opacity-80 text-center px-4 max-w-md">
-        We couldn’t load the products at this time. Please check your connection
-        or try again later.
-      </p>
-      <button
-        onClick={() => window.location.reload()}
-        className="btn btn-error text-white mt-2"
+
+  if (isError) {
+    return (
+      <motion.div
+        className="section-shell flex min-h-[70vh] flex-col items-center justify-center space-y-4 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
       >
-        🔁 Reload Page
-      </button>
-    </motion.div>
-  );
-
+        <MdErrorOutline className="text-6xl text-error" />
+        <h2 className="text-2xl font-semibold text-base-content">Unable to load products</h2>
+        <p className="max-w-md text-sm text-base-content/70 sm:text-base">
+          Please check your connection and try again. If the issue persists, verify the backend service is available.
+        </p>
+        <button onClick={() => window.location.reload()} className="btn btn-primary">
+          Reload Page
+        </button>
+      </motion.div>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h2 className="text-4xl font-bold text-center mb-6 text-primary">
-        🛍️ All Market Products
-      </h2>
+    <section className="section-shell py-8 sm:py-10 lg:py-12">
+      <div className="text-center">
+        <h1 className="section-title">All Market Products</h1>
+        <p className="section-subtitle">Browse products by date range and price to compare market listings efficiently.</p>
+      </div>
 
-      {/* Filters */}
-      <div className="bg-base-200 rounded-xl p-4 md:p-6 shadow-md mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex flex-col">
-            <label className="font-semibold text-sm mb-1">📅 Start Date</label>
+      <div className="surface-card mt-8 p-4 sm:p-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="flex flex-col gap-1.5">
+            <label className="flex items-center gap-2 text-sm font-semibold text-base-content/80">
+              <MdCalendarMonth className="text-primary" /> Start Date
+            </label>
             <DatePicker
               selected={startDate}
               onChange={setStartDate}
               className="input input-bordered w-full"
-              placeholderText="Start date"
+              placeholderText="Select start date"
               dateFormat="yyyy-MM-dd"
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="font-semibold text-sm mb-1">📅 End Date</label>
+          <div className="flex flex-col gap-1.5">
+            <label className="flex items-center gap-2 text-sm font-semibold text-base-content/80">
+              <MdCalendarMonth className="text-primary" /> End Date
+            </label>
             <DatePicker
               selected={endDate}
               onChange={setEndDate}
               className="input input-bordered w-full"
-              placeholderText="End date"
+              placeholderText="Select end date"
               dateFormat="yyyy-MM-dd"
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="font-semibold text-sm mb-1">
-              💵 Sort by Price
+          <div className="flex flex-col gap-1.5">
+            <label className="flex items-center gap-2 text-sm font-semibold text-base-content/80">
+              <MdSort className="text-primary" /> Sort by Price
             </label>
             <select
               value={sortOrder}
@@ -153,47 +166,51 @@ if (isError)
               className="select select-bordered w-full"
             >
               <option value="">Default</option>
-              <option value="asc">🔼 Low to High</option>
-              <option value="desc">🔽 High to Low</option>
+              <option value="asc">Low to High</option>
+              <option value="desc">High to Low</option>
             </select>
           </div>
         </div>
+        <div className="mt-4 flex items-center gap-2 text-xs text-base-content/60 sm:text-sm">
+          <MdSearch />
+          Filters are applied automatically when changed.
+        </div>
       </div>
 
-      {/* Show products or fallback */}
       {products.length === 0 ? (
-        <ProductNotFound />
+        <div className="mt-8">
+          <ProductNotFound />
+        </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>
 
-          {/* Pagination */}
-          <div className="mt-10 flex justify-center gap-4">
-        <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-          className="btn btn-sm btn-outline btn-primary"
-        >
-          Prev
-        </button>
-        <span className="text-primary font-medium">
-          Page {page} of {totalPages}
-        </span>
-        <button
-          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={page === totalPages}
-          className="btn btn-sm btn-outline btn-primary"
-        >
-          Next
-        </button>
-      </div>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="btn btn-sm btn-outline btn-primary sm:btn-md"
+            >
+              Previous
+            </button>
+            <span className="rounded-lg border border-base-300/70 bg-base-200/60 px-4 py-2 text-sm font-medium text-base-content">
+              Page {page} of {Math.max(totalPages, 1)}
+            </span>
+            <button
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages || 1))}
+              disabled={page === totalPages || totalPages === 0}
+              className="btn btn-sm btn-outline btn-primary sm:btn-md"
+            >
+              Next
+            </button>
+          </div>
         </>
       )}
-    </div>
+    </section>
   );
 };
 

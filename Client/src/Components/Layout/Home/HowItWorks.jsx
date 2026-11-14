@@ -1,54 +1,60 @@
 import { motion } from "framer-motion";
-import { FaSearchDollar, FaStoreAlt, FaTools } from "react-icons/fa";
+import { FaSearchDollar, FaStoreAlt, FaChartPie } from "react-icons/fa";
+
+const steps = [
+  {
+    icon: FaSearchDollar,
+    title: "Compare Market Prices",
+    desc: "Track daily price updates across vendors and markets to make informed purchasing decisions.",
+  },
+  {
+    icon: FaStoreAlt,
+    title: "Connect Buyers & Vendors",
+    desc: "Customers discover products efficiently while vendors present listings, offers, and advertisements.",
+  },
+  {
+    icon: FaChartPie,
+    title: "Manage with Insights",
+    desc: "Role-based dashboards provide visibility into orders, products, analytics, and operational workflows.",
+  },
+];
 
 const HowItWorks = () => {
-  const steps = [
-    {
-      icon: <FaSearchDollar className="text-5xl text-green-400" />,
-      title: "Compare Market Prices",
-      desc: "Explore real-time price updates from different vendors. Make informed buying decisions instantly.",
-    },
-    {
-      icon: <FaStoreAlt className="text-5xl text-blue-400" />,
-      title: "Buy & Sell Smartly",
-      desc: "Customers buy products easily, while vendors showcase their market offerings in real-time.",
-    },
-    {
-      icon: <FaTools className="text-5xl text-orange-400" />,
-      title: "Smart Dashboards",
-      desc: "Admins and Vendors manage their orders, products, and insights from one powerful dashboard.",
-    },
-  ];
-
   return (
-    <section className="py-20 px-4">
-      <div className="max-w-6xl mx-auto text-center">
-        <motion.h2
-          className="text-4xl md:text-5xl font-bold text-primary mb-12"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-        >
-         ⚒️ How Market Monitor Works ⚙️
-        </motion.h2>
+    <section className="section-shell py-14 sm:py-16">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+        className="text-center"
+      >
+        <h2 className="section-title">How Market Monitor Works</h2>
+        <p className="section-subtitle">
+          A streamlined workflow for price transparency, vendor visibility, and data-driven market decisions.
+        </p>
+      </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {steps.map((step, index) => (
+      <div className="mt-10 grid gap-6 md:grid-cols-3">
+        {steps.map((step, index) => {
+          const Icon = step.icon;
+          return (
             <motion.div
-              key={index}
-              className="bg-base-100 rounded-2xl shadow-primary shadow-md border border-primary/10 p-8 hover:scale-105 transition-transform duration-300"
-              initial={{ opacity: 0, y: 40 }}
+              key={step.title}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
+              transition={{ duration: 0.45, delay: index * 0.1 }}
               viewport={{ once: true }}
+              className="surface-card p-6 text-center sm:p-8"
             >
-              <div className="mb-6 flex justify-center">{step.icon}</div>
-              <h3 className="text-xl font-bold text-accent mb-3">{step.title}</h3>
-              <p className="text-base text-base-content/80">{step.desc}</p>
+              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <Icon className="text-2xl" />
+              </div>
+              <h3 className="text-lg font-bold text-base-content sm:text-xl">{step.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-base-content/70 sm:text-base">{step.desc}</p>
             </motion.div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </section>
   );
