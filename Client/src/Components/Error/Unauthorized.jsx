@@ -1,38 +1,39 @@
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
-import warningAnimation from "../Animation/AdminAnimation.json"; // Make sure you have a Lottie JSON file
-
 import { useNavigate } from "react-router-dom";
+import { FaShieldAlt, FaArrowLeft } from "react-icons/fa";
+import warningAnimation from "../Animation/AdminAnimation.json";
 
 const Unauthorized = () => {
   const navigate = useNavigate();
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen flex flex-col justify-center items-center  text-center px-4"
-    >
-      <div className="w-60 h-60 mb-6 ">
-        <Lottie animationData={warningAnimation} loop={true} />
-      </div>
-
-      <h1 className="text-4xl md:text-5xl font-extrabold text-red-500 mb-4 drop-shadow-md">
-        ⚠️ Unauthorized Access
-      </h1>
-
-      <p className="text-lg md:text-xl mb-8 max-w-md">
-        Sorry, you don't have permission to view this page. Please contact your admin if you believe this is a mistake.
-      </p>
-
-      <button
-        onClick={() => navigate(-1)}
-        className="btn btn-warning text-lg shadow-lg hover:scale-105 transition-transform"
+    <section className="section-shell flex min-h-[80vh] items-center justify-center py-12">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="surface-card w-full max-w-3xl px-6 py-10 text-center sm:px-10"
       >
-        🔙 Go Back
-      </button>
-    </motion.div>
+        <div className="mx-auto w-48 sm:w-56">
+          <Lottie animationData={warningAnimation} loop />
+        </div>
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-error/30 bg-error/10 px-4 py-1 text-sm font-medium text-error">
+          <FaShieldAlt /> Access restricted
+        </div>
+        <h1 className="mt-4 text-3xl font-extrabold text-base-content sm:text-4xl">Unauthorized Access</h1>
+        <p className="mx-auto mt-3 max-w-xl text-sm text-base-content/70 sm:text-base">
+          You do not have permission to view this page. If you believe this is an error, please contact an administrator.
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="btn btn-warning mt-8 gap-2 rounded-full px-6"
+        >
+          <FaArrowLeft /> Go Back
+        </button>
+      </motion.div>
+    </section>
   );
 };
 

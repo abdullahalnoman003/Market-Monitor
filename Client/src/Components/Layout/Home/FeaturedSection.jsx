@@ -4,51 +4,58 @@ import { FaStar, FaRocket, FaShieldAlt } from "react-icons/fa";
 
 const features = [
   {
-    icon: <FaStar className="text-3xl text-primary" />,
-    title: "Top Rated Products",
-    desc: "Only the best and highest-rated products make it to our front page."
+    icon: FaStar,
+    title: "Quality-Focused Listings",
+    desc: "Verified products and market data help users compare options with confidence.",
   },
   {
-    icon: <FaRocket className="text-3xl text-secondary" />,
-    title: "Fast Delivery",
-    desc: "We ensure quick, safe, and reliable product delivery to your doorstep."
+    icon: FaRocket,
+    title: "Efficient Marketplace Flow",
+    desc: "Fast browsing, streamlined actions, and responsive design across devices.",
   },
   {
-    icon: <FaShieldAlt className="text-3xl text-accent" />,
-    title: "Secure Payments",
-    desc: "All transactions are encrypted and backed by Stripe’s security."
-  }
+    icon: FaShieldAlt,
+    title: "Secure & Reliable",
+    desc: "Protected transactions and structured role-based access support trusted operations.",
+  },
 ];
 
 const FeaturedSection = () => {
   return (
-    <div className=""><div className="  py-16 px-4 max-w-6xl mx-auto">
-      <motion.h2
-        className="text-4xl font-bold text-center mb-12"
-        initial={{ opacity: 0, y: -20 }}
+    <section className="section-shell py-14 sm:py-16">
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+        className="text-center"
       >
-       🤗 Why Choose Us?
-      </motion.h2>
+        <h2 className="section-title">Why Choose Market Monitor</h2>
+        <p className="section-subtitle">A professional platform designed for clarity, performance, and dependable market visibility.</p>
+      </motion.div>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        {features.map((item, index) => (
-          <motion.div
-            key={index}
-            className="bg-base-200 p-6 rounded-xl shadow-primary text-center shadow-md hover:shadow-lg transition"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.2 }}
-          >
-            <h1 className="justify-center flex">{item.icon}</h1>
-            <h3 className="text-xl font-semibold mt-4 mb-2">{item.title}</h3>
-            <p className="text-secondary text-sm">{item.desc}</p>
-          </motion.div>
-        ))}
+      <div className="mt-10 grid gap-6 md:grid-cols-3">
+        {features.map((item, index) => {
+          const Icon = item.icon;
+          return (
+            <motion.div
+              key={item.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="surface-card p-6 text-center sm:p-8"
+            >
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
+                <Icon className="text-xl" />
+              </div>
+              <h3 className="text-lg font-bold text-base-content sm:text-xl">{item.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-base-content/70 sm:text-base">{item.desc}</p>
+            </motion.div>
+          );
+        })}
       </div>
-    </div></div>
-    
+    </section>
   );
 };
 

@@ -1,31 +1,32 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FaHome } from 'react-icons/fa';
-import Lottie from 'lottie-react';
-import Animation from './ProductNotFound.json';
-import useDocumentTitle from '../../Hooks/useDocumentTitle';
+import React from "react";
+import { Link } from "react-router-dom";
+import { FaHome, FaBoxOpen } from "react-icons/fa";
+import Lottie from "lottie-react";
+import Animation from "./ProductNotFound.json";
+import useDocumentTitle from "../../Hooks/useDocumentTitle";
 
 const ProductNotFound = () => {
-  useDocumentTitle("Product Not Found || Market Monitor");
+  useDocumentTitle("Product Not Found | Market Monitor");
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base text-center px-4">
-      <Lottie
-        className="shadow-2xl rounded-4xl"
-        animationData={Animation}
-        loop={true}
-      />
-      <h1 className="text-5xl font-extrabold mb-2 mt-5 text-yellow-500">Product Not Found</h1>
-      <h2 className="text-2xl font-bold text-red-500 mb-4">Sorry! We couldn’t find that product.</h2>
-      <p className="mb-6 max-w-md">
-        The product you're looking for might have been removed, is out of stock, or never existed. Please try searching again or return to the homepage.
-      </p>
-      <button className="btn btn-primary font-bold hover:shadow-xl my-3 gap-2 hover:bg-gradient-to-br px-6 py-2 rounded-md text-lg">
-        <Link to="/" className="flex gap-2 items-center">
-          <FaHome /> Go back to Home
-        </Link>
-      </button>
-    </div>
+    <section className="section-shell flex min-h-[60vh] items-center justify-center py-10">
+      <div className="surface-card w-full max-w-3xl px-6 py-10 text-center sm:px-10">
+        <Lottie className="mx-auto max-w-xs rounded-3xl sm:max-w-sm" animationData={Animation} loop />
+        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-warning/30 bg-warning/10 px-4 py-1 text-sm font-medium text-warning">
+          <FaBoxOpen /> Product unavailable
+        </div>
+        <h1 className="mt-4 text-3xl font-extrabold text-base-content sm:text-4xl">Product Not Found</h1>
+        <p className="mx-auto mt-3 max-w-xl text-sm text-base-content/70 sm:text-base">
+          The product you are looking for may be removed, unavailable, or does not exist. Try browsing all products or return home.
+        </p>
+        <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link to="/all-products" className="btn btn-outline btn-primary rounded-full">Browse Products</Link>
+          <Link to="/" className="btn btn-primary gap-2 rounded-full">
+            <FaHome /> Go to Home
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 };
 
