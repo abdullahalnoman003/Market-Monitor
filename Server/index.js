@@ -313,28 +313,52 @@ async function run() {
       try {
         const { sort, start, end, page = 1, limit = 6 } = req.query;
 
-        const filter = {};
-        if (start || end) {
+        const filter = { status: "approved" };
+
+        const normalizeDateString = (value) => {
+          if (!value) return null;
+          const raw = String(value).trim();
+          const ymd = raw.slice(0, 10);
+          if (/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return ymd;
+          const parsed = new Date(raw);
+          if (Number.isNaN(parsed.getTime())) return null;
+          return parsed.toISOString().slice(0, 10);
+        };
+
+        const startDate = normalizeDateString(start);
+        const endDate = normalizeDateString(end);
+
+        if (startDate || endDate) {
           filter.date = {};
-          if (start) filter.date.$gte = start;
-          if (end) filter.date.$lte = end;
+          if (startDate) filter.date.$gte = startDate;
+          if (endDate) filter.date.$lte = endDate;
+          // If range is inverted, swap to avoid empty/incorrect results
+          if (filter.date.$gte && filter.date.$lte && filter.date.$gte > filter.date.$lte) {
+            const tmp = filter.date.$gte;
+            filter.date.$gte = filter.date.$lte;
+            filter.date.$lte = tmp;
+          }
         }
 
-        const skip = (parseInt(page) - 1) * parseInt(limit);
-        const limitVal = parseInt(limit);
+        const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+        const limitVal = Math.min(Math.max(parseInt(limit, 10) || 6, 1), 50);
+        const skip = (pageNum - 1) * limitVal;
 
-        let cursor = ProductCollection.find(filter);
+        const sortStage =
+          sort === "asc"
+            ? { price_per_unit: 1, date: -1, _id: -1 }
+            : sort === "desc"
+            ? { price_per_unit: -1, date: -1, _id: -1 }
+            : { date: -1, _id: -1 };
 
-        if (sort === "asc") cursor = cursor.sort({ price_per_unit: 1 });
-        else if (sort === "desc") cursor = cursor.sort({ price_per_unit: -1 });
-
-        const totalCount = await ProductCollection.countDocuments(filter);
-
-        const products = await cursor.skip(skip).limit(limitVal).toArray();
+        const [products, totalCount] = await Promise.all([
+          ProductCollection.find(filter).sort(sortStage).skip(skip).limit(limitVal).toArray(),
+          ProductCollection.countDocuments(filter),
+        ]);
 
         res.json({
           products,
-          currentPage: parseInt(page),
+          currentPage: pageNum,
           totalPages: Math.ceil(totalCount / limitVal),
           totalItems: totalCount,
         });
