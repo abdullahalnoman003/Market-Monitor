@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 import { useNavigate } from "react-router-dom";
 import { FaShieldAlt, FaArrowLeft } from "react-icons/fa";
@@ -9,12 +8,7 @@ const Unauthorized = () => {
 
   return (
     <section className="section-shell flex min-h-[80vh] items-center justify-center py-12">
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="surface-card w-full max-w-3xl px-6 py-10 text-center sm:px-10"
-      >
+      <div className="surface-card w-full max-w-3xl px-6 py-10 text-center sm:px-10">
         <div className="mx-auto w-48 sm:w-56">
           <Lottie animationData={warningAnimation} loop />
         </div>
@@ -32,7 +26,7 @@ const Unauthorized = () => {
         >
           <FaArrowLeft /> Go Back
         </button>
-      </motion.div>
+      </div>
     </section>
   );
 };
