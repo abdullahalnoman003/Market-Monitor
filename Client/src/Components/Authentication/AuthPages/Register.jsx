@@ -5,19 +5,19 @@ import {
   updateProfile,
 } from "firebase/auth";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { FaUserPlus } from "react-icons/fa";
 import { auth } from "../../../Firebase/firebase.init";
-import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import useAxios from "../../../Hooks/useAxios";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
+import toast from "react-hot-toast";
+import BrandedLoader from "../../Shared/BrandedLoader";
 
 const Register = () => {
   useDocumentTitle("Register | Market Monitor");
   const navigate = useNavigate();
+  const location = useLocation();
   const provider = new GoogleAuthProvider();
   const imgbbApiKey = import.meta.env.VITE_IMGBB_API_KEY;
 
@@ -25,6 +25,11 @@ const Register = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
 
   const axiosInstance = useAxios();
+  const from = location.state?.from;
+  const redirectTo =
+    from?.pathname && from.pathname !== "/login" && from.pathname !== "/register"
+      ? `${from.pathname}${from.search || ""}${from.hash || ""}`
+      : "/";
 
   const {
     register,
@@ -47,7 +52,7 @@ const Register = () => {
       return data.data.url;
     } catch (err) {
       console.error("Image upload error:", err);
-      Swal.fire("Image Upload Failed", "Please try again later.", "error");
+      toast.error("Image upload failed. Please try again.");
       setUploadingImage(false);
       return null;
     }
@@ -93,20 +98,14 @@ const Register = () => {
           axiosInstance
             .post("/users", userInfo)
             .then(() => {
-              Swal.fire({
-                icon: "success",
-                title: "Registration Successful",
-                text: `Welcome to Market Monitor, ${user.displayName || name}.`,
-                timer: 2200,
-                showConfirmButton: false,
-              });
+              toast.success(`Welcome to Market Monitor, ${user.displayName || name}.`);
               reset();
               setLoading(false);
-              navigate("/");
+              navigate(redirectTo, { replace: true });
             })
             .catch((err) => {
               console.error("Error saving user to DB:", err);
-              Swal.fire({ icon: "error", title: "Registration Failed", text: "Failed to save user information. Please try again." });
+              toast.error("Failed to save user information. Please try again.");
               setLoading(false);
             });
         });
@@ -114,10 +113,10 @@ const Register = () => {
       .catch((error) => {
         console.error("Registration error:", error);
         let errorMessage = "Registration failed. Please try again.";
-        if (error.code === "auth/email-already-in-use") errorMessage = "This email is already registered. Please use a different email or log in.";
+        if (error.code === "auth/email-already-in-use") errorMessage = "This email is already registered. Please log in instead.";
         else if (error.code === "auth/weak-password") errorMessage = "Password is too weak. Please choose a stronger password.";
         else if (error.code === "auth/invalid-email") errorMessage = "Invalid email address. Please enter a valid email.";
-        Swal.fire({ icon: "error", title: "Registration Failed", text: errorMessage });
+        toast.error(errorMessage);
         setLoading(false);
       });
   };
@@ -147,25 +146,13 @@ const Register = () => {
         axiosInstance
           .post("/users", userInfo)
           .then(() => {
-            Swal.fire({
-              icon: "success",
-              title: "Registration Successful",
-              text: `Welcome to Market Monitor, ${user.displayName || "User"}.`,
-              timer: 2200,
-              showConfirmButton: false,
-            });
-            navigate("/");
+            toast.success(`Welcome to Market Monitor, ${user.displayName || "User"}.`);
+            navigate(redirectTo, { replace: true });
           })
           .catch((err) => {
             console.error("Google user DB save failed:", err);
-            Swal.fire({
-              icon: "success",
-              title: "Welcome",
-              text: `Successfully signed in with Google, ${user.displayName || "User"}.`,
-              timer: 2200,
-              showConfirmButton: false,
-            });
-            navigate("/");
+            toast.success(`Signed in as ${user.displayName || "User"}.`);
+            navigate(redirectTo, { replace: true });
           });
       })
       .catch((error) => {
@@ -173,37 +160,18 @@ const Register = () => {
         let errorMessage = "Google sign-in failed. Please try again.";
         if (error.code === "auth/popup-closed-by-user") errorMessage = "Sign-in was cancelled. Please try again.";
         else if (error.code === "auth/network-request-failed") errorMessage = "Network error. Please check your connection and try again.";
-        Swal.fire({ icon: "error", title: "Google Sign-in Failed", text: errorMessage });
+        toast.error(errorMessage);
         setLoading(false);
       });
   };
 
   if (loading || uploadingImage) {
-    return (
-      <div className="section-shell flex min-h-[70vh] items-center justify-center">
-        <div className="text-center">
-          <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="mt-4 text-sm font-semibold text-base-content/80 sm:text-base">
-            {uploadingImage ? "Uploading image..." : "Creating your account..."}
-          </p>
-        </div>
-      </div>
-    );
+    return <BrandedLoader label={uploadingImage ? "Uploading image..." : "Creating your account..."} />;
   }
 
   return (
-    <motion.section
-      className="section-shell flex min-h-[calc(100vh-6rem)] items-center justify-center py-8 sm:py-12"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.35 }}
-    >
-      <motion.div
-        className="grid w-full max-w-5xl overflow-hidden rounded-3xl border border-base-300/60 bg-base-200/40 shadow-xl md:grid-cols-2"
-        initial={{ y: 12, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4 }}
-      >
+    <section className="section-shell flex min-h-[calc(100vh-6rem)] items-center justify-center py-10">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-xl border border-base-300 bg-base-100 shadow-sm md:grid-cols-2">
         <div
           className="hidden bg-cover bg-center md:block"
           style={{
@@ -213,19 +181,17 @@ const Register = () => {
         />
 
         <div className="p-6 sm:p-8 lg:p-10">
-          <div className="mb-6 text-center md:text-left">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary sm:text-sm">
-              <FaUserPlus /> Create Account
-            </div>
-            <h1 className="text-3xl font-extrabold text-base-content sm:text-4xl">Join Market Monitor</h1>
-            <p className="mt-2 text-sm text-base-content/70 sm:text-base">
-              Register to track prices, compare markets, and access personalized dashboards.
+          <div className="mb-6">
+            <p className="text-sm font-medium text-primary">Market Monitor</p>
+            <h1 className="mt-1 text-2xl font-bold text-base-content sm:text-3xl">Create your account</h1>
+            <p className="mt-2 text-sm text-base-content/70">
+              Register to track prices, compare markets, and manage your activity.
             </p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="label font-semibold">Full Name</label>
+              <label className="label py-1 font-medium">Full Name</label>
               <input
                 type="text"
                 {...register("name", { required: "Name is required" })}
@@ -236,7 +202,7 @@ const Register = () => {
             </div>
 
             <div>
-              <label className="label font-semibold">Email</label>
+              <label className="label py-1 font-medium">Email</label>
               <input
                 type="email"
                 placeholder="name@example.com"
@@ -250,7 +216,7 @@ const Register = () => {
             </div>
 
             <div>
-              <label className="label font-semibold">Password</label>
+              <label className="label py-1 font-medium">Password</label>
               <input
                 type="password"
                 placeholder="Minimum 8 characters"
@@ -268,26 +234,26 @@ const Register = () => {
             </div>
 
             <div>
-              <label className="label font-semibold">Profile Image (Optional)</label>
+              <label className="label py-1 font-medium">Profile Image (Optional)</label>
               <input type="file" accept="image/*" {...register("image")} className="file-input file-input-bordered w-full" />
               <p className="mt-1 text-xs text-base-content/60">You can add a profile image now or update it later.</p>
             </div>
 
             <button type="submit" className="btn btn-primary w-full">Register</button>
 
-            <div className="divider text-xs sm:text-sm">OR</div>
+            <div className="divider my-2 text-xs sm:text-sm">OR</div>
 
             <button type="button" onClick={handleGoogleSignin} className="btn btn-outline w-full gap-3">
               <FcGoogle size={20} /> Sign Up with Google
             </button>
 
             <p className="pt-1 text-center text-sm text-base-content/70">
-              Already have an account? <Link to="/login" className="link link-primary font-semibold">Login</Link>
+              Already have an account? <Link to="/login" state={{ from }} className="link link-primary font-semibold">Login</Link>
             </p>
           </form>
         </div>
-      </motion.div>
-    </motion.section>
+      </div>
+    </section>
   );
 };
 

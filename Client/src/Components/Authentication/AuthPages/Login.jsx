@@ -4,35 +4,32 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { FaEyeSlash, FaEye, FaChartLine } from "react-icons/fa";
-import Swal from "sweetalert2";
-import { motion } from "framer-motion";
+import { FaEyeSlash, FaEye } from "react-icons/fa";
+import toast from "react-hot-toast";
 import { auth } from "../../../Firebase/firebase.init";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxios from "../../../Hooks/useAxios";
+import BrandedLoader from "../../Shared/BrandedLoader";
 
 const Login = () => {
   useDocumentTitle("Login | Market Monitor");
   const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from;
+  const redirectTo =
+    from?.pathname && from.pathname !== "/login" && from.pathname !== "/register"
+      ? `${from.pathname}${from.search || ""}${from.hash || ""}`
+      : "/";
 
   const axiosInstance = useAxios();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   if (loading) {
-    return (
-      <div className="section-shell flex min-h-[70vh] items-center justify-center">
-        <div className="text-center">
-          <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="mt-4 text-sm font-semibold text-base-content/80 sm:text-base">Signing you in...</p>
-        </div>
-      </div>
-    );
+    return <BrandedLoader label="Signing you in..." />;
   }
 
   const handleGoogleSignin = () => {
@@ -71,22 +68,17 @@ const Login = () => {
           console.log("Failed to update last login:", err.message);
         }
 
-        Swal.fire({
-          icon: "success",
-          title: "Login Successful",
-          text: `Welcome back, ${user.displayName || "User"}.`,
-          timer: 1800,
-          showConfirmButton: false,
-        });
-        navigate(from, { replace: true });
+        toast.success(`Welcome back, ${user.displayName || "User"}.`);
+        navigate(redirectTo, { replace: true });
       })
       .catch((error) => {
         console.error("Google login error:", error);
         let errorMessage = "Google login failed. Please try again.";
         if (error.code === "auth/popup-closed-by-user") errorMessage = "Sign-in was cancelled. Please try again.";
         else if (error.code === "auth/network-request-failed") errorMessage = "Network error. Please check your connection.";
-        else if (error.code === "auth/account-exists-with-different-credential") errorMessage = "An account with this email already exists. Please sign in with email and password.";
-        Swal.fire({ icon: "error", title: "Google Login Failed", text: errorMessage });
+        else if (error.code === "auth/account-exists-with-different-credential")
+          errorMessage = "An account with this email already exists. Please sign in with email and password.";
+        toast.error(errorMessage);
       })
       .finally(() => setLoading(false));
   };
@@ -110,14 +102,8 @@ const Login = () => {
         } catch (err) {
           console.log("Failed to update last login:", err.message);
         }
-        Swal.fire({
-          icon: "success",
-          title: "Login Successful",
-          text: `Welcome back, ${user.displayName || "User"}.`,
-          timer: 1800,
-          showConfirmButton: false,
-        });
-        navigate(from, { replace: true });
+        toast.success(`Welcome back, ${user.displayName || "User"}.`);
+        navigate(redirectTo, { replace: true });
       })
       .catch((error) => {
         console.error("Email login error:", error);
@@ -127,24 +113,14 @@ const Login = () => {
         else if (error.code === "auth/invalid-email") errorMessage = "Invalid email address.";
         else if (error.code === "auth/user-disabled") errorMessage = "This account has been disabled. Please contact support.";
         else if (error.code === "auth/too-many-requests") errorMessage = "Too many failed attempts. Please try again later.";
-        Swal.fire({ icon: "error", title: "Login Failed", text: errorMessage, timer: 3000 });
+        toast.error(errorMessage);
         setLoading(false);
       });
   };
 
   return (
-    <motion.section
-      className="section-shell flex min-h-[calc(100vh-6rem)] items-center justify-center py-8 sm:py-12"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.35 }}
-    >
-      <motion.div
-        className="grid w-full max-w-5xl overflow-hidden rounded-3xl border border-base-300/60 bg-base-200/40 shadow-xl md:grid-cols-2"
-        initial={{ y: 12, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4 }}
-      >
+    <section className="section-shell flex min-h-[calc(100vh-6rem)] items-center justify-center py-10">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-xl border border-base-300 bg-base-100 shadow-sm md:grid-cols-2">
         <div
           className="hidden bg-cover bg-center md:block"
           style={{
@@ -155,24 +131,22 @@ const Login = () => {
         />
 
         <div className="p-6 sm:p-8 lg:p-10">
-          <div className="mb-6 text-center md:text-left">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary sm:text-sm">
-              <FaChartLine /> Market Monitor Access
-            </div>
-            <h1 className="text-3xl font-extrabold text-base-content sm:text-4xl">Welcome Back</h1>
-            <p className="mt-2 text-sm text-base-content/70 sm:text-base">
-              Sign in to access market data, dashboards, and role-based tools.
+          <div className="mb-6">
+            <p className="text-sm font-medium text-primary">Market Monitor</p>
+            <h1 className="mt-1 text-2xl font-bold text-base-content sm:text-3xl">Sign in to your account</h1>
+            <p className="mt-2 text-sm text-base-content/70">
+              Access market data, dashboards, and account tools.
             </p>
           </div>
 
-          <form onSubmit={handleEmailLogin} className="space-y-4 sm:space-y-5">
+          <form onSubmit={handleEmailLogin} className="space-y-4">
             <div className="form-control">
-              <label className="label font-semibold">Email</label>
+              <label className="label py-1 font-medium">Email</label>
               <input type="email" name="email" className="input input-bordered w-full" placeholder="Enter your email" required />
             </div>
 
             <div className="form-control">
-              <label className="label font-semibold">Password</label>
+              <label className="label py-1 font-medium">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -183,7 +157,7 @@ const Login = () => {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/70 hover:text-base-content"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/60 hover:text-base-content"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
@@ -197,7 +171,7 @@ const Login = () => {
 
             <button type="submit" className="btn btn-primary w-full">Login</button>
 
-            <div className="divider text-xs sm:text-sm">OR</div>
+            <div className="divider my-2 text-xs sm:text-sm">OR</div>
 
             <button type="button" onClick={handleGoogleSignin} className="btn btn-outline w-full gap-3">
               <FcGoogle size={20} /> Continue with Google
@@ -205,12 +179,12 @@ const Login = () => {
 
             <p className="pt-1 text-center text-sm text-base-content/70">
               Don&apos;t have an account?{" "}
-              <Link to="/register" className="link link-primary font-semibold">Register</Link>
+              <Link to="/register" state={{ from }} className="link link-primary font-semibold">Register</Link>
             </p>
           </form>
         </div>
-      </motion.div>
-    </motion.section>
+      </div>
+    </section>
   );
 };
 
