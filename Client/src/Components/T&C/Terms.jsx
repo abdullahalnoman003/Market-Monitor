@@ -49,7 +49,7 @@ const Terms = () => {
           These terms may change over time. Updates will be posted here, and continued use of the site means you accept those changes.
         </p>
 
-        <p className="text-sm text-gray-500 mt-6">Last updated: July 12, 2025</p>
+        <p className="text-sm text-base-content/60 mt-6">Last updated: July 12, 2025</p>
       </div>
     </div>
   );

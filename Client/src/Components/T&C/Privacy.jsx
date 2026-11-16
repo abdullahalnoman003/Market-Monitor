@@ -46,7 +46,7 @@ const Privacy = () => {
           This policy may be revised occasionally. Updates will be posted here. Continued use of Market Monitor indicates your agreement with these terms.
         </p>
 
-        <p className="text-sm text-gray-500 mt-6">Last updated: July 12, 2025</p>
+        <p className="text-sm text-base-content/60 mt-6">Last updated: July 12, 2025</p>
       </div>
     </div>
   );

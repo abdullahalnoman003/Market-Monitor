@@ -44,7 +44,7 @@ const About = () => {
           As we grow, we aim to include more markets, expand vendor tools, and introduce smarter analytics for both buyers and sellers.
         </p>
 
-        <p className="text-sm text-gray-500 mt-6">Last updated: July 13, 2025</p>
+        <p className="text-sm text-base-content/60 mt-6">Last updated: July 13, 2025</p>
       </div>
     </div>
   );
