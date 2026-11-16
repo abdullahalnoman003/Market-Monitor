@@ -1,12 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+﻿import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import BrandedLoader from "../../Shared/BrandedLoader";
 
 const UpdateProduct = () => {
   const { id } = useParams();
@@ -27,20 +28,21 @@ const UpdateProduct = () => {
       .get(`/product/${id}`)
       .then((res) => {
         setProduct(res.data);
-        setProductDate(new Date(res.data.date));
+        setProductDate(res.data.date ? new Date(res.data.date) : new Date());
         setPriceHistory(res.data.prices || []);
-        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
-        Swal.fire("Error", "Failed to fetch product!", "error");
-        navigate("/dashboard/vendor");
-      });
+        toast.error("Failed to fetch product.");
+        navigate(-1);
+      })
+      .finally(() => setLoading(false));
   }, [id, axiosInstance, navigate]);
 
   const handleAddPrice = () => {
     if (!priceInput || isNaN(priceInput)) {
-      return Swal.fire("Invalid", "Please enter a valid price!", "warning");
+      toast.error("Please enter a valid price.");
+      return;
     }
 
     const newEntry = {
@@ -48,14 +50,12 @@ const UpdateProduct = () => {
       price: parseFloat(priceInput),
     };
 
-    setPriceHistory([...priceHistory, newEntry]);
+    setPriceHistory((prev) => [...prev, newEntry]);
     setPriceInput("");
   };
 
   const handleRemovePrice = (index) => {
-    const updated = [...priceHistory];
-    updated.splice(index, 1);
-    setPriceHistory(updated);
+    setPriceHistory((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleUpdate = (e) => {
@@ -77,87 +77,81 @@ const UpdateProduct = () => {
       .put(`/update-product/${id}`, updatedProduct)
       .then((res) => {
         if (res.data.modifiedCount > 0) {
-          Swal.fire("✅ Updated!", "Product updated successfully!", "success");
+          toast.success("Product updated successfully.");
           navigate(-1);
         } else {
-          Swal.fire("ℹ️ Notice", "No changes made.", "info");
+          toast("No changes made.");
         }
       })
       .catch((err) => {
-        Swal.fire("❌ Error", "Update failed!", "error");
         console.error(err);
+        toast.error("Update failed.");
       });
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center rounded-xl mt-8">
-        <div className="text-center space-y-3">
-          <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold text-primary">
-            Fetching product info...
-          </p>
-        </div>
-      </div>
-    );
+    return <BrandedLoader label="Loading product..." />;
+  }
+
+  if (!product) {
+    return null;
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-base-200 rounded-xl shadow-md my-10">
-      <h2 className="text-3xl font-bold text-center mb-4 text-primary">✏️ Update Product</h2>
+    <div className="max-w-4xl mx-auto p-6 sm:p-8 bg-base-100 border border-base-300 rounded-xl shadow-sm my-10">
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 text-primary">Update Product</h2>
       <form onSubmit={handleUpdate} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-4">
-          <input readOnly className="input input-bordered bg-base-100" value={user?.email} />
-          <input readOnly className="input input-bordered bg-base-100" value={user?.displayName} />
+          <input readOnly className="input input-bordered bg-base-200/40" value={user?.email || ""} />
+          <input readOnly className="input input-bordered bg-base-200/40" value={user?.displayName || ""} />
         </div>
 
         <div>
-          <label className="label font-semibold">🏪 Market Name</label>
+          <label className="label font-semibold">Market Name</label>
           <input type="text" name="market_name" required className="input input-bordered w-full"
             defaultValue={product.market_name} />
         </div>
 
         <div>
-          <label className="label font-semibold">📅 Product Date</label><br />
+          <label className="label font-semibold">Product Date</label><br />
           <DatePicker
             selected={productDate}
-            onChange={setProductDate}
+            onChange={(date) => setProductDate(date || new Date())}
             className="input input-bordered w-full"
             dateFormat="yyyy-MM-dd"
           />
         </div>
 
         <div>
-          <label className="label font-semibold">📝 Market Description</label>
+          <label className="label font-semibold">Market Description</label>
           <textarea name="market_description" className="textarea textarea-bordered w-full"
             defaultValue={product.market_description} required />
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="label font-semibold">🥦 Item Name</label>
+            <label className="label font-semibold">Item Name</label>
             <input type="text" name="item_name" required className="input input-bordered w-full"
               defaultValue={product.item_name} />
           </div>
           <div>
-            <label className="label font-semibold">💵 Price per Unit</label>
+            <label className="label font-semibold">Price per Unit</label>
             <input type="text" name="price_per_unit" required className="input input-bordered w-full"
               defaultValue={product.price_per_unit} />
           </div>
         </div>
 
         <div>
-          <label className="label font-semibold">🖼️ Product Image URL</label>
+          <label className="label font-semibold">Product Image URL</label>
           <input type="text" name="product_image" required className="input input-bordered w-full"
             defaultValue={product.product_image} />
         </div>
 
-        {/* Price History Editor */}
         <div>
-          <label className="label font-semibold">💵 Edit Price History</label>
+          <label className="label font-semibold">Edit Price History</label>
           <DatePicker
             selected={priceDate}
-            onChange={setPriceDate}
+            onChange={(date) => setPriceDate(date || new Date())}
             className="input input-bordered w-full mb-2"
             dateFormat="yyyy-MM-dd"
           />
@@ -174,17 +168,17 @@ const UpdateProduct = () => {
               className="btn btn-outline btn-primary"
               onClick={handleAddPrice}
             >
-              ➕ Add
+              Add
             </button>
           </div>
 
           {priceHistory.length > 0 && (
             <ul className="mt-3 space-y-2">
               {priceHistory.map((entry, idx) => (
-                <li key={idx} className="flex justify-between items-center p-2 bg-base-100 border rounded-md">
-                  <span>📅 {entry.date} — ৳{entry.price}</span>
-                  <button type="button" className="btn btn-xs " onClick={() => handleRemovePrice(idx)}>
-                    ❌
+                <li key={`${entry.date}-${idx}`} className="flex justify-between items-center p-2 bg-base-200/40 border border-base-300 rounded-md">
+                  <span>{entry.date} — {entry.price}</span>
+                  <button type="button" className="btn btn-xs btn-ghost text-error" onClick={() => handleRemovePrice(idx)} aria-label="Remove price entry">
+                    Remove
                   </button>
                 </li>
               ))}
@@ -193,13 +187,13 @@ const UpdateProduct = () => {
         </div>
 
         <div>
-          <label className="label font-semibold">📝 Item Description</label>
+          <label className="label font-semibold">Item Description</label>
           <textarea name="item_description" className="textarea textarea-bordered w-full"
             defaultValue={product.item_description} />
         </div>
 
         <div className="text-center mt-6">
-          <button type="submit" className="btn btn-success w-full text-lg">🔄 Update Product</button>
+          <button type="submit" className="btn btn-primary w-full">Update Product</button>
         </div>
       </form>
     </div>

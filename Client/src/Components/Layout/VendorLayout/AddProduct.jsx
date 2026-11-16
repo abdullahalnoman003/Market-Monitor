@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import Swal from "sweetalert2";
+﻿import React, { useContext, useState } from "react";
+import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
@@ -8,18 +8,19 @@ import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const AddProduct = () => {
-  useDocumentTitle("Add Products | Vendor")
+  useDocumentTitle("Add Products | Vendor");
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
 
-  const [productDate, setProductDate] = useState(new Date()); // for product
-  const [priceDate, setPriceDate] = useState(new Date()); // for price history
+  const [productDate, setProductDate] = useState(new Date());
+  const [priceDate, setPriceDate] = useState(new Date());
   const [priceInput, setPriceInput] = useState("");
   const [priceHistory, setPriceHistory] = useState([]);
 
   const handleAddPrice = () => {
     if (!priceInput || isNaN(priceInput)) {
-      return Swal.fire("Invalid", "Please enter a valid price!", "warning");
+      toast.error("Please enter a valid price.");
+      return;
     }
 
     const newEntry = {
@@ -27,14 +28,12 @@ const AddProduct = () => {
       price: parseFloat(priceInput),
     };
 
-    setPriceHistory([...priceHistory, newEntry]);
+    setPriceHistory((prev) => [...prev, newEntry]);
     setPriceInput("");
   };
 
   const handleRemovePrice = (index) => {
-    const updated = [...priceHistory];
-    updated.splice(index, 1);
-    setPriceHistory(updated);
+    setPriceHistory((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (e) => {
@@ -59,60 +58,54 @@ const AddProduct = () => {
       .post("/add-product", newProduct)
       .then((res) => {
         if (res?.data?.insertedId) {
-          Swal.fire({
-            icon: "success",
-            title: "✅ Success!",
-            text: "Product added successfully!",
-            timer: 2000,
-            showConfirmButton: false,
-          });
+          toast.success("Product added successfully.");
           form.reset();
+          setProductDate(new Date());
+          setPriceDate(new Date());
           setPriceHistory([]);
           setPriceInput("");
         } else {
-          Swal.fire("❌ Failed!", "Could not add product.", "error");
+          toast.error("Could not add product.");
         }
       })
       .catch((err) => {
-        Swal.fire("Error", err.message || "Something went wrong", "error");
+        toast.error(err.message || "Something went wrong.");
       });
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-base-200 rounded-xl shadow-md shadow-primary my-10">
-      <h2 className="text-3xl font-bold text-center mb-4 text-primary">
-        🛒 Add Market Product
+    <div className="max-w-4xl mx-auto p-6 sm:p-8 bg-base-100 border border-base-300 rounded-xl shadow-sm my-10">
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2 text-primary">
+        Add Market Product
       </h2>
-      <p className="text-center mb-6 font-medium">
+      <p className="text-center mb-6 text-base-content/70">
         Submit daily price updates to help monitor your local market.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Vendor Info */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="label font-semibold">📧 Vendor Email</label>
+            <label className="label font-semibold">Vendor Email</label>
             <input
               type="email"
-              className="input input-bordered w-full bg-base-100"
+              className="input input-bordered w-full bg-base-200/40"
               value={user?.email || ""}
               readOnly
             />
           </div>
           <div>
-            <label className="label font-semibold">🧑‍🌾 Vendor Name</label>
+            <label className="label font-semibold">Vendor Name</label>
             <input
               type="text"
-              className="input input-bordered w-full bg-base-100"
+              className="input input-bordered w-full bg-base-200/40"
               value={user?.displayName || ""}
               readOnly
             />
           </div>
         </div>
 
-        {/* Market Info */}
         <div>
-          <label className="label font-semibold">🏪 Market Name</label>
+          <label className="label font-semibold">Market Name</label>
           <input
             type="text"
             name="market_name"
@@ -123,17 +116,18 @@ const AddProduct = () => {
         </div>
 
         <div>
-          <label className="label font-semibold">📅 Product Date</label>
-          <br /><DatePicker
+          <label className="label font-semibold">Product Date</label>
+          <br />
+          <DatePicker
             selected={productDate}
-            onChange={(date) => setProductDate(date)}
+            onChange={(date) => setProductDate(date || new Date())}
             className="input input-bordered w-full"
             dateFormat="yyyy-MM-dd"
           />
         </div>
 
         <div>
-          <label className="label font-semibold">📝 Market Description</label>
+          <label className="label font-semibold">Market Description</label>
           <textarea
             name="market_description"
             className="textarea textarea-bordered w-full"
@@ -142,10 +136,9 @@ const AddProduct = () => {
           ></textarea>
         </div>
 
-        {/* Item Info */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="label font-semibold">🥦 Item Name</label>
+            <label className="label font-semibold">Item Name</label>
             <input
               type="text"
               name="item_name"
@@ -155,19 +148,19 @@ const AddProduct = () => {
             />
           </div>
           <div>
-            <label className="label font-semibold">💵 Price per Unit</label>
+            <label className="label font-semibold">Price per Unit</label>
             <input
               type="text"
               name="price_per_unit"
               className="input input-bordered w-full"
               required
-              placeholder="e.g., ৳30/kg"
+              placeholder="e.g., 30/kg"
             />
           </div>
         </div>
 
         <div>
-          <label className="label font-semibold">🖼️ Product Image URL</label>
+          <label className="label font-semibold">Product Image URL</label>
           <input
             type="text"
             name="product_image"
@@ -177,13 +170,12 @@ const AddProduct = () => {
           />
         </div>
 
-        {/* Price History */}
         <div>
-          <label className="label font-semibold">💵 Add Price History</label>
+          <label className="label font-semibold">Add Price History</label>
           <br />
           <DatePicker
             selected={priceDate}
-            onChange={(date) => setPriceDate(date)}
+            onChange={(date) => setPriceDate(date || new Date())}
             className="input input-bordered w-full mb-2"
             dateFormat="yyyy-MM-dd"
           />
@@ -201,7 +193,7 @@ const AddProduct = () => {
               className="btn btn-outline btn-primary"
               onClick={handleAddPrice}
             >
-              ➕ Add
+              Add
             </button>
           </div>
 
@@ -209,18 +201,19 @@ const AddProduct = () => {
             <ul className="mt-3 space-y-2">
               {priceHistory.map((entry, idx) => (
                 <li
-                  key={idx}
-                  className="flex justify-between items-center p-2 bg-base-100 border rounded-md"
+                  key={`${entry.date}-${idx}`}
+                  className="flex justify-between items-center p-2 bg-base-200/40 border border-base-300 rounded-md"
                 >
                   <span>
-                    📅 {entry.date} — ৳{entry.price}
+                    {entry.date} — {entry.price}
                   </span>
                   <button
                     type="button"
                     onClick={() => handleRemovePrice(idx)}
-                    className="btn btn-xs r"
+                    className="btn btn-xs btn-ghost text-error"
+                    aria-label="Remove price entry"
                   >
-                    ❌
+                    Remove
                   </button>
                 </li>
               ))}
@@ -228,9 +221,8 @@ const AddProduct = () => {
           )}
         </div>
 
-        {/* Description */}
         <div>
-          <label className="label font-semibold">📝 Item Description</label>
+          <label className="label font-semibold">Item Description</label>
           <textarea
             name="item_description"
             className="textarea textarea-bordered w-full"
@@ -238,10 +230,9 @@ const AddProduct = () => {
           ></textarea>
         </div>
 
-        {/* Submit */}
         <div className="text-center mt-8">
-          <button type="submit" className="btn btn-primary w-full text-lg">
-            ✅ Submit Product
+          <button type="submit" className="btn btn-primary w-full">
+            Submit Product
           </button>
         </div>
       </form>

@@ -1,93 +1,66 @@
+﻿import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { FaPlus, FaBox, FaBullhorn, FaFolderOpen } from "react-icons/fa";
 import Lottie from "lottie-react";
-import vendorLottie from "../../Animation/VendorAnimation.json"; 
+import vendorLottie from "../../Animation/VendorAnimation.json";
 import { useContext } from "react";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 
-const VendorWelcome = () => {
-    const {user} = useContext(AuthContext);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="bg-base-200 rounded-xl shadow-xl p-6 w-full"
-    >
-      {/* Welcome Section */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="text-center md:text-left">
-          <motion.h1
-            className="text-4xl font-bold mb-2 text-primary"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            Welcome, {user.displayName}!
-          </motion.h1>
-          <p className="text-lg text-secondary max-w-md">
-            Manage your products, promote your listings, and grow your sales directly from your vendor panel.
-          </p>
-        </div>
+const actions = [
+  { icon: FaPlus, title: "Add Product", desc: "Submit new items for review and listing.", to: "/dashboard/vendor/add-product", label: "Add Product", tint: "border-success/20 bg-success/5", iconTint: "bg-success/15 text-success" },
+  { icon: FaBox, title: "My Products", desc: "Track and manage your product listings.", to: "/dashboard/vendor/my-products", label: "View Products", tint: "border-primary/20 bg-primary/5", iconTint: "bg-primary/15 text-primary" },
+  { icon: FaBullhorn, title: "Add Advertisement", desc: "Promote your products to more users.", to: "/dashboard/vendor/add-advertisement", label: "Create Ad", tint: "border-accent/20 bg-accent/5", iconTint: "bg-accent/20 text-accent" },
+  { icon: FaFolderOpen, title: "My Advertisements", desc: "View the status of your submitted ads.", to: "/dashboard/vendor/my-advertisements", label: "View Ads", tint: "border-secondary/20 bg-secondary/5", iconTint: "bg-secondary/15 text-secondary" },
+];
 
-        <div className="w-full md:w-64">
-          <Lottie animationData={vendorLottie} loop={true} />
+const VendorWelcome = () => {
+  const { user } = useContext(AuthContext);
+  return (
+    <div className="w-full space-y-6">
+      <div className="surface-card overflow-hidden p-6 border-success/20 bg-gradient-to-br from-success/5 via-base-100 to-base-100">
+        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+          <div className="min-w-0 flex-1 text-center md:text-left">
+            <h1 className="break-words text-3xl font-bold text-primary sm:text-4xl">
+              Welcome, {user?.displayName || "Vendor"}!
+            </h1>
+            <p className="mt-2 max-w-md break-words text-base leading-relaxed text-base-content/70">
+              Manage your products, promote your listings, and grow your sales from your vendor panel.
+            </p>
+          </div>
+          <div className="w-full max-w-[14rem] shrink-0">
+            <Lottie animationData={vendorLottie} loop />
+          </div>
         </div>
       </div>
 
-      {/* Vendor Functional Cards */}
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mt-10"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2"
         initial="hidden"
-        animate="visible"
-        variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
+        animate="show"
+        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
       >
-        {/* Add Product */}
-        <motion.div
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          className="bg-base-100 p-5 rounded-xl shadow-md border-l-4 border-primary shadow-primary"
-        >
-          <FaPlus className="text-3xl text-primary mb-2" />
-          <h2 className="text-xl font-semibold">Add Product</h2>
-          <p className="text-sm text-gray-500 mb-2">Submit new items for review and listing.</p>
-          <Link to="/dashboard/vendor/add-product" className="btn btn-primary text-sm">Go to Add Product</Link>
-        </motion.div>
-
-        {/* My Products */}
-        <motion.div
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          className="bg-base-100 p-5 rounded-xl shadow-md border-l-4 border-secondary shadow-secondary"
-        >
-          <FaBox className="text-3xl text-secondary mb-2" />
-          <h2 className="text-xl font-semibold">My Products</h2>
-          <p className="text-sm text-gray-500 mb-2">Track and manage your product listings.</p>
-          <Link to="/dashboard/vendor/my-products" className="btn btn-secondary text-sm">Go to My Products</Link>
-        </motion.div>
-
-        {/* Add Advertisement */}
-        <motion.div
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          className="bg-base-100 p-5 rounded-xl shadow-md border-l-4 border-accent shadow-accent"
-        >
-          <FaBullhorn className="text-3xl text-accent mb-2" />
-          <h2 className="text-xl font-semibold">Add Advertisement</h2>
-          <p className="text-sm text-gray-500 mb-2">Promote your products to more users.</p>
-          <Link to="/dashboard/vendor/add-advertisement" className="btn btn-accent text-sm">Go to Advertisement</Link>
-        </motion.div>
-
-        {/* My Advertisements */}
-        <motion.div
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          className="bg-base-100 p-5 rounded-xl shadow-md border-l-4 border-info shadow-info"
-        >
-          <FaFolderOpen className="text-3xl text-info mb-2" />
-          <h2 className="text-xl font-semibold">My Advertisements</h2>
-          <p className="text-sm text-gray-500 mb-2">View the status of your submitted ads.</p>
-          <Link to="/dashboard/vendor/my-advertisements" className="btn btn-info text-sm">Go to My Ads</Link>
-        </motion.div>
+        {actions.map((item) => {
+          const Icon = item.icon;
+          return (
+            <motion.div
+              key={item.title}
+              variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}
+              whileHover={{ y: -3 }}
+              className={`surface-card flex h-full flex-col overflow-hidden p-5 ${item.tint}`}
+            >
+              <div className={`mb-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${item.iconTint}`}>
+                <Icon className="text-lg" />
+              </div>
+              <h2 className="break-words text-lg font-semibold leading-snug text-base-content">{item.title}</h2>
+              <p className="mb-4 mt-1 min-w-0 flex-1 break-words text-sm leading-relaxed text-base-content/70">{item.desc}</p>
+              <Link to={item.to} className="btn btn-primary btn-sm mt-auto w-full sm:w-fit">
+                <span className="truncate">{item.label}</span>
+              </Link>
+            </motion.div>
+          );
+        })}
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 

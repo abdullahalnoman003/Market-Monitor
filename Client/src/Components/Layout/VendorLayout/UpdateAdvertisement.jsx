@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+﻿import React, { useContext, useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import BrandedLoader from "../../Shared/BrandedLoader";
 
 const UpdateAdvertisement = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
-  const [adData, setAdData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [adTitle, setAdTitle] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -23,24 +23,24 @@ const UpdateAdvertisement = () => {
       .get(`/my-advertisements/${id}`)
       .then((res) => {
         const ad = res.data;
-        setAdData(ad);
-        setAdTitle(ad.ad_title);
-        setShortDescription(ad.short_description);
-        setBannerImage(ad.banner_image);
-        setImagePreview(ad.banner_image);
-        setLoading(false);
+        setAdTitle(ad.ad_title || "");
+        setShortDescription(ad.short_description || "");
+        setBannerImage(ad.banner_image || "");
+        setImagePreview(ad.banner_image || null);
       })
       .catch((err) => {
         console.error("Error loading ad:", err);
-        Swal.fire("❌ Error", "Failed to fetch advertisement data!", "error");
-        navigate("/");
-      });
+        toast.error("Failed to fetch advertisement data.");
+        navigate(-1);
+      })
+      .finally(() => setLoading(false));
   }, [id, axiosSecure, navigate]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file || !file.type.startsWith("image/")) {
-      return Swal.fire("Invalid File", "Please select a valid image.", "warning");
+      toast.error("Please select a valid image.");
+      return;
     }
     const localUrl = URL.createObjectURL(file);
     setImagePreview(localUrl);
@@ -48,7 +48,7 @@ const UpdateAdvertisement = () => {
   };
 
   const uploadImageIfNeeded = async () => {
-    if (typeof bannerImage === "string") return bannerImage; // Already uploaded
+    if (typeof bannerImage === "string") return bannerImage;
     const formData = new FormData();
     formData.append("image", bannerImage);
     const url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;
@@ -58,14 +58,15 @@ const UpdateAdvertisement = () => {
     });
     const data = await response.json();
     if (data.success) return data.data.url;
-    else throw new Error(data.error.message || "Image upload failed");
+    throw new Error(data.error?.message || "Image upload failed");
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
 
     if (!adTitle.trim() || !shortDescription.trim()) {
-      return Swal.fire("⚠️ Incomplete", "All fields are required.", "warning");
+      toast.error("All fields are required.");
+      return;
     }
 
     try {
@@ -83,37 +84,28 @@ const UpdateAdvertisement = () => {
       const res = await axiosSecure.put(`/my-advertisements/${id}`, updatedAd);
 
       if (res.data.modifiedCount > 0) {
-        Swal.fire("✅ Updated!", "Advertisement updated successfully!", "success");
+        toast.success("Advertisement updated successfully.");
         navigate("/dashboard/vendor/my-advertisements");
       } else {
-        Swal.fire("ℹ️ Notice", "No changes made.", "info");
+        toast("No changes made.");
       }
     } catch (error) {
-      Swal.fire("❌ Error", error.message || "Update failed", "error");
+      toast.error(error.message || "Update failed.");
     }
   };
 
   if (loading) {
-    return (
-      <div className="h-80 w-full flex items-center justify-center bg-base-200 rounded-xl mt-8">
-        <div className="text-center space-y-3">
-          <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold text-yellow-800">
-            Fetching advertisement info...
-          </p>
-        </div>
-      </div>
-    );
+    return <BrandedLoader label="Loading advertisement..." />;
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-8 bg-gradient-to-br from-base-200 to-base-300 rounded-2xl shadow-2xl my-12">
-      <h2 className="text-3xl font-extrabold text-primary text-center mb-6">
-        ✏️ Update Advertisement
+    <div className="max-w-3xl mx-auto p-6 sm:p-8 bg-base-100 border border-base-300 rounded-xl shadow-sm my-10">
+      <h2 className="text-2xl sm:text-3xl font-bold text-primary text-center mb-6">
+        Update Advertisement
       </h2>
       <form onSubmit={handleUpdate} className="space-y-6">
         <div className="form-control">
-          <label className="label font-semibold text-lg">📢 Ad Title</label>
+          <label className="label font-semibold">Ad Title</label>
           <input
             type="text"
             value={adTitle}
@@ -124,7 +116,7 @@ const UpdateAdvertisement = () => {
         </div>
 
         <div className="form-control">
-          <label className="label font-semibold text-lg">✍️ Short Description</label>
+          <label className="label font-semibold">Short Description</label>
           <textarea
             value={shortDescription}
             onChange={(e) => setShortDescription(e.target.value)}
@@ -132,13 +124,13 @@ const UpdateAdvertisement = () => {
             maxLength={150}
             required
           ></textarea>
-          <span className="text-xs text-right mt-1 text-base-content/70">
+          <span className="text-xs text-right mt-1 text-base-content/60">
             {shortDescription.length}/150
           </span>
         </div>
 
         <div className="form-control">
-          <label className="label font-semibold text-lg">🖼️ Banner Image</label>
+          <label className="label font-semibold">Banner Image</label>
           {imagePreview && (
             <div className="relative mb-4">
               <img
@@ -157,9 +149,9 @@ const UpdateAdvertisement = () => {
           />
         </div>
 
-        <div className="text-center pt-4">
-          <button type="submit" className="btn btn-primary w-full text-lg">
-            🔄 Update Advertisement
+        <div className="pt-2">
+          <button type="submit" className="btn btn-primary w-full">
+            Update Advertisement
           </button>
         </div>
       </form>
