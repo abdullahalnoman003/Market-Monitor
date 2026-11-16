@@ -2,10 +2,11 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useQuery } from "@tanstack/react-query";
 import React, { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 import useAxios from "../../../../Hooks/useAxios";
 import { AuthContext } from "../../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../../Hooks/useDocumentTitle";
+import BrandedLoader from "../../../Shared/BrandedLoader";
 
 const PaymentForm = () => {
   useDocumentTitle("Payment")
@@ -29,14 +30,7 @@ const PaymentForm = () => {
   });
 
  if (isPending) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center bg-base">
-        <div className="text-center space-y-3">
-          <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold ">Please Wait... <br />Loading Information </p>
-        </div>
-      </div>
-    );
+    return <BrandedLoader label="Loading payment information..." />;
   }
 
   const fullAmount = Number(productInfo.price_per_unit) || 0;
@@ -55,11 +49,10 @@ const PaymentForm = () => {
     setIsProcessing(true);
 
     try {
-      const { error: cardError, paymentMethod } =
-        await stripe.createPaymentMethod({
-          type: "card",
-          card,
-        });
+      const { error: cardError } = await stripe.createPaymentMethod({
+        type: "card",
+        card,
+      });
 
       if (cardError) {
         setError(cardError.message);
@@ -111,12 +104,7 @@ const PaymentForm = () => {
         const saveRes = await axiosInstance.post("/orders", orderData);
 
         if (saveRes?.data?.insertedId) {
-          await Swal.fire({
-            icon: "success",
-            title: "Payment Successful!",
-            html: `<strong>Transaction ID:</strong> <code>${transactionId}</code>`,
-            confirmButtonText: "Okay!",
-          });
+          toast.success(`Payment successful. Transaction ID: ${transactionId}`);
           navigate("/all-products");
         } else {
           throw new Error("Order saving failed. Please contact support.");
@@ -124,6 +112,7 @@ const PaymentForm = () => {
       }
     } catch (err) {
       setError(err.message || "Something went wrong.");
+      toast.error(err.message || "Payment failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -176,14 +165,14 @@ const PaymentForm = () => {
           <div className="p-3 border shadow shadow-primary rounded-md">
             <CardElement
               options={{
-                style: {
-                  base: {
-                    fontSize: "16px",
-                    color: "#32325d",
-                    "::placeholder": { color: "#a0aec0" },
-                  },
-                  invalid: { color: "#fa755a" },
-                },
+        style: {
+          base: {
+            fontSize: "16px",
+            color: "oklch(0.23 0.03 155)",
+            "::placeholder": { color: "oklch(0.55 0.02 155 / 0.7)" },
+          },
+          invalid: { color: "oklch(0.6 0.2 25)" },
+        },
                 hidePostalCode: true,
               }}
             />

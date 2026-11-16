@@ -1,24 +1,22 @@
-import { useContext, useEffect, useState } from "react";
+﻿import { useContext, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { FaBoxOpen } from "react-icons/fa";
 import useAxios from "../../../Hooks/useAxios";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
-  import { motion } from "framer-motion";
-import { FaBoxOpen } from "react-icons/fa";
+import BrandedLoader from "../../Shared/BrandedLoader";
 
 const PriceTrends = () => {
-  useDocumentTitle("Price Trends | Dashboard")
-  const {user} = useContext(AuthContext);
+  useDocumentTitle("Price Trends | Dashboard");
+  const { user } = useContext(AuthContext);
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedProductData, setSelectedProductData] = useState(null);
-  const userEmail = user.email
+  const userEmail = user?.email;
 
-  //  Fetching user's watchlist
   const { data: watchlist = [], isLoading } = useQuery({
     queryKey: ["watchlist", userEmail],
     enabled: !!userEmail,
@@ -28,16 +26,17 @@ const PriceTrends = () => {
     },
   });
 
-  //  Fetching selected product details using productId
   useEffect(() => {
     const fetchProduct = async () => {
-      if (selectedProductId) {
-        try {
-          const res = await axiosInstance.get(`/product/${selectedProductId}`);
-          setSelectedProductData(res.data);
-        } catch (err) {
-          console.error("Failed to fetch product data:", err);
-        }
+      if (!selectedProductId) {
+        setSelectedProductData(null);
+        return;
+      }
+      try {
+        const res = await axiosInstance.get(`/product/${selectedProductId}`);
+        setSelectedProductData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch product data:", err);
       }
     };
 
@@ -45,80 +44,82 @@ const PriceTrends = () => {
   }, [selectedProductId, axiosInstance]);
 
   if (isLoading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="text-center space-y-3 ">
-          <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold text-primary">Please Wait...</p>
-        </div>
-      </div>
-    );
+    return <BrandedLoader label="Loading price trends..." />;
   }
 
   return (
-    <div className="min-h-screen  text-gray-300 flex flex-col md:flex-row gap-6 p-6">
-        
-        
-      {/* Left Panel: Product List */}
-      <div className="md:w-1/3  p-4 rounded-xl shadow-md shadow-primary">
-        <h2 className="text-xl font-bold mb-4 text-primary text-center">📝 Watchlisted Products</h2>
-        <ul className="space-y-3">
+    <div className="min-h-screen bg-base-200 p-4 sm:p-6">
+      <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+        <div className="surface-card p-4 sm:p-5">
+          <h2 className="mb-4 text-center text-xl font-bold text-base-content">Watchlisted Products</h2>
 
-          {watchlist.length === 0 &&(
-    <motion.div
-      className="min-h-screen flex flex-col items-center justify-center px-4 text-primary space-y-4"
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-    >
-      <FaBoxOpen className="text-6xl text-accent animate-pulse" />
-      <h2 className="text-2xl text-center font-bold">No Orders Found</h2>
-      <p className="text-base-content text-center opacity-70 max-w-md">
-        You haven’t Watchlisted any Products yet. Explore products and make your Wachlist today!
-      </p>
-    </motion.div>
+          {watchlist.length === 0 ? (
+            <div className="flex min-h-[240px] flex-col items-center justify-center space-y-3 px-2 text-center">
+              <FaBoxOpen className="text-4xl text-primary/40" />
+              <h3 className="text-base font-semibold text-base-content">No watchlisted products</h3>
+              <p className="text-sm text-base-content/70">
+                Add products to your watchlist to compare their price trends here.
+              </p>
+            </div>
+          ) : (
+            <ul className="space-y-2">
+              {watchlist.map((item) => (
+                <li key={item._id}>
+                  <button
+                    type="button"
+                    className={`w-full rounded-lg border px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+                      selectedProductId === item.productId
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-base-300 bg-base-100 hover:bg-base-200"
+                    }`}
+                    onClick={() => setSelectedProductId(item.productId)}
+                  >
+                    {item.productName}
+                  </button>
+                </li>
+              ))}
+            </ul>
           )}
+        </div>
 
-          {watchlist.map((item) => (
-            <li key={item._id}>
-              <button
-                className={`w-full font-bold text-left px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  selectedProductId === item.productId
-                    ? "bg-info text-white font-bold border shadow-primary shadow-xs"
-                    : "bg-[#334155] hover:bg-[#475569] border border-primary shadow-primary shadow-xs"
-                }`}
-                onClick={() => setSelectedProductId(item.productId)}
-              >
-                {item.productName}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div className="surface-card flex min-h-[420px] flex-col p-4 sm:p-6">
+          {!selectedProductData ? (
+            <div className="flex flex-1 items-center justify-center text-center">
+              <p className="text-base font-medium text-base-content/70">
+                Select a product to view price trends.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="mb-4">
+                <h2 className="text-xl font-bold text-base-content sm:text-2xl">
+                  {selectedProductData.item_name} — Price Trends
+                </h2>
+                <p className="text-sm text-base-content/60">
+                  Track historical price changes for this product.
+                </p>
+              </div>
 
-      {/* Right Panel: Chart */}
-      <div className="md:w-2/3 bg-[#1e293b] shadow-primary p-6 rounded-xl shadow-md flex flex-col items-center justify-center">
-        {!selectedProductData ? (
-          <p className="text-center text-lg text-primary font-bold">📌 Select a product to view price trends</p>
-        ) : (
-          <>
-            <h2 className="text-2xl font-bold mb-4 text-info">{selectedProductData.item_name} — Price Trends</h2>
-
-            {selectedProductData.prices?.length > 0 ? (
-              <ResponsiveContainer width="100%" height={350}>
-                <LineChart data={selectedProductData.prices}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="date" stroke="#cbd5e1" />
-                  <YAxis stroke="#cbd5e1" />
-                  <Tooltip contentStyle={{ backgroundColor: "#1e293b", color: "#f8fafc" }} />
-                  <Line type="monotone" dataKey="price" stroke="#38bdf8" strokeWidth={3} activeDot={{ r: 6 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-sm text-warning">⚠️ No price data available for this product.</p>
-            )}
-          </>
-        )}
+              {selectedProductData.prices?.length > 0 ? (
+                <div className="h-[320px] w-full sm:h-[380px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={selectedProductData.prices}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-base-300)" />
+                      <XAxis dataKey="date" stroke="currentColor" tick={{ fontSize: 12 }} />
+                      <YAxis stroke="currentColor" tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="price" stroke="var(--color-primary)" strokeWidth={2.5} activeDot={{ r: 5 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="flex flex-1 items-center justify-center">
+                  <p className="text-sm text-base-content/70">No price data available for this product.</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

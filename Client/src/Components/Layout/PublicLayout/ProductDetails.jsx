@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaRegBookmark, FaComments, FaChartBar, FaStar } from "react-icons/fa";
 import { FaCartPlus } from "react-icons/fa6";
-import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 import {
   BarChart,
   Bar,
@@ -15,6 +15,7 @@ import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useUserRole from "../../../Hooks/useUserRole";
 import ProductNotFound from "../../Error/ProductNotFound";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { DetailsSkeleton } from "../../Shared/Skeletons";
 
 const ProductDetails = () => {
   const { user } = useContext(AuthContext);
@@ -62,7 +63,7 @@ const ProductDetails = () => {
 
     const data = {
       productId: product._id,
-      productName : product.item_name,
+      productName: product.item_name,
       market: product.market_name,
       date: product.date,
       userEmail: user.email,
@@ -71,17 +72,13 @@ const ProductDetails = () => {
 
     axiosSecure
       .post("/watchlist", data)
-      .then(() => Swal.fire("Added to watchlist!", "", "success"))
+      .then(() => toast.success("Added to watchlist."))
       .catch((error) => {
-        if (error.response && error.response.status === 400) {
-          Swal.fire(
-            "Info",
-            error.response.data.message || "Already in watchlist",
-            "info"
-          );
+        if (error.response?.status === 400) {
+          toast(error.response.data.message || "Already in watchlist");
         } else {
           console.error(error);
-          Swal.fire("Error", "Failed to add to watchlist", "error");
+          toast.error("Failed to add to watchlist.");
         }
       });
   };
@@ -91,8 +88,7 @@ const ProductDetails = () => {
   };
 
   const handleSubmitReview = () => {
-    if (!comment || !rating)
-      return Swal.fire("Add both comment and rating", "", "warning");
+    if (!comment || !rating) return toast.error("Please add both a comment and a rating.");
 
     const reviewData = {
       productId: product._id,
@@ -103,36 +99,28 @@ const ProductDetails = () => {
       date: new Date().toISOString().split("T")[0],
     };
 
-    axiosSecure.post("/reviews", reviewData).then(() => {
-      setReviews((prev) => [reviewData, ...prev]);
-      setComment("");
-      setRating(0);
-      Swal.fire("Review submitted", "", "success");
-    });
+    axiosSecure
+      .post("/reviews", reviewData)
+      .then(() => {
+        setReviews((prev) => [reviewData, ...prev]);
+        setComment("");
+        setRating(0);
+        toast.success("Review submitted.");
+      })
+      .catch(() => toast.error("Failed to submit review."));
   };
 
   const handleReviewDelete = (reviewId) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This review will be deleted!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axiosSecure
-          .delete(`/delete-review/${reviewId}`)
-          .then(() => {
-            setReviews((prev) => prev.filter((r) => r._id !== reviewId));
-            Swal.fire("Deleted!", "Your review has been deleted.", "success");
-          })
-          .catch(() => {
-            Swal.fire("Error", "Could not delete review.", "error");
-          });
-      }
-    });
+    if (!window.confirm("Delete this review?")) return;
+    axiosSecure
+      .delete(`/delete-review/${reviewId}`)
+      .then(() => {
+        setReviews((prev) => prev.filter((r) => r._id !== reviewId));
+        toast.success("Review deleted.");
+      })
+      .catch(() => {
+        toast.error("Could not delete review.");
+      });
   };
   const handleReviewUpdate = () => {
     if (!editedComment.trim()) return;
@@ -140,16 +128,14 @@ const ProductDetails = () => {
       .patch(`/update-review/${editingReviewId}`, { comment: editedComment })
       .then(() => {
         setReviews((prev) =>
-          prev.map((r) =>
-            r._id === editingReviewId ? { ...r, comment: editedComment } : r
-          )
+          prev.map((r) => (r._id === editingReviewId ? { ...r, comment: editedComment } : r))
         );
         setEditingReviewId(null);
         setEditedComment("");
-        Swal.fire("Success", "Review updated!", "success");
+        toast.success("Review updated.");
       })
       .catch(() => {
-        Swal.fire("Error", "Failed to update review", "error");
+        toast.error("Failed to update review.");
       });
   };
   const handleComparePrices = () => {
@@ -158,7 +144,7 @@ const ProductDetails = () => {
     const baseDatePrice = chartData.find((d) => d.date === compareDate);
     const latestPrice = chartData[chartData.length - 1];
 
-    if (baseDatePrice) {
+    if (baseDatePrice && latestPrice) {
       const diff = latestPrice.price - baseDatePrice.price;
       const changeText =
         diff > 0
@@ -169,7 +155,7 @@ const ProductDetails = () => {
       setCompareSummary(changeText);
       setCompareData(chartData);
     } else {
-      Swal.fire("No data found for selected date", "Please select another date.", "info");
+      toast("No data found for selected date. Please choose another date.");
     }
   };
 
@@ -178,11 +164,7 @@ const ProductDetails = () => {
     setCompareDate("");
   };
   if (loading) {
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <span className="loading loading-bars loading-lg text-primary"></span>
-      </div>
-    );
+    return <DetailsSkeleton />;
   }
 
   if (!product) {
@@ -375,7 +357,7 @@ const ProductDetails = () => {
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="price" fill="#38bdf8" />
+                    <Bar dataKey="price" fill="var(--color-primary)" />
           </BarChart>
         </ResponsiveContainer>
       </div>

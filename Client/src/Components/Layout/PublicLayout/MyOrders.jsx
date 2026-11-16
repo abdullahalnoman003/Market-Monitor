@@ -1,99 +1,86 @@
+﻿import { useMemo, useState, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { FaEye } from "react-icons/fa";
-import { useContext } from "react";
+import { FaEye, FaBoxOpen } from "react-icons/fa";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
-import { motion } from "framer-motion";
-import { FaBoxOpen } from "react-icons/fa";
+import BrandedLoader from "../../Shared/BrandedLoader";
 
+const PAGE_SIZE = 10;
 
 const MyOrders = () => {
-  useDocumentTitle("My Orders | Dashboard")
+  useDocumentTitle("My Orders | Dashboard");
   const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
+  const [page, setPage] = useState(1);
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["myOrders", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
       const res = await axiosSecure.get(`/orders?buyerEmail=${user.email}`);
-      return res.data;
+      return res.data || [];
     },
   });
 
+  const totalPages = Math.max(1, Math.ceil(orders.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedOrders = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return orders.slice(start, start + PAGE_SIZE);
+  }, [orders, currentPage]);
+
   if (isLoading) {
+    return <BrandedLoader label="Loading your orders..." />;
+  }
+
+  if (orders.length === 0) {
     return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="text-center space-y-3 ">
-          <span className="loading loading-bars loading-lg text-primary"></span>
-          <p className="text-xl font-semibold text-primary">Please Wait...</p>
-        </div>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center space-y-3">
+        <FaBoxOpen className="text-5xl text-primary/50" />
+        <h2 className="text-2xl font-bold text-base-content">No Orders Found</h2>
+        <p className="text-base-content/70 max-w-md">
+          You haven&apos;t placed any orders yet. Explore products and make your first purchase.
+        </p>
+        <Link to="/all-products" className="btn btn-primary btn-sm mt-2">Browse Products</Link>
       </div>
     );
   }
 
-
-if (orders.length === 0) {
   return (
-    <motion.div
-      className="min-h-screen flex flex-col items-center justify-center px-4 text-primary space-y-4"
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-    >
-      <FaBoxOpen className="text-6xl text-accent animate-pulse" />
-      <h2 className="text-2xl font-bold">No Orders Found</h2>
-      <p className="text-base-content text-center opacity-70 max-w-md">
-        You haven’t placed any orders yet. Explore products and make your first purchase today!
-      </p>
-    </motion.div>
-  );
-}
-
-
-  return (
-    <div className="min-h-screen px-4 py-10 ">
-      <h2 className="text-3xl text-center font-bold mb-6 text-primary pb-1">
-        🧾 My Order List
+    <div className="min-h-screen px-4 py-10">
+      <h2 className="text-2xl sm:text-3xl text-center font-bold mb-2 text-primary">
+        My Orders
       </h2>
+      <p className="text-center text-base-content/70 mb-6">Showing 10 orders per page.</p>
 
-      <div className="overflow-x-auto rounded-xl shadow-md border mx-auto max-w-7xl shadow-primary ">
-        <table className=" w-full text-left text-sm ">
-          <thead className=" text-primary uppercase text-xs tracking-wider border-b-2">
+      <div className="overflow-x-auto rounded-xl border border-base-300 bg-base-100 mx-auto max-w-7xl shadow-sm">
+        <table className="table w-full text-sm">
+          <thead className="bg-base-200 text-xs uppercase tracking-wider">
             <tr>
-              <th className="px-5 py-3">#</th>
-              <th className="px-5 py-3">Product Name</th>
-              <th className="px-5 py-3">Market</th>
-              <th className="px-5 py-3">Unit Price</th>
-              <th className="px-5 py-3">Total Price</th>
-              <th className="px-5 py-3">Date</th>
-              <th className="px-5 py-3">Action</th>
+              <th>#</th>
+              <th>Product Name</th>
+              <th>Market</th>
+              <th>Unit Price</th>
+              <th>Total Price</th>
+              <th>Date</th>
+              <th>Action</th>
             </tr>
           </thead>
-          <tbody className=" divide-y ">
-            {orders.map((order, index) => (
-              <tr
-                key={order._id}
-                className="hover:bg-primary-content transition-all duration-200"
-              >
-
-                <td className="px-5 py-3">{index + 1}</td>
-                <td className="px-5 py-3">{order.productName}</td>
-                <td className="px-5 py-3">{order.marketName || "Unknown"}</td>
-                <td className="px-5 py-3  font-medium">
-                  ${order.unitPrice}
-                </td>
-                <td className="px-5 py-3 text-secondary">${order.price}</td>
-                <td className="px-5 py-3">
-                  {new Date(order.date).toLocaleDateString("en-GB")}
-                </td>
-                <td className="px-5 py-3">
+          <tbody>
+            {paginatedOrders.map((order, index) => (
+              <tr key={order._id} className="hover">
+                <td>{(currentPage - 1) * PAGE_SIZE + index + 1}</td>
+                <td>{order.productName}</td>
+                <td>{order.marketName || "Unknown"}</td>
+                <td className="font-medium">${order.unitPrice}</td>
+                <td>${order.price ?? order.totalAmount}</td>
+                <td>{new Date(order.date).toLocaleDateString("en-GB")}</td>
+                <td>
                   <Link to={`/product/${order.id}`}>
-                    <button className="flex items-center gap-1 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded-md transition-colors duration-200">
-                      <FaEye className="text-sm" />
-                      View
+                    <button className="btn btn-xs btn-primary gap-1">
+                      <FaEye /> View
                     </button>
                   </Link>
                 </td>
@@ -102,6 +89,28 @@ if (orders.length === 0) {
           </tbody>
         </table>
       </div>
+
+      {orders.length > PAGE_SIZE && (
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <button
+            className="btn btn-sm btn-outline"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="rounded-md border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            className="btn btn-sm btn-outline"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

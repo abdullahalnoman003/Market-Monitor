@@ -1,90 +1,66 @@
+﻿import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { FaHeart, FaShoppingCart, FaChartLine } from "react-icons/fa";
 import Lottie from "lottie-react";
-import userLottie from "../../Animation/UserAnimation.json"; // Add your user animation JSON here
+import userLottie from "../../Animation/UserAnimation.json";
 import { useContext } from "react";
 import { AuthContext } from "../../Authentication/Context/AuthContext";
 
-const UserWelcome = () => {
-    const {user} = useContext(AuthContext);
+const actions = [
+  { icon: FaHeart, title: "Manage Watchlist", desc: "View and organize your saved items.", to: "/dashboard/user/manage-watchlist", label: "Go to Watchlist", tint: "border-accent/20 bg-accent/5", iconTint: "bg-accent/20 text-accent" },
+  { icon: FaShoppingCart, title: "My Orders", desc: "Check order status and history.", to: "/dashboard/user/orders", label: "Go to Orders", tint: "border-info/20 bg-info/5", iconTint: "bg-info/15 text-info" },
+  { icon: FaChartLine, title: "Price Trends", desc: "Analyze market prices for your products.", to: "/dashboard/user/price-trends", label: "View Trends", tint: "border-secondary/20 bg-secondary/5", iconTint: "bg-secondary/15 text-secondary" },
+];
 
+const UserWelcome = () => {
+  const { user } = useContext(AuthContext);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="bg-base-200 rounded-xl shadow-xl p-6 w-full"
-    >
-      {/* Welcome Section */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="text-center md:text-left">
-          <motion.h1
-            className="text-4xl font-bold mb-2 text-primary"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            Welcome, {user.displayName}!
-          </motion.h1>
-          <p className="text-lg text-secondary max-w-md">
-            Track your watchlist, manage your orders, and view market trends all in one place.
-          </p>
-        </div>
-
-        <div className="w-full md:w-64">
-          <Lottie animationData={userLottie} loop={true} />
+    <div className="w-full space-y-6">
+      <div className="surface-card overflow-hidden p-6 border-info/20 bg-gradient-to-br from-info/5 via-base-100 to-base-100">
+        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+          <div className="min-w-0 flex-1 text-center md:text-left">
+            <h1 className="break-words text-3xl font-bold text-primary sm:text-4xl">
+              Welcome, {user?.displayName || "User"}!
+            </h1>
+            <p className="mt-2 max-w-md break-words text-base leading-relaxed text-base-content/70">
+              Track your watchlist, manage your orders, and view market trends from your dashboard.
+            </p>
+          </div>
+          <div className="w-full max-w-[14rem] shrink-0">
+            <Lottie animationData={userLottie} loop />
+          </div>
         </div>
       </div>
 
-      {/* User Functional Cards */}
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mt-10"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
         initial="hidden"
-        animate="visible"
-        variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
+        animate="show"
+        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
       >
-        {/* Manage Watchlist */}
-        <motion.div
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          className="bg-base-100 p-5 rounded-xl shadow-md border-l-4 border-primary shadow-primary"
-        >
-          <FaHeart className="text-3xl text-primary mb-2" />
-          <h2 className="text-xl font-semibold">Manage Watchlist</h2>
-          <p className="text-sm text-gray-500 mb-2">View and organize your favorite items.</p>
-          <Link to="/dashboard/user/manage-watchlist" className="btn btn-primary text-sm">
-            Go to Watchlist
-          </Link>
-        </motion.div>
-
-        {/* My Orders */}
-        <motion.div
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          className="bg-base-100 p-5 rounded-xl shadow-md border-l-4 border-secondary shadow-secondary"
-        >
-          <FaShoppingCart className="text-3xl text-secondary mb-2" />
-          <h2 className="text-xl font-semibold">My Orders</h2>
-          <p className="text-sm text-gray-500 mb-2">Check order status and history.</p>
-          <Link to="/dashboard/user/orders" className="btn btn-secondary text-sm">
-            Go to Orders
-          </Link>
-        </motion.div>
-
-        {/* View Price Trends */}
-        <motion.div
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          className="bg-base-100 p-5 rounded-xl shadow-md border-l-4 border-accent shadow-accent"
-        >
-          <FaChartLine className="text-3xl text-accent mb-2" />
-          <h2 className="text-xl font-semibold">Price Trends</h2>
-          <p className="text-sm text-gray-500 mb-2">Analyze market prices of your products.</p>
-          <Link to="/dashboard/user/price-trends" className="btn btn-accent text-sm">
-            View Trends
-          </Link>
-        </motion.div>
+        {actions.map((item) => {
+          const Icon = item.icon;
+          return (
+            <motion.div
+              key={item.title}
+              variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}
+              whileHover={{ y: -3 }}
+              className={`surface-card flex h-full flex-col overflow-hidden p-5 ${item.tint}`}
+            >
+              <div className={`mb-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${item.iconTint}`}>
+                <Icon className="text-lg" />
+              </div>
+              <h2 className="break-words text-lg font-semibold leading-snug text-base-content">{item.title}</h2>
+              <p className="mb-4 mt-1 min-w-0 flex-1 break-words text-sm leading-relaxed text-base-content/70">{item.desc}</p>
+              <Link to={item.to} className="btn btn-primary btn-sm mt-auto w-full sm:w-fit">
+                <span className="truncate">{item.label}</span>
+              </Link>
+            </motion.div>
+          );
+        })}
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 
