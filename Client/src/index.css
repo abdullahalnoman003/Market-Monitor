@@ -169,6 +169,81 @@ a, button, input, select, textarea {
     radial-gradient(700px 320px at 50% 0%, color-mix(in oklab, var(--color-primary) 8%, transparent), transparent 70%);
 }
 
+/* react-datepicker theme fixes */
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  width: 100%;
+  min-width: 0;
+  display: block;
+}
+.react-datepicker__input-container {
+  position: relative;
+}
+.react-datepicker__input-container input {
+  width: 100%;
+  min-width: 0;
+}
+.react-datepicker-popper {
+  z-index: 60 !important;
+}
+.react-datepicker-popper[data-placement^="bottom"] {
+  padding-top: 4px;
+}
+.react-datepicker {
+  font-family: inherit;
+  border: 1px solid var(--color-base-300);
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
+  border-radius: 0.75rem;
+  box-shadow: 0 12px 30px -16px color-mix(in oklab, var(--color-base-content) 25%, transparent);
+}
+.react-datepicker__header {
+  background-color: color-mix(in oklab, var(--color-primary) 10%, var(--color-base-100));
+  border-bottom: 1px solid var(--color-base-300);
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker-year-header,
+.react-datepicker__day-name {
+  color: var(--color-base-content);
+}
+.react-datepicker__day {
+  color: var(--color-base-content);
+}
+.react-datepicker__day:hover {
+  background-color: color-mix(in oklab, var(--color-primary) 15%, transparent);
+}
+.react-datepicker__day--selected,
+.react-datepicker__day--in-selecting-range,
+.react-datepicker__day--in-range,
+.react-datepicker__day--keyboard-selected {
+  background-color: var(--color-primary) !important;
+  color: var(--color-primary-content) !important;
+}
+.react-datepicker__day--disabled {
+  color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+}
+.react-datepicker__triangle {
+  display: none;
+}
+.react-datepicker__close-icon {
+  padding-right: 0.5rem;
+}
+.react-datepicker__close-icon::after {
+  background-color: var(--color-base-300);
+  color: var(--color-base-content);
+  font-size: 14px;
+}
+.react-datepicker__portal {
+  background-color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+  z-index: 60;
+}
+.react-datepicker__portal .react-datepicker {
+  box-shadow: 0 20px 40px -20px color-mix(in oklab, var(--color-base-content) 35%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
