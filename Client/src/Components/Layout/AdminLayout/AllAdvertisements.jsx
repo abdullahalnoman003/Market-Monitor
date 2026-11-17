@@ -1,54 +1,46 @@
-import React from "react";
-import Swal from "sweetalert2";
+﻿import React, { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxios from "../../../Hooks/useAxios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import BrandedLoader from "../../Shared/BrandedLoader";
+
+const PAGE_SIZE = 10;
 
 const AllAdvertisements = () => {
   useDocumentTitle("Manage Advertisements | Admin");
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
+  const [selectedActions, setSelectedActions] = useState({});
+  const [page, setPage] = useState(1);
 
-  const {
-    data: ads = [],
-    isLoading,
-  } = useQuery({
+  const { data: ads = [], isLoading } = useQuery({
     queryKey: ["advertisements"],
     queryFn: async () => {
-      const res = await axiosInstance.get("/advertisement");// this is also calling in home so no need to add verification
-      return res.data;
+      const res = await axiosInstance.get("/advertisement");
+      return res.data || [];
     },
   });
 
-const statusMutation = useMutation({
-  mutationFn: async ({ id, status, reason = "", feedback = "" }) => {
-    const res = await axiosSecure.patch(`/advertisement/status/${id}`, {
-      status,
-      rejectionReason: reason,
-      rejectionFeedback: feedback,
-    });
-    return res.data;
-  },
-  onSuccess: () => {
-    queryClient.invalidateQueries(["advertisements"]);
-    Swal.fire({
-      icon: "success",
-      title: "Status updated successfully!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-  },
-  onError: (error) => {
-    Swal.fire({
-      icon: "error",
-      title: "Update Failed",
-      text: error?.response?.data?.message || error.message || "Something went wrong!",
-    });
-  },
-});
-
+  const statusMutation = useMutation({
+    mutationFn: async ({ id, status, reason = "", feedback = "" }) => {
+      const res = await axiosSecure.patch(`/advertisement/status/${id}`, {
+        status,
+        rejectionReason: reason,
+        rejectionFeedback: feedback,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["advertisements"]);
+      toast.success("Status updated successfully.");
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || error.message || "Failed to update status.");
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
@@ -57,69 +49,52 @@ const statusMutation = useMutation({
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["advertisements"]);
-      Swal.fire({
-      icon: "success",
-      title: "Advertisement Deleted!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
+      toast.success("Advertisement deleted.");
     },
     onError: (error) => {
-    Swal.fire({
-      icon: "error",
-      title: "Update Failed",
-      text: error?.response?.data?.message || error.message || "Something went wrong!",
-    });
-  },
+      toast.error(error?.response?.data?.message || error.message || "Failed to delete advertisement.");
+    },
   });
 
-  const changeAdStatus = async (id, currentStatus, newStatus) => {
-    if (currentStatus === newStatus) return;
-
-    if (newStatus === "rejected") {
-      const { isConfirmed, value: formValues } = await Swal.fire({
-        title: "Provide rejection reason and feedback",
-        html: `
-          <input id="reason" class="swal2-input" placeholder="Reason for rejection" required>
-          <textarea id="feedback" class="swal2-textarea" placeholder="Provide feedback" required></textarea>
-        `,
-        focusConfirm: false,
-        confirmButtonText: "Submit",
-        preConfirm: () => {
-          const reason = document.getElementById("reason").value;
-          const feedback = document.getElementById("feedback").value;
-          if (!reason || !feedback) {
-            Swal.showValidationMessage("Both fields are required");
-            return false;
-          }
-          return { reason, feedback };
-        },
-      });
-
-      if (isConfirmed && formValues) {
-        statusMutation.mutate({
-          id,
-          status: "rejected",
-          reason: formValues.reason,
-          feedback: formValues.feedback,
-        });
-      }
-    } else if (newStatus === "approved") {
-      statusMutation.mutate({ id, status: "approved" });
+  const handleConfirmAction = (ad) => {
+    const action = selectedActions[ad._id] || "";
+    if (!action) {
+      toast.error("Select an action first.");
+      return;
     }
-  };
 
-  const deleteAd = async (id) => {
-    const { isConfirmed } = await Swal.fire({
-      title: "Are you sure?",
-      text: "You can't undo this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-    });
+    if (action === "approve") {
+      statusMutation.mutate({ id: ad._id, status: "approved" });
+      return;
+    }
 
-    if (isConfirmed) {
-      deleteMutation.mutate(id);
+    if (action === "reject") {
+      const reason = window.prompt("Reason for rejection (required):", "");
+      if (reason === null) return;
+      const trimmedReason = reason.trim();
+      if (!trimmedReason) {
+        toast.error("Rejection reason is required.");
+        return;
+      }
+      const feedback = window.prompt("Feedback for vendor (required):", "");
+      if (feedback === null) return;
+      const trimmedFeedback = feedback.trim();
+      if (!trimmedFeedback) {
+        toast.error("Rejection feedback is required.");
+        return;
+      }
+      statusMutation.mutate({
+        id: ad._id,
+        status: "rejected",
+        reason: trimmedReason,
+        feedback: trimmedFeedback,
+      });
+      return;
+    }
+
+    if (action === "delete") {
+      if (!window.confirm("Delete this advertisement? This cannot be undone.")) return;
+      deleteMutation.mutate(ad._id);
     }
   };
 
@@ -130,81 +105,74 @@ const statusMutation = useMutation({
       rejected: "badge-error",
     };
     return (
-      <span className={`badge font-bold ${badgeMap[status] || "badge-neutral"}`}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+      <span className={`badge font-semibold ${badgeMap[status] || "badge-neutral"}`}>
+        {String(status || "unknown").charAt(0).toUpperCase() + String(status || "unknown").slice(1)}
       </span>
     );
   };
 
+  const totalPages = Math.max(1, Math.ceil(ads.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedAds = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return ads.slice(start, start + PAGE_SIZE);
+  }, [ads, currentPage]);
+
+  if (isLoading) {
+    return <BrandedLoader label="Loading advertisements..." />;
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 min-h-screen">
       <h2 className="text-3xl sm:text-4xl font-bold text-center mb-2 text-primary">
-        📢 Manage All Advertisements
+        Manage All Advertisements
       </h2>
-      <p className="text-center text-base sm:text-lg mb-8">
-        Admin can view, approve, reject (with feedback), or delete advertisements created by vendors.
+      <p className="text-center text-base sm:text-lg mb-8 text-base-content/70">
+        Select an action and confirm. Showing 10 advertisements per page.
       </p>
 
-      <div className="overflow-x-auto rounded-lg shadow-md shadow-primary">
+      <div className="overflow-x-auto rounded-xl border border-base-300 shadow-sm bg-base-100">
         <table className="table w-full">
-          <thead className="bg-accent text-sm sm:text-base text-white">
+          <thead className="bg-base-200 text-sm sm:text-base text-base-content">
             <tr>
               <th>#</th>
               <th>Vendor</th>
               <th>Ad Title</th>
               <th>Status</th>
-              <th className="text-center">Actions</th>
+              <th className="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            {isLoading ? (
+            {paginatedAds.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-6">
-                  <div className="text-center space-y-3 ">
-                    <span className="loading loading-bars loading-lg text-primary "></span>
-                    <p className="text-xl font-semibold">Loading products</p>
-                  </div>
-                </td>
-              </tr>
-            ) : ads.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="text-center py-6 text-lg">
+                <td colSpan="5" className="text-center py-6 text-base-content/70">
                   No advertisements found.
                 </td>
               </tr>
             ) : (
-              ads.map((ad, i) => (
-                <tr key={ad._id} className="hover:bg-base-200 transition-all">
-                  <td>{i + 1}</td>
+              paginatedAds.map((ad, i) => (
+                <tr key={ad._id} className="hover:bg-base-200/60 transition-colors">
+                  <td>{(currentPage - 1) * PAGE_SIZE + i + 1}</td>
                   <td className="whitespace-nowrap">{ad.vendor_name}</td>
                   <td className="whitespace-nowrap">{ad.ad_title}</td>
                   <td>{getStatusBadge(ad.status)}</td>
-                  <td>
-                    <div className="flex gap-2 justify-center flex-wrap">
-                      {ad.status !== "approved" && (
-                        <button
-                          onClick={() => changeAdStatus(ad._id, ad.status, "approved")}
-                          className="btn btn-xs btn-success"
-                        >
-                          Approve
-                        </button>
-                      )}
-                      {ad.status !== "rejected" && (
-                        <button
-                          onClick={() => changeAdStatus(ad._id, ad.status, "rejected")}
-                          className="btn btn-xs btn-error"
-                        >
-                          Reject
-                        </button>
-                      )}
-                      {ad.status === "rejected" && (
-                        <button
-                          onClick={() => deleteAd(ad._id)}
-                          className="btn btn-xs btn-warning"
-                        >
-                          Delete
-                        </button>
-                      )}
+                  <td className="align-middle">
+                    <div className="flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
+                      <select
+                        className="select select-bordered select-sm h-9 w-full min-w-0 sm:w-44"
+                        value={selectedActions[ad._id] || ""}
+                        onChange={(e) =>
+                          setSelectedActions((prev) => ({ ...prev, [ad._id]: e.target.value }))
+                        }
+                      >
+                        <option value="">Select action</option>
+                        {ad.status !== "approved" && <option value="approve">Approve</option>}
+                        {ad.status !== "rejected" && <option value="reject">Reject</option>}
+                        <option value="delete">Delete</option>
+                      </select>
+                      <button className="btn btn-sm btn-primary h-9 min-h-9 w-full shrink-0 px-3 sm:w-auto" onClick={() => handleConfirmAction(ad)}>
+                        Confirm
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -213,6 +181,28 @@ const statusMutation = useMutation({
           </tbody>
         </table>
       </div>
+
+      {ads.length > PAGE_SIZE && (
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <button
+            className="btn btn-sm btn-outline"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="rounded-md border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            className="btn btn-sm btn-outline"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

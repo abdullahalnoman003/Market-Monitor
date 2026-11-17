@@ -1,106 +1,104 @@
-import React from "react";
-import Swal from "sweetalert2";
+﻿import React, { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useDocumentTitle from "../../../Hooks/useDocumentTitle";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import BrandedLoader from "../../Shared/BrandedLoader";
+
+const PAGE_SIZE = 10;
 
 const AllProductsAdmin = () => {
   useDocumentTitle("All Products | Admin");
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [selectedActions, setSelectedActions] = useState({});
+  const [page, setPage] = useState(1);
 
-  // Fetch all products
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["all-products"],
     queryFn: async () => {
       const res = await axiosSecure.get("/all-products");
-      return res.data;
+      return res.data || [];
     },
   });
 
-  // Approve/Reject mutation
   const statusMutation = useMutation({
     mutationFn: async ({ id, payload }) => {
       return await axiosSecure.patch(`/product/status/${id}`, payload);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["all-products"]);
-    },
+    onSuccess: () => queryClient.invalidateQueries(["all-products"]),
   });
 
-  // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
       return await axiosSecure.delete(`/product/${id}`);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["all-products"]);
-    },
+    onSuccess: () => queryClient.invalidateQueries(["all-products"]),
   });
 
-  const changeProductStatus = async (id, newStatus) => {
-    if (newStatus === "rejected") {
-      const { value: formValues } = await Swal.fire({
-        title: "Provide rejection reason and feedback",
-        html: `
-          <input id="reason" class="swal2-input" placeholder="Reason" required>
-          <textarea id="feedback" class="swal2-textarea" placeholder="Feedback" required></textarea>
-        `,
-        focusConfirm: false,
-        preConfirm: () => {
-          const reason = document.getElementById("reason").value.trim();
-          const feedback = document.getElementById("feedback").value.trim();
+  const handleConfirmAction = (product) => {
+    const action = selectedActions[product._id] || "";
+    if (!action) {
+      toast.error("Select an action first.");
+      return;
+    }
 
-          if (!reason || !feedback) {
-            Swal.showValidationMessage(
-              "Please provide both reason and feedback"
-            );
-            return false;
-          }
+    if (action === "approve") {
+      statusMutation.mutate(
+        { id: product._id, payload: { status: "approved" } },
+        {
+          onSuccess: () => toast.success("Product approved."),
+          onError: () => toast.error("Failed to approve product."),
+        }
+      );
+      return;
+    }
 
-          return { reason, feedback };
-        },
-      });
-
-      if (formValues) {
-        const { reason, feedback } = formValues;
-        statusMutation.mutate({
-          id,
+    if (action === "reject") {
+      const reason = window.prompt("Reason for rejection (required):", "");
+      if (reason === null) return;
+      const trimmedReason = reason.trim();
+      if (!trimmedReason) {
+        toast.error("Rejection reason is required.");
+        return;
+      }
+      const feedback = window.prompt("Feedback for vendor (required):", "");
+      if (feedback === null) return;
+      const trimmedFeedback = feedback.trim();
+      if (!trimmedFeedback) {
+        toast.error("Rejection feedback is required.");
+        return;
+      }
+      statusMutation.mutate(
+        {
+          id: product._id,
           payload: {
             status: "rejected",
-            rejectionReason: reason,
-            rejectionFeedback: feedback,
+            rejectionReason: trimmedReason,
+            rejectionFeedback: trimmedFeedback,
           },
-        });
-        Swal.fire(
-          "❌ Rejected",
-          "Rejection feedback has been saved.",
-          "success"
-        );
-      }
-    } else if (newStatus === "approved") {
-      statusMutation.mutate({
-        id,
-        payload: { status: "approved" },
-      });
-      Swal.fire("✅ Approved", "Product has been approved.", "success");
+        },
+        {
+          onSuccess: () => toast.success("Product rejected and feedback saved."),
+          onError: () => toast.error("Failed to reject product."),
+        }
+      );
+      return;
     }
-  };
 
-  const handleDelete = async (id) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "This will permanently delete the product.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-    });
+    if (action === "update") {
+      navigate(`/dashboard/admin/update-product/${product._id}`);
+      return;
+    }
 
-    if (result.isConfirmed) {
-      deleteMutation.mutate(id);
-      Swal.fire("🗑️ Deleted!", "Product has been deleted.", "success");
+    if (action === "delete") {
+      if (!window.confirm("Delete this product permanently?")) return;
+      deleteMutation.mutate(product._id, {
+        onSuccess: () => toast.success("Product deleted."),
+        onError: () => toast.error("Failed to delete product."),
+      });
     }
   };
 
@@ -117,90 +115,70 @@ const AllProductsAdmin = () => {
     }
   };
 
+  const totalPages = Math.max(1, Math.ceil(products.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return products.slice(start, start + PAGE_SIZE);
+  }, [products, currentPage]);
+
+  if (isLoading) {
+    return <BrandedLoader label="Loading products..." />;
+  }
 
   return (
     <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <h2 className="text-3xl  sm:text-4xl font-bold text-center mb-4 text-primary">
-        🛒 All Products Management
+      <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-primary">
+        All Products Management
       </h2>
-      <p className="text-center mb-6 text-sm sm:text-base">
-        Admin can approve, reject (with feedback), update, or remove vendor
-        products.
+      <p className="text-center mb-6 text-sm sm:text-base text-base-content/70">
+        Select an action and confirm. Showing 10 products per page.
       </p>
 
-      <div className="overflow-x-auto shadow-md rounded-xl shadow-primary">
+      <div className="overflow-x-auto rounded-xl border border-base-300 shadow-sm bg-base-100">
         <table className="table w-full">
-          <thead className="bg-accent text-white">
+          <thead className="bg-base-200 text-base-content">
             <tr>
               <th>#</th>
               <th>Item Name</th>
               <th>Vendor</th>
               <th>Status</th>
               <th>Price</th>
-              <th className="text-center">Actions</th>
+              <th className="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            {isLoading ? (
+            {paginatedProducts.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-6">
-                  <div className="text-center space-y-3 ">
-                    <span className="loading loading-bars loading-lg text-primary "></span>
-                    <p className="text-xl font-semibold">Loading products</p>
-                  </div>
-                </td>
-              </tr>
-            ) : products.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="text-center py-6 text-error">
+                <td colSpan="6" className="text-center py-6 text-base-content/70">
                   No Products Found
                 </td>
               </tr>
             ) : (
-              products.map((product, i) => (
-                <tr key={product._id} className="hover:bg-base-200">
-                  <td>{i + 1}</td>
+              paginatedProducts.map((product, i) => (
+                <tr key={product._id} className="hover:bg-base-200/60">
+                  <td>{(currentPage - 1) * PAGE_SIZE + i + 1}</td>
                   <td>{product.item_name}</td>
                   <td>{product.vendor_name}</td>
                   <td>{getStatusBadge(product.status)}</td>
                   <td>৳{product.price_per_unit}</td>
-                  <td>
-                    <div className="flex flex-wrap gap-2 justify-center">
-                      {product.status !== "approved" && (
-                        <button
-                          className="btn btn-xs btn-success"
-                          onClick={() =>
-                            changeProductStatus(product._id, "approved")
-                          }
-                        >
-                          Approve
-                        </button>
-                      )}
-                      {product.status !== "rejected" && (
-                        <button
-                          className="btn btn-xs btn-error"
-                          onClick={() =>
-                            changeProductStatus(product._id, "rejected")
-                          }
-                        >
-                          Reject
-                        </button>
-                      )}
-                      <button
-                        className="btn btn-xs btn-info"
-                        onClick={() =>
-                          navigate(
-                            `/dashboard/admin/update-product/${product._id}`
-                          )
+                  <td className="align-middle">
+                    <div className="flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
+                      <select
+                        className="select select-bordered select-sm h-9 w-full min-w-0 sm:w-44"
+                        value={selectedActions[product._id] || ""}
+                        onChange={(e) =>
+                          setSelectedActions((prev) => ({ ...prev, [product._id]: e.target.value }))
                         }
                       >
-                        Update
-                      </button>
-                      <button
-                        className="btn btn-xs btn-warning"
-                        onClick={() => handleDelete(product._id)}
-                      >
-                        Delete
+                        <option value="">Select action</option>
+                        {product.status !== "approved" && <option value="approve">Approve</option>}
+                        {product.status !== "rejected" && <option value="reject">Reject</option>}
+                        <option value="update">Update</option>
+                        <option value="delete">Delete</option>
+                      </select>
+                      <button className="btn btn-sm btn-primary h-9 min-h-9 w-full shrink-0 px-3 sm:w-auto" onClick={() => handleConfirmAction(product)}>
+                        Confirm
                       </button>
                     </div>
                   </td>
@@ -210,6 +188,28 @@ const AllProductsAdmin = () => {
           </tbody>
         </table>
       </div>
+
+      {products.length > PAGE_SIZE && (
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <button
+            className="btn btn-sm btn-outline"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="rounded-md border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            className="btn btn-sm btn-outline"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
