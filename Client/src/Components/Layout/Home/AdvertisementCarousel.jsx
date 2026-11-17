@@ -4,6 +4,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { motion } from "framer-motion";
 import { FaBullhorn } from "react-icons/fa";
 import useAxios from "../../../Hooks/useAxios";
+import { BannerSkeleton } from "../../Shared/Skeletons";
 
 const AdvertisementCarousel = () => {
   const [ads, setAds] = useState([]);
@@ -23,9 +24,13 @@ const AdvertisementCarousel = () => {
 
   if (loading) {
     return (
-      <section className="section-shell py-14">
-        <div className="flex h-40 items-center justify-center">
-          <span className="loading loading-spinner loading-lg text-primary"></span>
+      <section className="section-shell py-14 sm:py-16">
+        <div className="text-center">
+          <h2 className="section-title">Advertisement Highlights</h2>
+          <p className="section-subtitle">Loading featured promotions...</p>
+        </div>
+        <div className="mt-10">
+          <BannerSkeleton />
         </div>
       </section>
     );
@@ -34,13 +39,16 @@ const AdvertisementCarousel = () => {
   return (
     <section className="section-shell py-14 sm:py-16">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
         className="text-center"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
       >
-        <h2 className="section-title">Advertisement Highlights</h2>
+        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+          <span className="text-base-content">Advertisement </span>
+          <span className="text-primary">Highlights</span>
+        </h2>
         <p className="section-subtitle">Featured promotions from verified vendors across the marketplace.</p>
       </motion.div>
 
@@ -51,20 +59,14 @@ const AdvertisementCarousel = () => {
           <p className="text-sm text-base-content/70">Please check back soon for new vendor campaigns and offers.</p>
         </div>
       ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="surface-card mt-10 overflow-hidden p-2 sm:p-3"
-        >
+        <div className="surface-card mt-10 overflow-hidden p-2 sm:p-3">
           <Carousel
             showThumbs={false}
             showStatus={false}
             autoPlay
             infiniteLoop
             interval={3500}
-            transitionTime={700}
+            transitionTime={500}
             emulateTouch
             swipeable
             showArrows
@@ -79,7 +81,7 @@ const AdvertisementCarousel = () => {
                   loading="lazy"
                 />
                 <div className="space-y-2 px-4 py-5 text-center sm:px-8 sm:py-6">
-                  <h3 className="text-xl font-bold text-base-content sm:text-2xl">{ad.ad_title}</h3>
+                  <h3 className="text-xl font-semibold text-base-content sm:text-2xl">{ad.ad_title}</h3>
                   <p className="mx-auto max-w-3xl text-sm text-base-content/75 sm:text-base">
                     {ad.short_description}
                   </p>
@@ -88,7 +90,7 @@ const AdvertisementCarousel = () => {
               </div>
             ))}
           </Carousel>
-        </motion.div>
+        </div>
       )}
     </section>
   );

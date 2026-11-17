@@ -1,6 +1,6 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+﻿import { useEffect, useState, useMemo, useCallback } from "react";
+import { motion } from "framer-motion";
 import { FaStar, FaChevronLeft, FaChevronRight, FaQuoteLeft } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
 
 const reviews = [
   {
@@ -59,14 +59,14 @@ const CustomerReview = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setCurrentIndex((prev) => (prev + 1) % reviews.length);
-    setTimeout(() => setIsTransitioning(false), 300);
+    setTimeout(() => setIsTransitioning(false), 250);
   }, [isTransitioning]);
 
   const prevReview = useCallback(() => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
-    setTimeout(() => setIsTransitioning(false), 300);
+    setTimeout(() => setIsTransitioning(false), 250);
   }, [isTransitioning]);
 
   const goToReview = useCallback(
@@ -74,7 +74,7 @@ const CustomerReview = () => {
       if (isTransitioning || index === currentIndex) return;
       setIsTransitioning(true);
       setCurrentIndex(index);
-      setTimeout(() => setIsTransitioning(false), 300);
+      setTimeout(() => setIsTransitioning(false), 250);
     },
     [currentIndex, isTransitioning]
   );
@@ -92,20 +92,27 @@ const CustomerReview = () => {
   return (
     <section className="section-shell py-14 sm:py-16">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
         className="text-center"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
       >
-        <h2 className="section-title">Customer Testimonials</h2>
+        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+          <span className="text-base-content">Customer </span>
+          <span className="text-secondary">Testimonials</span>
+        </h2>
         <p className="section-subtitle">
           Feedback from customers and vendors using Market Monitor to track prices and improve decisions.
         </p>
       </motion.div>
 
-      <div
+      <motion.div
         className="surface-card relative mt-10 overflow-hidden"
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         onMouseEnter={() => setIsAutoPlay(false)}
         onMouseLeave={() => setIsAutoPlay(true)}
       >
@@ -113,54 +120,45 @@ const CustomerReview = () => {
           <FaQuoteLeft className="text-3xl sm:text-4xl" />
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentReview.id}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="p-6 sm:p-8 lg:p-10"
-          >
-            <div className="flex flex-col items-center gap-6 text-center lg:flex-row lg:items-start lg:text-left">
-              <div className="relative flex-shrink-0">
-                <img
-                  src={currentReview.avatar}
-                  alt={currentReview.name}
-                  className="h-20 w-20 rounded-full border-2 border-primary/30 object-cover shadow-md sm:h-24 sm:w-24"
-                  loading="lazy"
-                  onError={(e) => {
-                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      currentReview.name
-                    )}&background=random&color=fff&size=120`;
-                  }}
-                />
+        <div className="p-6 sm:p-8 lg:p-10">
+          <div className="flex flex-col items-center gap-6 text-center lg:flex-row lg:items-start lg:text-left">
+            <div className="relative flex-shrink-0">
+              <img
+                src={currentReview.avatar}
+                alt={currentReview.name}
+                className="h-20 w-20 rounded-full border-2 border-primary/30 object-cover shadow-sm sm:h-24 sm:w-24"
+                loading="lazy"
+                onError={(e) => {
+                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    currentReview.name
+                  )}&background=random&color=fff&size=120`;
+                }}
+              />
+            </div>
+
+            <div className="flex-1">
+              <div className="mb-4 flex justify-center gap-1 lg:justify-start">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <FaStar
+                    key={i}
+                    className={i < currentReview.rating ? "text-warning" : "text-base-content/25"}
+                  />
+                ))}
               </div>
 
-              <div className="flex-1">
-                <div className="mb-4 flex justify-center gap-1 lg:justify-start">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <FaStar
-                      key={i}
-                      className={i < currentReview.rating ? "text-warning" : "text-base-content/25"}
-                    />
-                  ))}
-                </div>
+              <blockquote className="text-base leading-relaxed text-base-content/85 sm:text-lg">
+                "{currentReview.comment}"
+              </blockquote>
 
-                <blockquote className="text-base leading-relaxed text-base-content/85 sm:text-lg">
-                  "{currentReview.comment}"
-                </blockquote>
-
-                <div className="mt-5">
-                  <p className="text-lg font-bold text-primary">{currentReview.name}</p>
-                  <p className="text-sm text-base-content/60">{currentReview.role}</p>
-                </div>
+              <div className="mt-5">
+                <p className="text-lg font-bold text-primary">{currentReview.name}</p>
+                <p className="text-sm text-base-content/60">{currentReview.role}</p>
               </div>
             </div>
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        </div>
 
-        <div className="flex items-center justify-between gap-4 border-t border-base-300/50 px-4 py-4 sm:px-6">
+        <div className="flex items-center justify-between gap-4 border-t border-base-300 px-4 py-4 sm:px-6">
           <button
             type="button"
             onClick={prevReview}
@@ -196,7 +194,7 @@ const CustomerReview = () => {
             <FaChevronRight />
           </button>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

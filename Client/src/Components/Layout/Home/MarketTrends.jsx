@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   FaArrowUp,
@@ -109,13 +109,17 @@ const MarketTrends = () => {
   return (
     <section className="section-shell py-14 sm:py-16">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
         className="text-center"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
       >
-        <h2 className="section-title">Market Trends & Price Insights</h2>
+        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+          <span className="text-primary">Market Trends</span>
+          <span className="text-base-content"> & </span>
+          <span className="text-secondary">Price Insights</span>
+        </h2>
         <p className="section-subtitle">
           Monitor price movement, volume signals, and actionable insights to support smarter purchasing decisions.
         </p>
@@ -123,11 +127,11 @@ const MarketTrends = () => {
 
       <div className="mt-10 grid gap-6 lg:grid-cols-3">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.05 }}
-          viewport={{ once: true }}
           className="lg:col-span-2"
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
           <div className="surface-card p-4 sm:p-6">
             <div className="mb-5 flex flex-wrap items-center gap-3">
@@ -140,7 +144,7 @@ const MarketTrends = () => {
               {trendingProducts.map((product) => (
                 <div
                   key={product.id}
-                  className="rounded-xl border border-base-300/60 bg-base-100/60 p-4 transition-colors hover:bg-base-100"
+                  className="rounded-xl border border-base-300 bg-base-100/80 p-4 transition-colors hover:bg-base-100"
                 >
                   <button
                     type="button"
@@ -190,8 +194,8 @@ const MarketTrends = () => {
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
-                      transition={{ duration: 0.25 }}
-                      className="mt-4 border-t border-base-300/60 pt-4"
+                      transition={{ duration: 0.2 }}
+                      className="mt-4 border-t border-base-300 pt-4"
                     >
                       <div className="grid gap-4 text-sm sm:grid-cols-2">
                         <div>
@@ -218,20 +222,20 @@ const MarketTrends = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          viewport={{ once: true }}
           className="space-y-6"
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.05, ease: "easeOut" }}
         >
           <div className="surface-card p-5 sm:p-6">
             <div className="mb-5 flex items-center gap-3">
-              <FaInfoCircle className="text-xl text-secondary" />
+              <FaInfoCircle className="text-xl text-primary" />
               <h3 className="text-xl font-bold text-base-content">Market Insights</h3>
             </div>
             <div className="space-y-3">
               {marketInsights.map((insight) => (
-                <div key={insight.title} className="rounded-xl border border-base-300/60 bg-base-100/60 p-4">
+                <div key={insight.title} className="rounded-xl border border-base-300 bg-base-100/80 p-4">
                   <div className="flex items-start gap-3">
                     <div className="mt-0.5 text-lg">{insight.icon}</div>
                     <div>
